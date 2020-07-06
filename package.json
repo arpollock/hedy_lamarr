@@ -1,0 +1,9 @@
+{
+  "name": "hedy_lamarr",
+  "version": "1.0.0",
+  "description": "Mines CS Master's Project",
+  "main": "index.js",
+  "author": "Alex Pollock",
+  "license": "MIT",
+  "private": true
+}
