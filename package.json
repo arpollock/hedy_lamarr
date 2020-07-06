@@ -5,5 +5,8 @@
   "main": "index.js",
   "author": "Alex Pollock",
   "license": "MIT",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "phaser": "^3.23.0"
+  }
 }
