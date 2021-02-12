@@ -2,11 +2,21 @@
   "name": "hedy_lamarr",
   "version": "1.0.0",
   "description": "Mines CS Master's Project",
-  "main": "index.js",
   "author": "Alex Pollock",
   "license": "MIT",
   "private": true,
-  "dependencies": {
-    "phaser": "^3.23.0"
-  }
+  "main": "./src/main.ts",
+  "scripts": {
+    "build": "webpack",
+    "start": "webpack --watch & live-server --port=5050"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.1",
+    "phaser": "^3.23.0",
+    "ts-loader": "^8.0.0",
+    "typescript": "^3.9.6",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.12"
+  },
+  "dependencies": {}
 }
