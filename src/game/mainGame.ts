@@ -198,6 +198,7 @@ export class HomeScene extends Phaser.Scene {
 
     if ((this.cursors.left.isDown || this.cursors.right.isDown) && this.player.body.onFloor()) {
       this.player.anims.play('walk', true);
+      this.playerConfig.numJumps = 0;
     } else if (!(this.player.body.onFloor())) {
       this.player.anims.play('jump', true);
     } else { // this.player.body.onFloor()
