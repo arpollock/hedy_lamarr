@@ -1,4 +1,5 @@
 import 'phaser';
+import MovingPlatform from './MovingPlatform'
 
 interface PlayerConfig {
   x: number,
@@ -51,6 +52,9 @@ export class HomeScene extends Phaser.Scene {
   private cursors;
   private printDebugKey;
 
+  private platform1;
+  private platform2;
+
   constructor() {
     super({
       key: 'HomeScene'
@@ -77,6 +81,8 @@ export class HomeScene extends Phaser.Scene {
     this.load.image('gem', 'gem.png');
     // simple star image
     this.load.image('star', 'star.png');
+    // the elevator/moving platform image
+    this.load.image('platform', 'platform.png');
     // player animations
     this.load.atlas('player', 'player.png', 'player.json');
   }
@@ -109,6 +115,14 @@ export class HomeScene extends Phaser.Scene {
     this.physics.world.bounds.width = this.groundLayer.width;
     this.physics.world.bounds.height = this.groundLayer.height;
 
+    // create a moving elevator (vertical)
+    this.platform1 = new MovingPlatform(this, 500, 500, 'platform');
+    this.platform1.moveVertically();
+
+    // create a moving elevator (horizontal)
+    this.platform2 = new MovingPlatform(this, 600, this.mHeight - 200, 'platform');
+    this.platform2.moveHorizontally();
+
     // configure the player's sprite
     this.player = this.physics.add.sprite(this.playerConfig.x, this.playerConfig.y, 'player');
     this.player.setDisplaySize(this.playerConfig.width, this.playerConfig.height);
@@ -125,6 +139,8 @@ export class HomeScene extends Phaser.Scene {
 
     // set bounds so the camera won't go outside the game world
     this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
+    // todo below is line to 'view whole world' will need to move to in-game phone option?
+    this.cameras.main.setZoom(.5);
     // make the camera follow the player
     this.cameras.main.startFollow(this.player);
 
