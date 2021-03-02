@@ -19,7 +19,7 @@ export default class MovingPlatform extends Phaser.Physics.Arcade.Image {
   public moveVertically(): void {
 	  this.scene.tweens.addCounter({
       from: 0,
-      to: -300,
+      to: 300,
       duration: 2500,
       ease: Phaser.Math.Easing.Sine.InOut,
       repeat: -1,
@@ -35,7 +35,7 @@ export default class MovingPlatform extends Phaser.Physics.Arcade.Image {
   public moveHorizontally(): void {
 	  this.scene.tweens.addCounter({
       from: 0,
-      to: -300,
+      to: 300,
       duration: 2500,
       ease: Phaser.Math.Easing.Sine.InOut,
       repeat: -1,

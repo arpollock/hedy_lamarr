@@ -18,6 +18,8 @@ export class HomeScene extends Phaser.Scene {
   private gWidth: number = 800; // (this.sys.game.config.width || 800) as number;
   // game window height
   private gHeight: number = 600; // (this.sys.game.config.height || 600) as number;
+
+  private zoomFactor: number = 0.5;
   // map width: 30 tiles * 70 px/tile = 2100 px
   private mWidth = 2100;
   // map height: 20 tiles * 70 px/tile = 1400 px
@@ -52,9 +54,6 @@ export class HomeScene extends Phaser.Scene {
   private cursors;
   private printDebugKey;
 
-  private platform1;
-  private platform2;
-
   constructor() {
     super({
       key: 'HomeScene'
@@ -72,7 +71,7 @@ export class HomeScene extends Phaser.Scene {
 
     this.load.setBaseURL('./../tutorial/source/assets/');
     // map made with Tiled in JSON format
-    this.load.tilemapTiledJSON('map', 'map_1.json');
+    this.load.tilemapTiledJSON('map', 'map_1.4.json');
     // tiles in spritesheet 
     this.load.spritesheet('tiles', 'tiles.png', {frameWidth: 70, frameHeight: 70});
     // simple coin image
@@ -115,15 +114,20 @@ export class HomeScene extends Phaser.Scene {
     this.physics.world.bounds.width = this.groundLayer.width;
     this.physics.world.bounds.height = this.groundLayer.height;
 
-    // create a moving elevator (vertical)
-    this.platform1 = new MovingPlatform(this, 500, 500, 'platform');
-    this.platform1.moveVertically();
-
-    // create a moving elevator (horizontal)
-    this.platform2 = new MovingPlatform(this, 600, this.mHeight - 200, 'platform');
-    this.platform2.moveHorizontally();
-
-    // configure the player's sprite
+    // add the moving platforms as specified in the object layer of the map
+    const plats = this.map.filterObjects("Platforms", p => p.name == "platform");
+    plats.forEach(p => {
+      const plat = new MovingPlatform(this, p.x, p.y, 'platform');
+      if (this.tiledObjectPropertyIsTrue('moveVertical', p)) {
+        plat.moveVertically();
+      } else if(this.tiledObjectPropertyIsTrue('moveHorizontal', p)) {
+        plat.moveHorizontally();
+      } //else {
+      //   console.log('platform does not move');
+      //   console.log(p);
+      // }
+    });
+    
     this.player = this.physics.add.sprite(this.playerConfig.x, this.playerConfig.y, 'player');
     this.player.setDisplaySize(this.playerConfig.width, this.playerConfig.height);
     this.player.setBounce(0.0);
@@ -137,10 +141,10 @@ export class HomeScene extends Phaser.Scene {
     // get key object for print debugging
     this.printDebugKey = this.input.keyboard.addKey('P');
 
+    // todo below is line to 'view whole world' will need to move to in-game phone option?
+    this.cameras.main.setZoom(this.zoomFactor);
     // set bounds so the camera won't go outside the game world
     this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
-    // todo below is line to 'view whole world' will need to move to in-game phone option?
-    this.cameras.main.setZoom(.5);
     // make the camera follow the player
     this.cameras.main.startFollow(this.player);
 
@@ -184,8 +188,11 @@ export class HomeScene extends Phaser.Scene {
     });
 
     // text to show score, etc.
-    this.text = this.add.text(20, 570, this.scoreString, {
-      fontSize: '20px',
+    const textX = 0 - (this.gWidth / this.zoomFactor) / 5;
+    const textY = this.gHeight / this.zoomFactor - 400;
+    console.log(`text location: ${textX}, ${textY}`);
+    this.text = this.add.text(textX, textY, this.scoreString, {
+      fontSize: '32px',
       fill: '#ffffff'
     });
     this.text.setScrollFactor(0);
@@ -261,5 +268,33 @@ export class HomeScene extends Phaser.Scene {
   private updateScoreText() {
     this.scoreString = `Coins: ${this.numCoins} Gems: ${this.numGems} Stars: ${this.numStars}`;
     this.text.setText(this.scoreString);
+  }
+
+  // returns -1 if prop is not found
+  private tiledObjectHasProperty(p: string, tObj: any): number {
+    if (tObj.hasOwnProperty('properties')) {
+      var propIdx = -1;
+      var i = 0;
+      tObj.properties.forEach(prop => {
+        if (prop.hasOwnProperty('name') && prop['name'] === p) {
+          // propFound = true;
+          propIdx = i;
+        }
+        i++;
+      });
+    }
+    // console.log(`tiledObjectHasProperty returning ${propFound} for property ${p}`);
+    return propIdx;
+  }
+
+  private tiledObjectPropertyIsTrue(p: string, tObj: any): boolean {
+    const propIdx = this.tiledObjectHasProperty(p, tObj);
+    if ( propIdx >= 0 ) {
+      if (tObj.properties[propIdx].value === true) {
+        return true;
+      }
+    }
+    // console.log(`tiledObjectPropertyIsTrue returning false for property ${p}`);
+    return false;
   }
 };
