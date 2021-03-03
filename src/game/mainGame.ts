@@ -114,8 +114,15 @@ export class HomeScene extends Phaser.Scene {
     this.physics.world.bounds.width = this.groundLayer.width;
     this.physics.world.bounds.height = this.groundLayer.height;
 
+    // add the player's sprite
+    this.player = this.physics.add.sprite(this.playerConfig.x, this.playerConfig.y, 'player');
+    this.player.setDisplaySize(this.playerConfig.width, this.playerConfig.height);
+    this.player.setBounce(0.0);
+    this.player.setCollideWorldBounds(true);
+
     // add the moving platforms as specified in the object layer of the map
     const plats = this.map.filterObjects("Platforms", p => p.name == "platform");
+    const platformObjs: Array<MovingPlatform> = [];
     plats.forEach(p => {
       const plat = new MovingPlatform(this, p.x, p.y, 'platform');
       if (this.tiledObjectPropertyIsTrue('moveVertical', p)) {
@@ -126,15 +133,37 @@ export class HomeScene extends Phaser.Scene {
       //   console.log('platform does not move');
       //   console.log(p);
       // }
+      platformObjs.push(plat);
     });
+    this.physics.world.enable(platformObjs, Phaser.Physics.Arcade.DYNAMIC_BODY); //Phaser.Physics.Arcade.STATIC_BODY
     
-    this.player = this.physics.add.sprite(this.playerConfig.x, this.playerConfig.y, 'player');
-    this.player.setDisplaySize(this.playerConfig.width, this.playerConfig.height);
-    this.player.setBounce(0.0);
-    this.player.setCollideWorldBounds(true);
-
     // keep the player from falling through the ground
     this.physics.add.collider(this.groundLayer, this.player);
+
+    platformObjs.forEach(pObj => {
+      (pObj.body as Phaser.Physics.Arcade.Body).setImmovable();
+      (pObj.body as Phaser.Physics.Arcade.Body).setAllowGravity(false);
+
+      const collisionMovingPlatform = () => {
+        if (pObj.body.touching.up && this.player.body.touching.down) {
+          this.player.isOnPlatform = true;
+          this.player.currentPlatform = pObj;      
+        }
+      };
+      //Only allow collisions from top
+      const isCollisionFromTop = () => {
+        return pObj.body.y > this.player.body.y;
+      };
+
+      // this.physics.add.collider(pObj, this.player, this.playerPlatformCollision);
+      this.physics.add.collider(
+        this.player,
+        pObj,
+        collisionMovingPlatform,
+        isCollisionFromTop,
+        this.scene
+      );
+    });
 
     // track user input events
     this.cursors = this.input.keyboard.createCursorKeys();
@@ -198,8 +227,13 @@ export class HomeScene extends Phaser.Scene {
     this.text.setScrollFactor(0);
 
   }
-  update(time: number): void {
+
+  public update(time: number): void {
     this.renderPlayer();
+  }
+
+  private playerPlatformCollision(): void {
+    console.log('player platform collision');
   }
 
   private renderPlayer(): void {
@@ -219,13 +253,21 @@ export class HomeScene extends Phaser.Scene {
       this.player.anims.play('idle', true);
     }
 
-    if ((this.cursors.left.isDown || this.cursors.right.isDown) && this.player.body.onFloor()) {
+    if ((this.cursors.left.isDown || this.cursors.right.isDown) && this.playerOnFloor()) {
       this.player.anims.play('walk', true);
       this.playerConfig.numJumps = 0;
-    } else if (!(this.player.body.onFloor())) {
+    } else if (!(this.playerOnFloor())) {
       this.player.anims.play('jump', true);
     } else { // this.player.body.onFloor()
       this.playerConfig.numJumps = 0;
+    }
+
+    if (this.player.isOnPlatform && this.player.currentPlatform) {
+      this.player.body.position.x += this.player.currentPlatform.getVx();
+      this.player.body.position.y += this.player.currentPlatform.getVy();
+
+      this.player.isOnPlatform = false;
+      this.player.currentPlatform = null;
     }
 
     if ((Phaser.Input.Keyboard.JustDown(this.cursors.space) || Phaser.Input.Keyboard.JustDown(this.cursors.up)) && this.playerConfig.numJumps < this.playerConfig.maxJumps) {
@@ -295,6 +337,13 @@ export class HomeScene extends Phaser.Scene {
       }
     }
     // console.log(`tiledObjectPropertyIsTrue returning false for property ${p}`);
+    return false;
+  }
+
+  private playerOnFloor() {
+    if (this.player.body.onFloor() || this.player.isOnPlatform) {
+      return true;
+    }
     return false;
   }
 };

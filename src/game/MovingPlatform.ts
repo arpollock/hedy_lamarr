@@ -1,6 +1,6 @@
 import 'phaser';
 
-export default class MovingPlatform extends Phaser.Physics.Arcade.Image {
+export default class MovingPlatform extends Phaser.Physics.Arcade.Sprite {
 	/**
 	 * 
 	 * @param {Phaser.Scene} scene 
@@ -8,19 +8,35 @@ export default class MovingPlatform extends Phaser.Physics.Arcade.Image {
 	 * @param {number} y 
 	 * @param {string} texture 
 	 */
-  private startY;
-  private startX;
+  private startY: number;
+  private startX: number;
+  private dur: number;
+  private dist: number;
+
+  private vx: number;
+  private vy: number;
+  private previousX: number;
+  private previousY: number;
+
 	constructor(scene, x, y, texture) {
 		super(scene, x, y, texture);
 		scene.add.existing(this);
     this.startY = y;
     this.startX = x;
+
+    this.previousX = x;
+    this.previousY = y;
+    this.vx = 0;
+    this.vy = 0;
+    this.dur = 3500;
+    this.dist = 300;
 	}
+
   public moveVertically(): void {
 	  this.scene.tweens.addCounter({
       from: 0,
-      to: 300,
-      duration: 2500,
+      to: this.dist,
+      duration: this.dur,
       ease: Phaser.Math.Easing.Sine.InOut,
       repeat: -1,
       yoyo: true,
@@ -28,6 +44,9 @@ export default class MovingPlatform extends Phaser.Physics.Arcade.Image {
         const y = this.startY + target.value
         const dy = y - this.y
         this.y = y
+        
+        this.vy = y - this.previousY;
+        this.previousY = y; 
       }
     })
   }
@@ -35,8 +54,8 @@ export default class MovingPlatform extends Phaser.Physics.Arcade.Image {
   public moveHorizontally(): void {
 	  this.scene.tweens.addCounter({
       from: 0,
-      to: 300,
-      duration: 2500,
+      to: this.dist,
+      duration: this.dur,
       ease: Phaser.Math.Easing.Sine.InOut,
       repeat: -1,
       yoyo: true,
@@ -44,7 +63,19 @@ export default class MovingPlatform extends Phaser.Physics.Arcade.Image {
         const x = this.startX + target.value
         const dx = x - this.x
         this.x = x
+
+        this.vx = x - this.previousX;
+        this.previousX = x; 
       }
     })
   }
+
+  public getVx(): number {
+    return this.vx;
+  }
+
+  public getVy(): number {
+    return this.vy;
+  }
+
 }
