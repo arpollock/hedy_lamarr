@@ -45,6 +45,11 @@
                          "name":"moveVertical",
                          "type":"bool",
                          "value":false
+                        }, 
+                        {
+                         "name":"obstacleNum",
+                         "type":"int",
+                         "value":0
                         }],
                  "rotation":0,
                  "type":"",
@@ -68,6 +73,11 @@
                          "name":"moveVertical",
                          "type":"bool",
                          "value":true
+                        }, 
+                        {
+                         "name":"obstacleNum",
+                         "type":"int",
+                         "value":1
                         }],
                  "rotation":0,
                  "type":"",
@@ -75,6 +85,53 @@
                  "width":70,
                  "x":1432.96,
                  "y":351.569
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":6,
+         "name":"Buttons",
+         "objects":[
+                {
+                 "gid":21,
+                 "height":70,
+                 "id":4,
+                 "name":"button",
+                 "properties":[
+                        {
+                         "name":"obstacleNum",
+                         "type":"int",
+                         "value":0
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":70,
+                 "x":802.375542507021,
+                 "y":910.670155731427
+                }, 
+                {
+                 "gid":21,
+                 "height":70,
+                 "id":5,
+                 "name":"button",
+                 "properties":[
+                        {
+                         "name":"obstacleNum",
+                         "type":"int",
+                         "value":1
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":70,
+                 "x":1259.35792698494,
+                 "y":698.773295889712
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -124,8 +181,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":6,
- "nextobjectid":4,
+ "nextlayerid":7,
+ "nextobjectid":6,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.4.3",
@@ -191,6 +248,19 @@
          "imagewidth":70,
          "margin":0,
          "name":"platform",
+         "spacing":0,
+         "tilecount":1,
+         "tileheight":70,
+         "tilewidth":70
+        }, 
+        {
+         "columns":1,
+         "firstgid":21,
+         "image":"buttonOff.png",
+         "imageheight":70,
+         "imagewidth":70,
+         "margin":0,
+         "name":"button",
          "spacing":0,
          "tilecount":1,
          "tileheight":70,

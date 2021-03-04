@@ -8,6 +8,10 @@ export default class MovingPlatform extends Phaser.Physics.Arcade.Sprite {
 	 * @param {number} y 
 	 * @param {string} texture 
 	 */
+
+  public isFixed: boolean;
+  public objectNum: number;
+
   private startY: number;
   private startX: number;
   private dur: number;
@@ -23,6 +27,9 @@ export default class MovingPlatform extends Phaser.Physics.Arcade.Sprite {
 		scene.add.existing(this);
     this.startY = y;
     this.startX = x;
+
+    this.isFixed = false;
+    this.objectNum = -1;
 
     this.previousX = x;
     this.previousY = y;

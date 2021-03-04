@@ -1,6 +1,6 @@
 import 'phaser';
-import MovingPlatform from './MovingPlatform'
-// import PauseScene from './PauseScene'
+import MovingPlatform from './MovingPlatform';
+import ObstacleButton from './ObstacleButton';
 
 interface PlayerConfig {
   x: number,
@@ -93,6 +93,9 @@ export class HomeScene extends Phaser.Scene {
     this.load.image('star', 'star.png');
     // the elevator/moving platform image
     this.load.image('platform', 'platform.png');
+    // the button (on and off) images
+    this.load.image('buttonOff', 'buttonOff.png');
+    this.load.image('buttonOn', 'buttonOn.png');
     // player animations
     this.load.atlas('player', 'player.png', 'player.json');
   }
@@ -137,21 +140,62 @@ export class HomeScene extends Phaser.Scene {
     plats.forEach(p => {
       const plat = new MovingPlatform(this, p.x, p.y, 'platform');
       plat.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
-      if (this.tiledObjectPropertyIsTrue('moveVertical', p)) {
-        plat.moveVertically();
-      } else if(this.tiledObjectPropertyIsTrue('moveHorizontal', p)) {
-        plat.moveHorizontally();
-      } //else {
-      //   console.log('platform does not move');
-      //   console.log(p);
-      // }
+      if (plat.isFixed) {
+        if (this.tiledObjectPropertyIsTrue('moveVertical', p)) {
+          plat.moveVertically();
+        } else if(this.tiledObjectPropertyIsTrue('moveHorizontal', p)) {
+          plat.moveHorizontally();
+        }
+      }
+      const obstacleNumIdx = this.tiledObjectHasProperty('obstacleNum', p)
+      if (obstacleNumIdx >= 0) {
+        plat.objectNum = p.properties[obstacleNumIdx].value;
+        // console.log(`platform obstacle num: ${plat['objectNum']}`)
+      }
       platformObjs.push(plat);
     });
     this.physics.world.enable(platformObjs, Phaser.Physics.Arcade.DYNAMIC_BODY); //Phaser.Physics.Arcade.STATIC_BODY
+
+    // add the buttons to enable the player to interact with obstacles
+    // add the moving platforms as specified in the object layer of the map
+    const buttons = this.map.filterObjects("Buttons", p => p.name == "button");
+    const buttonObjs: Array<ObstacleButton> = [];
+    buttons.forEach(b => {
+      const butt = new ObstacleButton(this, b.x, b.y, 'buttonOff');
+      butt.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
+      const obstacleNumIdx = this.tiledObjectHasProperty('obstacleNum', b)
+      if (obstacleNumIdx >= 0) {
+        butt.objectNum = b.properties[obstacleNumIdx].value;
+        // console.log(`platform obstacle num: ${plat['objectNum']}`)
+      }
+      buttonObjs.push(butt);
+    });
+    this.physics.world.enable(buttonObjs, Phaser.Physics.Arcade.STATIC_BODY);
     
     // keep the player from falling through the ground
     this.physics.add.collider(this.groundLayer, this.player);
 
+    // handle collisions with moving platforms
+    buttonObjs.forEach(bObj => {
+
+      const collisionObstacleButton = () => {
+        console.log(`collision with button # ${bObj.objectNum}`)
+      };
+      //Only allow collisions from top
+      const isCollisionFromTop = () => { // todo fix this/figure out how to remove
+        return true;//bObj.body.y > this.player.body.y;
+      };
+
+      this.physics.add.collider(
+        this.player,
+        bObj,
+        collisionObstacleButton,
+        isCollisionFromTop,
+        this.scene
+      );
+    });
+
+    // handle collisions with button
     platformObjs.forEach(pObj => {
       (pObj.body as Phaser.Physics.Arcade.Body).setImmovable();
       (pObj.body as Phaser.Physics.Arcade.Body).setAllowGravity(false);
