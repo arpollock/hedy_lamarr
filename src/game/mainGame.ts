@@ -1,5 +1,6 @@
 import 'phaser';
 import MovingPlatform from './MovingPlatform'
+// import PauseScene from './PauseScene'
 
 interface PlayerConfig {
   x: number,
@@ -15,17 +16,17 @@ interface PlayerConfig {
 
 export class HomeScene extends Phaser.Scene {
   // game window width
-  private gWidth: number = 800; // (this.sys.game.config.width || 800) as number;
+  private gWidth: number;//  = 800; // (this.sys.game.config.width || 800) as number;
   // game window height
-  private gHeight: number = 600; // (this.sys.game.config.height || 600) as number;
+  private gHeight: number; //  = 600; // (this.sys.game.config.height || 600) as number;
 
-  private zoomFactor: number = 0.5;
+  private zoomFactor: number; //  = 0.5;
   // map width: 30 tiles * 70 px/tile = 2100 px
-  private mWidth = 2100;
+  private mWidth; // = 2100;
   // map height: 20 tiles * 70 px/tile = 1400 px
-  private mHeight = 1400;
-  private gravity: number = 500;
-  private groundDrag: number = 500;
+  private mHeight; //  = 1400;
+  private gravity: number; // = 500;
+  private groundDrag: number; // = 500;
   private map;// : Phaser.Physics.Arcade.World; or Phaser.Tilemaps.Tilemap
 
   private groundLayer;
@@ -39,20 +40,11 @@ export class HomeScene extends Phaser.Scene {
   private scoreString: string;
 
   private player; // : Phaser.Physics.Arcade.Sprite;
-  private playerConfig: PlayerConfig = {
-    width: 66,
-    height: 92,
-    x: 140, // player starting x loc
-    y: (this.mHeight-70*5), // player starting y loc
-    speed: 200,
-    numJumps: 0,
-    maxJumps: 2,
-    flipX: false,
-    walkFrameRate: 15,
-  };
+  private playerConfig: PlayerConfig;
 
   private cursors;
-  private printDebugKey;
+  private pauseKey: Phaser.Input.Keyboard.Key;
+  private printDebugKey: Phaser.Input.Keyboard.Key;
 
   constructor() {
     super({
@@ -60,6 +52,25 @@ export class HomeScene extends Phaser.Scene {
     });
   }
   init(params): void {
+    this.gWidth = 800;
+    this.gHeight = 600;
+    this.zoomFactor = 0.5;
+    this.mWidth = 2100;
+    this.mHeight = 1400;
+    this.gravity = 500;
+    this.groundDrag = 500;
+    this.playerConfig = {
+      width: 66,
+      height: 92,
+      x: 140, // player starting x loc
+      y: (this.mHeight-70*5), // player starting y loc
+      speed: 200,
+      numJumps: 0,
+      maxJumps: 2,
+      flipX: false,
+      walkFrameRate: 15,
+    };
+
     this.numCoins = 0;
     this.numGems = 0;
     this.numStars = 0;
@@ -155,7 +166,6 @@ export class HomeScene extends Phaser.Scene {
         return pObj.body.y > this.player.body.y;
       };
 
-      // this.physics.add.collider(pObj, this.player, this.playerPlatformCollision);
       this.physics.add.collider(
         this.player,
         pObj,
@@ -169,6 +179,8 @@ export class HomeScene extends Phaser.Scene {
     this.cursors = this.input.keyboard.createCursorKeys();
     // get key object for print debugging
     this.printDebugKey = this.input.keyboard.addKey('P');
+    // get key object for pausing the game (the escape button)
+    this.pauseKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC.valueOf());
 
     // todo below is line to 'view whole world' will need to move to in-game phone option?
     this.cameras.main.setZoom(this.zoomFactor);
@@ -230,10 +242,14 @@ export class HomeScene extends Phaser.Scene {
 
   public update(time: number): void {
     this.renderPlayer();
-  }
-
-  private playerPlatformCollision(): void {
-    console.log('player platform collision');
+    // detect if the player wants to pause the game
+    if (Phaser.Input.Keyboard.JustDown(this.pauseKey)) {
+      console.log('Pause button pushed!');
+      if( !(this.scene.isPaused()) ) {
+        console.log('Game paused!');
+        this.scene.switch('PauseScene');
+      }
+    }
   }
 
   private renderPlayer(): void {

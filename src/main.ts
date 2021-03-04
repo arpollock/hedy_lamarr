@@ -1,12 +1,13 @@
 import 'phaser';
 import { HomeScene } from './game/mainGame';
+import { PauseScene } from './game/PauseScene';
 
 const gameConfig: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   width: 800,
   height: 600,
   backgroundColor: '#40739e',
-  scene: [HomeScene],
+  scene: [HomeScene, PauseScene],
   physics: {
       default: 'arcade',
       arcade: {
