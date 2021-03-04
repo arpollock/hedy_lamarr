@@ -42,6 +42,9 @@ export class HomeScene extends Phaser.Scene {
   private player; // : Phaser.Physics.Arcade.Sprite;
   private playerConfig: PlayerConfig;
 
+  private buttonObjs: Array<ObstacleButton>;
+  private platformObjs: Array<MovingPlatform>;
+
   private cursors;
   private pauseKey: Phaser.Input.Keyboard.Key;
   private printDebugKey: Phaser.Input.Keyboard.Key;
@@ -59,6 +62,10 @@ export class HomeScene extends Phaser.Scene {
     this.mHeight = 1400;
     this.gravity = 500;
     this.groundDrag = 500;
+
+    this.buttonObjs = [];
+    this.platformObjs = [];
+
     this.playerConfig = {
       width: 66,
       height: 92,
@@ -136,30 +143,33 @@ export class HomeScene extends Phaser.Scene {
 
     // add the moving platforms as specified in the object layer of the map
     const plats = this.map.filterObjects("Platforms", p => p.name == "platform");
-    const platformObjs: Array<MovingPlatform> = [];
+    // const platformObjs: Array<MovingPlatform> = [];
     plats.forEach(p => {
       const plat = new MovingPlatform(this, p.x, p.y, 'platform');
       plat.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
+      if (this.tiledObjectPropertyIsTrue('moveVertical', p)) {
+        // plat.moveVertically();
+        plat.movesV = true;
+      } else if(this.tiledObjectPropertyIsTrue('moveHorizontal', p)) {
+        // plat.moveHorizontally();
+        plat.movesH = true;
+      }
       if (plat.isFixed) {
-        if (this.tiledObjectPropertyIsTrue('moveVertical', p)) {
-          plat.moveVertically();
-        } else if(this.tiledObjectPropertyIsTrue('moveHorizontal', p)) {
-          plat.moveHorizontally();
-        }
+        this.movePlatform(plat);
       }
       const obstacleNumIdx = this.tiledObjectHasProperty('obstacleNum', p)
       if (obstacleNumIdx >= 0) {
         plat.objectNum = p.properties[obstacleNumIdx].value;
         // console.log(`platform obstacle num: ${plat['objectNum']}`)
       }
-      platformObjs.push(plat);
+      this.platformObjs.push(plat);
     });
-    this.physics.world.enable(platformObjs, Phaser.Physics.Arcade.DYNAMIC_BODY); //Phaser.Physics.Arcade.STATIC_BODY
+    this.physics.world.enable(this.platformObjs, Phaser.Physics.Arcade.DYNAMIC_BODY); // other option is Phaser.Physics.Arcade.STATIC_BODY
 
     // add the buttons to enable the player to interact with obstacles
     // add the moving platforms as specified in the object layer of the map
     const buttons = this.map.filterObjects("Buttons", p => p.name == "button");
-    const buttonObjs: Array<ObstacleButton> = [];
+    // const buttonObjs: Array<ObstacleButton> = [];
     buttons.forEach(b => {
       const butt = new ObstacleButton(this, b.x, b.y, 'buttonOff');
       butt.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
@@ -168,35 +178,52 @@ export class HomeScene extends Phaser.Scene {
         butt.objectNum = b.properties[obstacleNumIdx].value;
         // console.log(`platform obstacle num: ${plat['objectNum']}`)
       }
-      buttonObjs.push(butt);
+      this.buttonObjs.push(butt);
     });
-    this.physics.world.enable(buttonObjs, Phaser.Physics.Arcade.STATIC_BODY);
+    this.physics.world.enable(this.buttonObjs, Phaser.Physics.Arcade.STATIC_BODY);
     
     // keep the player from falling through the ground
     this.physics.add.collider(this.groundLayer, this.player);
 
     // handle collisions with moving platforms
-    buttonObjs.forEach(bObj => {
+    this.buttonObjs.forEach(bObj => {
+
+      // bObj.body.coll
+      bObj.body.setSize((bObj.body.width * 3 / 4), (bObj.body.height / 10));
 
       const collisionObstacleButton = () => {
-        console.log(`collision with button # ${bObj.objectNum}`)
+        // console.log(`collision with button # ${bObj.objectNum}`)
+        if (bObj.body.touching.up && this.player.body.touching.down) {
+          // console.log('button pushed')
+          if ( !(bObj.isFixed) ) { // activate if off
+            bObj.isFixed = true
+            this.fixObstacle(bObj);
+          }    
+        }
       };
-      //Only allow collisions from top
-      const isCollisionFromTop = () => { // todo fix this/figure out how to remove
-        return true;//bObj.body.y > this.player.body.y;
+
+      const directionCollisionObstacleButton = () => {
+        const buttonY: number = (bObj.body.y - bObj.body.height - 10); //(bObj.body.height / 4));
+        const isFromTop: boolean = buttonY > this.player.y;
+        // console.log(`${buttonY} > ${this.player.y} == ${isFromTop}`);
+        if (isFromTop) {
+          // console.log('player pushing from top, returning true');
+          return true;
+        }
+        return false;
       };
 
       this.physics.add.collider(
         this.player,
         bObj,
         collisionObstacleButton,
-        isCollisionFromTop,
+        directionCollisionObstacleButton,
         this.scene
       );
     });
 
     // handle collisions with button
-    platformObjs.forEach(pObj => {
+    this.platformObjs.forEach(pObj => {
       (pObj.body as Phaser.Physics.Arcade.Body).setImmovable();
       (pObj.body as Phaser.Physics.Arcade.Body).setAllowGravity(false);
 
@@ -401,10 +428,34 @@ export class HomeScene extends Phaser.Scene {
     return false;
   }
 
-  private playerOnFloor() {
+  private playerOnFloor(): boolean {
     if (this.player.body.onFloor() || this.player.isOnPlatform) {
       return true;
     }
     return false;
+  }
+
+  private fixObstacle(ob: ObstacleButton): void {
+    console.log(`fixing obstacle num: ${ob.objectNum}`)
+    this.platformObjs.forEach( p => {
+      if (p.objectNum == ob.objectNum) {
+        console.log('obstacle found!')
+        ob.setTexture('buttonOn');
+        ob.body.setSize(ob.body.width, 0); // change the height of the collison box to match a pressed button
+        p.isFixed = true;
+        this.movePlatform(p);
+        return
+      }
+    });
+  }
+
+  private movePlatform(plat: MovingPlatform) {
+    if(plat.isFixed) {
+      if (plat.movesV) {
+        plat.moveVertically();
+      } else if(plat.movesH) {
+        plat.moveHorizontally();
+      }
+    }
   }
 };
