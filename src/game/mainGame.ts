@@ -136,6 +136,7 @@ export class HomeScene extends Phaser.Scene {
     const platformObjs: Array<MovingPlatform> = [];
     plats.forEach(p => {
       const plat = new MovingPlatform(this, p.x, p.y, 'platform');
+      plat.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
       if (this.tiledObjectPropertyIsTrue('moveVertical', p)) {
         plat.moveVertically();
       } else if(this.tiledObjectPropertyIsTrue('moveHorizontal', p)) {
