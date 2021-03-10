@@ -2,6 +2,7 @@ import 'phaser';
 import MovingPlatform from './MovingPlatform';
 import ObstacleButton from './ObstacleButton';
 import LaserDoor from './LaserDoor';
+import Goal from './Goal';
 
 interface PlayerConfig {
   x: number,
@@ -13,6 +14,11 @@ interface PlayerConfig {
   maxJumps: number,
   flipX: boolean,
   walkFrameRate: number,
+}
+
+class PlayerSprite extends Phaser.Physics.Arcade.Sprite{
+  public isOnPlatform: boolean;
+  public currentPlatform: any;
 }
 
 export class HomeScene extends Phaser.Scene {
@@ -34,18 +40,25 @@ export class HomeScene extends Phaser.Scene {
   private coinLayer;
   private gemLayer;
   private starLayer;
+
   private numCoins: number;
   private numGems: number;
   private numStars: number;
   private text;
   private scoreString: string;
 
-  private player; // : Phaser.Physics.Arcade.Sprite;
+  private player: PlayerSprite; // : Phaser.Physics.Arcade.Sprite;
   private playerConfig: PlayerConfig;
 
   private buttonObjs: Array<ObstacleButton>;
   private platformObjs: Array<MovingPlatform>;
   private doorObjs: Array<LaserDoor>;
+
+  private goalObjs: Array<Goal>;
+
+  private goalReached: boolean;
+
+  // private creatures: Phaser.Physics.Arcade.Sprite;
 
   private cursors;
   private pauseKey: Phaser.Input.Keyboard.Key;
@@ -68,6 +81,9 @@ export class HomeScene extends Phaser.Scene {
     this.buttonObjs = [];
     this.platformObjs = [];
     this.doorObjs = [];
+    this.goalObjs = [];
+
+    this.goalReached = false;
 
     this.playerConfig = {
       width: 66,
@@ -96,7 +112,7 @@ export class HomeScene extends Phaser.Scene {
     // tiles in spritesheet 
     this.load.spritesheet('tiles', 'tiles.png', {frameWidth: 70, frameHeight: 70});
     // tiles in spritesheet 
-    this.load.spritesheet('lasers', 'sheet_lasers.png', {frameWidth: 70, frameHeight: 70});
+    this.load.spritesheet('sheet_lasers', 'sheet_lasers.png', {frameWidth: 70, frameHeight: 70});
     // simple coin image
     this.load.image('coin', 'coin.png');
     // simple gem image
@@ -110,6 +126,8 @@ export class HomeScene extends Phaser.Scene {
     this.load.image('buttonOn', 'buttonOn.png');
     // player animations
     this.load.atlas('player', 'player.png', 'player.json');
+    // creatures to save + animations
+    // this.load.atlas('creature', 'spritesheet_creatures.png', 'spritesheet_creatures.json');
   }
 
   create(): void {
@@ -135,16 +153,61 @@ export class HomeScene extends Phaser.Scene {
     const gemTiles = this.map.addTilesetImage('gem');
     // // add stars as tiles
     this.gemLayer = this.map.createDynamicLayer('Gems', gemTiles, 0, 0);
- 
+
     // set the boundaries of our game world
     this.physics.world.bounds.width = this.groundLayer.width;
     this.physics.world.bounds.height = this.groundLayer.height;
 
     // add the player's sprite
-    this.player = this.physics.add.sprite(this.playerConfig.x, this.playerConfig.y, 'player');
+    this.player = (this.physics.add.sprite(this.playerConfig.x, this.playerConfig.y, 'player') as PlayerSprite);
     this.player.setDisplaySize(this.playerConfig.width, this.playerConfig.height);
     this.player.setBounce(0.0);
     this.player.setCollideWorldBounds(true);
+    this.player.setDepth(999);
+    // this.game.world.bringToTop(this.player);
+    // add the goal objects as specified in the object layer of the map
+    const goals = this.map.filterObjects("Goal", p => p.name == "goal");
+    goals.forEach(g => {
+      const partNameIdx: number = this.tiledObjectHasProperty('part', g);
+      const partName: string = (partNameIdx >= 0) ? g.properties[partNameIdx].value : '';
+      const goal = new Goal(this, g.x, g.y, 'sheet_lasers', this.laserDoorPartToFrameNum(partName));
+      goal.part = partName;
+      goal.setOrigin(0, 1);
+      const obstacleNumIdx = this.tiledObjectHasProperty('obstacleNum', g);
+      if (obstacleNumIdx >= 0) {
+        goal['objectNum'] = g.properties[obstacleNumIdx].value;
+        // console.log(`platform obstacle num: ${plat['objectNum']}`)
+      }
+      this.goalObjs.push(goal);
+    });
+    this.physics.world.enable(this.goalObjs, Phaser.Physics.Arcade.STATIC_BODY);
+
+    this.goalObjs.forEach(gObj => {
+      const collisionGoalObject = () => {
+        // console.log('overlap with goal object');
+        if(gObj.part === 'lever' && !this.goalReached) {
+          this.triggerGoalReached();
+        }
+        // some stuff
+      };
+      const directionCollisonGoalObject = () => {
+        if (gObj.part === 'lever') {
+          return true;
+        }
+        return false;
+      };
+      // this.physics.add.overlap(
+      //   this.player,
+      //   gObj,
+      //   collisionGoalObject,
+      //   directionCollisonGoalObject,
+      //   this.scene
+      // );
+      // collision with the goal objects
+      // this.starLayer.setTileIndexCallback(19, this.collectStar, this); // the gem id is 19
+      // when the player overlaps with a tile with index 19, collectStar will be called    
+      this.physics.add.overlap(this.player, gObj, collisionGoalObject, directionCollisonGoalObject, this.scene);
+    });
 
     // add the moving platforms as specified in the object layer of the map
     const plats = this.map.filterObjects("Platforms", p => p.name == "platform");
@@ -194,7 +257,7 @@ export class HomeScene extends Phaser.Scene {
       const partNameIdx: number = this.tiledObjectHasProperty('part', d);
       const partName: string = (partNameIdx >= 0) ? d.properties[partNameIdx].value : '';
 
-      const ld = new LaserDoor(this, d.x, d.y, 'lasers', this.laserDoorPartToFrameNum(partName));
+      const ld = new LaserDoor(this, d.x, d.y, 'sheet_lasers', this.laserDoorPartToFrameNum(partName));
       ld.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
       const obstacleNumIdx: number = this.tiledObjectHasProperty('obstacleNum', d)
       if (obstacleNumIdx >= 0) {
@@ -356,12 +419,12 @@ export class HomeScene extends Phaser.Scene {
   private renderPlayer(): void {
     this.player.setDragX(0);
     if (this.cursors.left.isDown) { // if the left arrow key is down
-      this.player.body.setVelocityX(this.playerConfig.speed*-1); // move left
+      (this.player.body as Phaser.Physics.Arcade.Body).setVelocityX(this.playerConfig.speed*-1); // move left
       // this.player.anims.play('walk', true);
       this.player.flipX = true;
       // console.log("blue player moving left");
     } else if (this.cursors.right.isDown) { // if the right arrow key is down
-      this.player.body.setVelocityX(this.playerConfig.speed); // move right
+      (this.player.body as Phaser.Physics.Arcade.Body).setVelocityX(this.playerConfig.speed); // move right
       // this.player.anims.play('walk', true);
       this.player.flipX = false;
       // console.log("blue player moving right");
@@ -388,7 +451,7 @@ export class HomeScene extends Phaser.Scene {
     }
 
     if ((Phaser.Input.Keyboard.JustDown(this.cursors.space) || Phaser.Input.Keyboard.JustDown(this.cursors.up)) && this.playerConfig.numJumps < this.playerConfig.maxJumps) {
-      this.player.body.setVelocityY(this.gravity*-0.67); // jump up
+      (this.player.body as Phaser.Physics.Arcade.Body).setVelocityY(this.gravity*-0.67); // jump up
       this.playerConfig.numJumps++;
     }
 
@@ -405,6 +468,19 @@ export class HomeScene extends Phaser.Scene {
     this.coinLayer.removeTileAt(tile.x, tile.y);
     this.numCoins++;
     this.updateScoreText();
+    return false;
+  }
+
+  private triggerGoalReached(): boolean {
+    console.log('goal reached!');
+    this.goalReached = true;
+    this.goalObjs.forEach(g => {
+      if(g.part === 'laser') {
+        g.destroy(true);
+      } else if (g.part === 'lever') {
+        g.setFrame(84, false, false);
+      }
+    });
     return false;
   }
 
@@ -458,7 +534,7 @@ export class HomeScene extends Phaser.Scene {
   }
 
   private playerOnFloor(): boolean {
-    if (this.player.body.onFloor() || this.player.isOnPlatform) {
+    if ((this.player.body as Phaser.Physics.Arcade.Body).onFloor() || this.player.isOnPlatform) {
       return true;
     }
     return false;
@@ -511,9 +587,15 @@ export class HomeScene extends Phaser.Scene {
     if (partName === 'base') {
       return 89; // 91 is the short one
     }
+    if (partName === 'base_down') {
+      return 75;
+    }
     if (partName === 'laser') {
       return 78;
     }
-    return 0;
+    if (partName === 'lever') {
+      return 85;
+    }
+    return 1;
   }
 };
