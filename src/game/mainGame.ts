@@ -1,6 +1,7 @@
 import 'phaser';
 import MovingPlatform from './MovingPlatform';
 import ObstacleButton from './ObstacleButton';
+import LaserDoor from './LaserDoor';
 
 interface PlayerConfig {
   x: number,
@@ -44,6 +45,7 @@ export class HomeScene extends Phaser.Scene {
 
   private buttonObjs: Array<ObstacleButton>;
   private platformObjs: Array<MovingPlatform>;
+  private doorObjs: Array<LaserDoor>;
 
   private cursors;
   private pauseKey: Phaser.Input.Keyboard.Key;
@@ -65,6 +67,7 @@ export class HomeScene extends Phaser.Scene {
 
     this.buttonObjs = [];
     this.platformObjs = [];
+    this.doorObjs = [];
 
     this.playerConfig = {
       width: 66,
@@ -92,6 +95,8 @@ export class HomeScene extends Phaser.Scene {
     this.load.tilemapTiledJSON('map', 'map_1.4.json');
     // tiles in spritesheet 
     this.load.spritesheet('tiles', 'tiles.png', {frameWidth: 70, frameHeight: 70});
+    // tiles in spritesheet 
+    this.load.spritesheet('lasers', 'sheet_lasers.png', {frameWidth: 70, frameHeight: 70});
     // simple coin image
     this.load.image('coin', 'coin.png');
     // simple gem image
@@ -167,7 +172,7 @@ export class HomeScene extends Phaser.Scene {
     this.physics.world.enable(this.platformObjs, Phaser.Physics.Arcade.DYNAMIC_BODY); // other option is Phaser.Physics.Arcade.STATIC_BODY
 
     // add the buttons to enable the player to interact with obstacles
-    // add the moving platforms as specified in the object layer of the map
+    // add the buttons as specified in the object layer of the map
     const buttons = this.map.filterObjects("Buttons", p => p.name == "button");
     // const buttonObjs: Array<ObstacleButton> = [];
     buttons.forEach(b => {
@@ -181,6 +186,25 @@ export class HomeScene extends Phaser.Scene {
       this.buttonObjs.push(butt);
     });
     this.physics.world.enable(this.buttonObjs, Phaser.Physics.Arcade.STATIC_BODY);
+
+    // add the buttons as specified in the object layer of the map
+    const doors = this.map.filterObjects("Doors", p => p.name == "door");
+    // const buttonObjs: Array<ObstacleButton> = [];
+    doors.forEach(d => {
+      const ld = new LaserDoor(this, d.x, d.y, 'lasers', 91);
+      ld.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
+      const obstacleNumIdx: number = this.tiledObjectHasProperty('obstacleNum', d)
+      if (obstacleNumIdx >= 0) {
+        ld.objectNum = d.properties[obstacleNumIdx].value;
+        // console.log(`platform obstacle num: ${plat['objectNum']}`)
+      }
+      const partNameIdx: number = this.tiledObjectHasProperty('part', d);
+      if (obstacleNumIdx >= 0) {
+        ld.part = d.properties[partNameIdx].value;
+      }
+      this.doorObjs.push(ld);
+    });
+    this.physics.world.enable(this.doorObjs, Phaser.Physics.Arcade.STATIC_BODY);
     
     // keep the player from falling through the ground
     this.physics.add.collider(this.groundLayer, this.player);
@@ -439,7 +463,7 @@ export class HomeScene extends Phaser.Scene {
     console.log(`fixing obstacle num: ${ob.objectNum}`)
     this.platformObjs.forEach( p => {
       if (p.objectNum == ob.objectNum) {
-        console.log('obstacle found!')
+        console.log('obstacle found (platform)!')
         ob.setTexture('buttonOn');
         ob.body.setSize(ob.body.width, 0); // change the height of the collison box to match a pressed button
         p.isFixed = true;
@@ -447,6 +471,25 @@ export class HomeScene extends Phaser.Scene {
         return
       }
     });
+    var foundDoor: boolean = false;
+    this.doorObjs.forEach( d => {
+      if (d.objectNum == ob.objectNum) {
+        foundDoor = true;
+        console.log('obstacle found (door)!');
+        if (d.part === 'laser') {
+          console.log(`removing obstalce num ${d.objectNum} laser part`);
+          d.destroy(true);
+        } else if (d.part === 'base') {
+          console.log(`removing obstalce num ${d.objectNum} base part`);
+          d.setFrame(91, false, false);
+        }
+
+      }
+    });
+    if (foundDoor) {
+      ob.setTexture('buttonOn');
+      ob.body.setSize(ob.body.width, 0);
+    }
   }
 
   private movePlatform(plat: MovingPlatform) {

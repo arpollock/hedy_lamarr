@@ -112,8 +112,8 @@
                  "type":"",
                  "visible":true,
                  "width":70,
-                 "x":802.375542507021,
-                 "y":910.670155731427
+                 "x":802.376,
+                 "y":910.67
                 }, 
                 {
                  "gid":21,
@@ -130,8 +130,161 @@
                  "type":"",
                  "visible":true,
                  "width":70,
-                 "x":1259.35792698494,
-                 "y":698.773295889712
+                 "x":1259.36,
+                 "y":698.773
+                }, 
+                {
+                 "gid":21,
+                 "height":70,
+                 "id":13,
+                 "name":"button",
+                 "properties":[
+                        {
+                         "name":"obstacleNum",
+                         "type":"int",
+                         "value":2
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":70,
+                 "x":1680.37196483166,
+                 "y":629.930858794044
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":7,
+         "name":"Doors",
+         "objects":[
+                {
+                 "gid":113,
+                 "height":70,
+                 "id":6,
+                 "name":"door",
+                 "properties":[
+                        {
+                         "name":"obstacleNum",
+                         "type":"int",
+                         "value":2
+                        }, 
+                        {
+                         "name":"on",
+                         "type":"bool",
+                         "value":true
+                        }, 
+                        {
+                         "name":"part",
+                         "type":"string",
+                         "value":"base"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":70,
+                 "x":1750.28747842252,
+                 "y":630.538441110078
+                }, 
+                {
+                 "gid":103,
+                 "height":70,
+                 "id":9,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":70,
+                 "x":1750.80990629183,
+                 "y":629.377510040161
+                }, 
+                {
+                 "gid":103,
+                 "height":70,
+                 "id":10,
+                 "name":"door",
+                 "properties":[
+                        {
+                         "name":"obstacleNum",
+                         "type":"int",
+                         "value":2
+                        }, 
+                        {
+                         "name":"on",
+                         "type":"bool",
+                         "value":true
+                        }, 
+                        {
+                         "name":"part",
+                         "type":"string",
+                         "value":"laser"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":70,
+                 "x":1750.80990629183,
+                 "y":559.765729585007
+                }, 
+                {
+                 "gid":103,
+                 "height":70,
+                 "id":11,
+                 "name":"door",
+                 "properties":[
+                        {
+                         "name":"obstacleNum",
+                         "type":"int",
+                         "value":2
+                        }, 
+                        {
+                         "name":"on",
+                         "type":"bool",
+                         "value":true
+                        }, 
+                        {
+                         "name":"part",
+                         "type":"string",
+                         "value":"laser"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":70,
+                 "x":1750.80990629183,
+                 "y":489.836196278021
+                }, 
+                {
+                 "gid":103,
+                 "height":70,
+                 "id":12,
+                 "name":"door",
+                 "properties":[
+                        {
+                         "name":"obstacleNum",
+                         "type":"int",
+                         "value":2
+                        }, 
+                        {
+                         "name":"on",
+                         "type":"bool",
+                         "value":true
+                        }, 
+                        {
+                         "name":"part",
+                         "type":"string",
+                         "value":"laser"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":70,
+                 "x":1750.80990629183,
+                 "y":419.967462802747
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -181,8 +334,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":7,
- "nextobjectid":6,
+ "nextlayerid":8,
+ "nextobjectid":14,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.4.3",
@@ -263,6 +416,19 @@
          "name":"button",
          "spacing":0,
          "tilecount":1,
+         "tileheight":70,
+         "tilewidth":70
+        }, 
+        {
+         "columns":14,
+         "firstgid":22,
+         "image":"sheet_lasers.png",
+         "imageheight":490,
+         "imagewidth":980,
+         "margin":0,
+         "name":"sheet_lasers",
+         "spacing":0,
+         "tilecount":98,
          "tileheight":70,
          "tilewidth":70
         }],
