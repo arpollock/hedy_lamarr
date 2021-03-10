@@ -191,20 +191,25 @@ export class HomeScene extends Phaser.Scene {
     const doors = this.map.filterObjects("Doors", p => p.name == "door");
     // const buttonObjs: Array<ObstacleButton> = [];
     doors.forEach(d => {
-      const ld = new LaserDoor(this, d.x, d.y, 'lasers', 91);
+      const partNameIdx: number = this.tiledObjectHasProperty('part', d);
+      const partName: string = (partNameIdx >= 0) ? d.properties[partNameIdx].value : '';
+
+      const ld = new LaserDoor(this, d.x, d.y, 'lasers', this.laserDoorPartToFrameNum(partName));
       ld.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
       const obstacleNumIdx: number = this.tiledObjectHasProperty('obstacleNum', d)
       if (obstacleNumIdx >= 0) {
         ld.objectNum = d.properties[obstacleNumIdx].value;
         // console.log(`platform obstacle num: ${plat['objectNum']}`)
       }
-      const partNameIdx: number = this.tiledObjectHasProperty('part', d);
-      if (obstacleNumIdx >= 0) {
-        ld.part = d.properties[partNameIdx].value;
-      }
+      ld.part = partName;
       this.doorObjs.push(ld);
     });
     this.physics.world.enable(this.doorObjs, Phaser.Physics.Arcade.STATIC_BODY);
+    this.doorObjs.forEach(dObj => {
+      dObj.body.setSize((dObj.body.width - 10), dObj.body.height);
+      this.physics.add.collider(dObj, this.player);
+    });
+    
     
     // keep the player from falling through the ground
     this.physics.add.collider(this.groundLayer, this.player);
@@ -246,7 +251,7 @@ export class HomeScene extends Phaser.Scene {
       );
     });
 
-    // handle collisions with button
+    // handle collisions with moving platform
     this.platformObjs.forEach(pObj => {
       (pObj.body as Phaser.Physics.Arcade.Body).setImmovable();
       (pObj.body as Phaser.Physics.Arcade.Body).setAllowGravity(false);
@@ -481,7 +486,7 @@ export class HomeScene extends Phaser.Scene {
           d.destroy(true);
         } else if (d.part === 'base') {
           console.log(`removing obstalce num ${d.objectNum} base part`);
-          d.setFrame(91, false, false);
+          // d.setFrame(89, false, false);
         }
 
       }
@@ -500,5 +505,15 @@ export class HomeScene extends Phaser.Scene {
         plat.moveHorizontally();
       }
     }
+  }
+
+  private laserDoorPartToFrameNum(partName: string): number {
+    if (partName === 'base') {
+      return 89; // 91 is the short one
+    }
+    if (partName === 'laser') {
+      return 78;
+    }
+    return 0;
   }
 };

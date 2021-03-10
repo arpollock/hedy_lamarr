@@ -148,8 +148,8 @@
                  "type":"",
                  "visible":true,
                  "width":70,
-                 "x":1680.37196483166,
-                 "y":629.930858794044
+                 "x":1680.37,
+                 "y":629.931
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -187,20 +187,36 @@
                  "type":"",
                  "visible":true,
                  "width":70,
-                 "x":1750.28747842252,
-                 "y":630.538441110078
+                 "x":1750,
+                 "y":630.538
                 }, 
                 {
                  "gid":103,
                  "height":70,
                  "id":9,
                  "name":"",
+                 "properties":[
+                        {
+                         "name":"obstacleNum",
+                         "type":"int",
+                         "value":2
+                        }, 
+                        {
+                         "name":"on",
+                         "type":"bool",
+                         "value":true
+                        }, 
+                        {
+                         "name":"part",
+                         "type":"string",
+                         "value":"laser"
+                        }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":70,
-                 "x":1750.80990629183,
-                 "y":629.377510040161
+                 "x":1750,
+                 "y":629.378
                 }, 
                 {
                  "gid":103,
@@ -227,8 +243,8 @@
                  "type":"",
                  "visible":true,
                  "width":70,
-                 "x":1750.80990629183,
-                 "y":559.765729585007
+                 "x":1750,
+                 "y":559.766
                 }, 
                 {
                  "gid":103,
@@ -255,8 +271,8 @@
                  "type":"",
                  "visible":true,
                  "width":70,
-                 "x":1750.80990629183,
-                 "y":489.836196278021
+                 "x":1750,
+                 "y":489.836
                 }, 
                 {
                  "gid":103,
@@ -283,8 +299,8 @@
                  "type":"",
                  "visible":true,
                  "width":70,
-                 "x":1750.80990629183,
-                 "y":419.967462802747
+                 "x":1750,
+                 "y":419.967
                 }],
          "opacity":1,
          "type":"objectgroup",

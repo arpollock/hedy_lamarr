@@ -63,29 +63,35 @@
   </object>
  </objectgroup>
  <objectgroup id="7" name="Doors">
-  <object id="6" name="door" gid="113" x="1750.29" y="630.538" width="70" height="70">
+  <object id="6" name="door" gid="113" x="1750" y="630.538" width="70" height="70">
    <properties>
     <property name="obstacleNum" type="int" value="2"/>
     <property name="on" type="bool" value="true"/>
     <property name="part" value="base"/>
    </properties>
   </object>
-  <object id="9" gid="103" x="1750.81" y="629.378" width="70" height="70"/>
-  <object id="10" name="door" gid="103" x="1750.81" y="559.766" width="70" height="70">
+  <object id="9" gid="103" x="1750" y="629.378" width="70" height="70">
    <properties>
     <property name="obstacleNum" type="int" value="2"/>
     <property name="on" type="bool" value="true"/>
     <property name="part" value="laser"/>
    </properties>
   </object>
-  <object id="11" name="door" gid="103" x="1750.81" y="489.836" width="70" height="70">
+  <object id="10" name="door" gid="103" x="1750" y="559.766" width="70" height="70">
    <properties>
     <property name="obstacleNum" type="int" value="2"/>
     <property name="on" type="bool" value="true"/>
     <property name="part" value="laser"/>
    </properties>
   </object>
-  <object id="12" name="door" gid="103" x="1750.81" y="419.967" width="70" height="70">
+  <object id="11" name="door" gid="103" x="1750" y="489.836" width="70" height="70">
+   <properties>
+    <property name="obstacleNum" type="int" value="2"/>
+    <property name="on" type="bool" value="true"/>
+    <property name="part" value="laser"/>
+   </properties>
+  </object>
+  <object id="12" name="door" gid="103" x="1750" y="419.967" width="70" height="70">
    <properties>
     <property name="obstacleNum" type="int" value="2"/>
     <property name="on" type="bool" value="true"/>
