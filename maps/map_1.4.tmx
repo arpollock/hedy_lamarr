@@ -95,22 +95,22 @@
  <objectgroup id="9" name="Goal">
   <object id="14" name="goal" gid="97" x="1890" y="70" width="70" height="70">
    <properties>
-    <property name="part" value="base"/>
+    <property name="part" value="base_down"/>
    </properties>
   </object>
   <object id="15" name="goal" gid="97" x="1820" y="70" width="70" height="70">
    <properties>
-    <property name="part" value="base"/>
+    <property name="part" value="base_down"/>
    </properties>
   </object>
   <object id="16" name="goal" gid="97" x="1750" y="70" width="70" height="70">
    <properties>
-    <property name="part" value="base"/>
+    <property name="part" value="base_down"/>
    </properties>
   </object>
   <object id="17" name="goal" gid="97" x="1680" y="70" width="70" height="70">
    <properties>
-    <property name="part" value="base"/>
+    <property name="part" value="base_down"/>
    </properties>
   </object>
   <object id="18" name="goal" gid="102" x="1890" y="140" width="70" height="70">

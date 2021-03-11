@@ -3,6 +3,8 @@ import MovingPlatform from './MovingPlatform';
 import ObstacleButton from './ObstacleButton';
 import LaserDoor from './LaserDoor';
 import Goal from './Goal';
+import eventsCenter from './EventsCenter'
+// import { HudMenu } from './HudMenu';
 
 interface PlayerConfig {
   x: number,
@@ -69,7 +71,7 @@ export class HomeScene extends Phaser.Scene {
       key: 'HomeScene'
     });
   }
-  init(params): void {
+  public init(params): void {
     this.gWidth = 800;
     this.gHeight = 600;
     this.zoomFactor = 0.5;
@@ -102,9 +104,10 @@ export class HomeScene extends Phaser.Scene {
     this.numStars = 0;
     this.scoreString = `Coins: ${this.numCoins} Gems: ${this.numGems} Stars: ${this.numStars}`;
   }
-  preload(): void {
+  public preload(): void {
     // this.load.setBaseURL('./assets/');
     // this.load.image('player', 'player/blue/front.png');
+    this.scene.launch('HudMenu');
 
     this.load.setBaseURL('./../tutorial/source/assets/');
     // map made with Tiled in JSON format
@@ -130,7 +133,7 @@ export class HomeScene extends Phaser.Scene {
     // this.load.atlas('creature', 'spritesheet_creatures.png', 'spritesheet_creatures.json');
   }
 
-  create(): void {
+  public create(): void {
 
     // load the map 
     this.map = this.make.tilemap({key: 'map'});
@@ -164,7 +167,6 @@ export class HomeScene extends Phaser.Scene {
     this.player.setBounce(0.0);
     this.player.setCollideWorldBounds(true);
     this.player.setDepth(999);
-    // this.game.world.bringToTop(this.player);
     // add the goal objects as specified in the object layer of the map
     const goals = this.map.filterObjects("Goal", p => p.name == "goal");
     goals.forEach(g => {
@@ -347,6 +349,7 @@ export class HomeScene extends Phaser.Scene {
     this.pauseKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC.valueOf());
 
     // todo below is line to 'view whole world' will need to move to in-game phone option?
+    this.cameras.main.setBackgroundColor('#40739e');
     this.cameras.main.setZoom(this.zoomFactor);
     // set bounds so the camera won't go outside the game world
     this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
@@ -503,6 +506,8 @@ export class HomeScene extends Phaser.Scene {
   private updateScoreText() {
     this.scoreString = `Coins: ${this.numCoins} Gems: ${this.numGems} Stars: ${this.numStars}`;
     this.text.setText(this.scoreString);
+    // this.events.emit('updateScoreText', this.scoreString);
+    eventsCenter.emit('updateScoreText', this.scoreString);
   }
 
   // returns -1 if prop is not found
