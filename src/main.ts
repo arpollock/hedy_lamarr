@@ -2,24 +2,20 @@ import 'phaser';
 import { HomeScene } from './game/mainGame';
 import { PauseScene } from './game/PauseScene';
 import { HudMenu } from './game/HudMenu';
+import { gravity, width, height } from './Constants'
 
 const gameConfig: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
-  width: 800,
-  height: 600,
-  // backgroundColor: '#40739e',
+  width: width,
+  height: height,
   scene: [HomeScene, HudMenu, PauseScene],
   physics: {
       default: 'arcade',
       arcade: {
-          gravity: { y: 500 }
+          gravity: { y: gravity }
       }
   },
   transparent: true,
-  // scene: {
-  //     preload: preload,
-  //     create: create
-  // }
 };
 
 export class MyGame extends Phaser.Game {
@@ -27,6 +23,7 @@ export class MyGame extends Phaser.Game {
     super(config);
   }
 }
+
 window.onload = () => {
   var game: Phaser.Game = new MyGame(gameConfig);
 };

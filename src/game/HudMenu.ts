@@ -1,10 +1,11 @@
 import 'phaser';
-import eventsCenter from './EventsCenter'
+import eventsCenter from './EventsCenter';
+import { sceneNames } from './../Constants';
 
 export class HudMenu extends Phaser.Scene {
   constructor() {
     super({
-      key: 'HudMenu'
+      key: sceneNames.hudMenu
     });
   }
 

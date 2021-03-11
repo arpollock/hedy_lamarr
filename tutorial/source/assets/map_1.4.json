@@ -590,6 +590,60 @@
                  "width":70,
                  "x":1610,
                  "y":280
+                }, 
+                {
+                 "gid":91,
+                 "height":70,
+                 "id":33,
+                 "name":"goal",
+                 "properties":[
+                        {
+                         "name":"part",
+                         "type":"string",
+                         "value":"creature"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":70,
+                 "x":1715,
+                 "y":280
+                }, 
+                {
+                 "gid":91,
+                 "height":70,
+                 "id":35,
+                 "name":"goal",
+                 "properties":[
+                        {
+                         "name":"part",
+                         "type":"string",
+                         "value":"creature"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":70,
+                 "x":1785,
+                 "y":280
+                }, 
+                {
+                 "gid":91,
+                 "height":70,
+                 "id":36,
+                 "name":"goal",
+                 "properties":[
+                        {
+                         "name":"part",
+                         "type":"string",
+                         "value":"creature"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":70,
+                 "x":1855,
+                 "y":280
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -640,7 +694,7 @@
          "y":0
         }],
  "nextlayerid":10,
- "nextobjectid":33,
+ "nextobjectid":37,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.4.3",

@@ -3,20 +3,18 @@ import MovingPlatform from './MovingPlatform';
 import ObstacleButton from './ObstacleButton';
 import LaserDoor from './LaserDoor';
 import Goal from './Goal';
-import eventsCenter from './EventsCenter'
-// import { HudMenu } from './HudMenu';
-
-interface PlayerConfig {
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-  speed: number,
-  numJumps: number,
-  maxJumps: number,
-  flipX: boolean,
-  walkFrameRate: number,
-}
+import eventsCenter from './EventsCenter';
+import {
+  gravity,
+  groundDrag,
+  PlayerConfig,
+  width,
+  height,
+  mapHeight,
+  backgroundColor,
+  partNames,
+  sceneNames, 
+  mapWidth} from './../Constants';
 
 class PlayerSprite extends Phaser.Physics.Arcade.Sprite{
   public isOnPlatform: boolean;
@@ -24,18 +22,7 @@ class PlayerSprite extends Phaser.Physics.Arcade.Sprite{
 }
 
 export class HomeScene extends Phaser.Scene {
-  // game window width
-  private gWidth: number;//  = 800; // (this.sys.game.config.width || 800) as number;
-  // game window height
-  private gHeight: number; //  = 600; // (this.sys.game.config.height || 600) as number;
-
-  private zoomFactor: number; //  = 0.5;
-  // map width: 30 tiles * 70 px/tile = 2100 px
-  private mWidth; // = 2100;
-  // map height: 20 tiles * 70 px/tile = 1400 px
-  private mHeight; //  = 1400;
-  private gravity: number; // = 500;
-  private groundDrag: number; // = 500;
+  private zoomFactor: number;
   private map;// : Phaser.Physics.Arcade.World; or Phaser.Tilemaps.Tilemap
 
   private groundLayer;
@@ -46,10 +33,11 @@ export class HomeScene extends Phaser.Scene {
   private numCoins: number;
   private numGems: number;
   private numStars: number;
+
   private text;
   private scoreString: string;
 
-  private player: PlayerSprite; // : Phaser.Physics.Arcade.Sprite;
+  private player: PlayerSprite; // extends Phaser.Physics.Arcade.Sprite;
   private playerConfig: PlayerConfig;
 
   private buttonObjs: Array<ObstacleButton>;
@@ -57,7 +45,6 @@ export class HomeScene extends Phaser.Scene {
   private doorObjs: Array<LaserDoor>;
 
   private goalObjs: Array<Goal>;
-
   private goalReached: boolean;
 
   // private creatures: Phaser.Physics.Arcade.Sprite;
@@ -68,17 +55,12 @@ export class HomeScene extends Phaser.Scene {
 
   constructor() {
     super({
-      key: 'HomeScene'
+      key: sceneNames.mainGame
     });
   }
   public init(params): void {
-    this.gWidth = 800;
-    this.gHeight = 600;
+
     this.zoomFactor = 0.5;
-    this.mWidth = 2100;
-    this.mHeight = 1400;
-    this.gravity = 500;
-    this.groundDrag = 500;
 
     this.buttonObjs = [];
     this.platformObjs = [];
@@ -90,8 +72,8 @@ export class HomeScene extends Phaser.Scene {
     this.playerConfig = {
       width: 66,
       height: 92,
-      x: 140, // player starting x loc
-      y: (this.mHeight-70*5), // player starting y loc
+      x: mapWidth - 200, // 140, // player starting x loc
+      y: 10, // (mapHeight-70*5), // player starting y loc
       speed: 200,
       numJumps: 0,
       maxJumps: 2,
@@ -105,10 +87,8 @@ export class HomeScene extends Phaser.Scene {
     this.scoreString = `Coins: ${this.numCoins} Gems: ${this.numGems} Stars: ${this.numStars}`;
   }
   public preload(): void {
+    this.scene.launch(sceneNames.hudMenu);
     // this.load.setBaseURL('./assets/');
-    // this.load.image('player', 'player/blue/front.png');
-    this.scene.launch('HudMenu');
-
     this.load.setBaseURL('./../tutorial/source/assets/');
     // map made with Tiled in JSON format
     this.load.tilemapTiledJSON('map', 'map_1.4.json');
@@ -130,7 +110,7 @@ export class HomeScene extends Phaser.Scene {
     // player animations
     this.load.atlas('player', 'player.png', 'player.json');
     // creatures to save + animations
-    // this.load.atlas('creature', 'spritesheet_creatures.png', 'spritesheet_creatures.json');
+    this.load.atlasXML('creature', 'spritesheet_creatures.png', 'spritesheet_creatures.xml');
   }
 
   public create(): void {
@@ -172,9 +152,20 @@ export class HomeScene extends Phaser.Scene {
     goals.forEach(g => {
       const partNameIdx: number = this.tiledObjectHasProperty('part', g);
       const partName: string = (partNameIdx >= 0) ? g.properties[partNameIdx].value : '';
-      const goal = new Goal(this, g.x, g.y, 'sheet_lasers', this.laserDoorPartToFrameNum(partName));
+      let goal: Goal;
+      if (partName !== partNames.creature) {
+        goal = new Goal(this, g.x, g.y, 'sheet_lasers', this.laserDoorPartToFrameNum(partName)); 
+        goal.setDepth(1);
+        goal.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
+        this.physics.world.enable(goal, Phaser.Physics.Arcade.STATIC_BODY);
+      } else { // creature object
+        goal = new Goal(this, g.x, g.y, partNames.creature, 'creatureRed_stand.png');// this.textures.get('creature').frames['creatureBlue_stand.png']);
+        goal.setDepth(0);
+        goal.setOrigin(-0.4, 1); // change the origin to the top left to match the default for Tiled
+        this.physics.world.enable(goal, Phaser.Physics.Arcade.DYNAMIC_BODY);
+        this.physics.add.collider(this.groundLayer, goal); // the creatures are affected by gravity, so they need to collide with the ground
+      }
       goal.part = partName;
-      goal.setOrigin(0, 1);
       const obstacleNumIdx = this.tiledObjectHasProperty('obstacleNum', g);
       if (obstacleNumIdx >= 0) {
         goal['objectNum'] = g.properties[obstacleNumIdx].value;
@@ -182,46 +173,34 @@ export class HomeScene extends Phaser.Scene {
       }
       this.goalObjs.push(goal);
     });
-    this.physics.world.enable(this.goalObjs, Phaser.Physics.Arcade.STATIC_BODY);
+    // this.physics.world.enable(this.goalObjs, Phaser.Physics.Arcade.STATIC_BODY);
 
     this.goalObjs.forEach(gObj => {
       const collisionGoalObject = () => {
         // console.log('overlap with goal object');
-        if(gObj.part === 'lever' && !this.goalReached) {
+        if(gObj.part === partNames.lever && !this.goalReached) {
           this.triggerGoalReached();
         }
         // some stuff
       };
       const directionCollisonGoalObject = () => {
-        if (gObj.part === 'lever') {
+        if (gObj.part === partNames.lever) {
           return true;
         }
         return false;
       };
-      // this.physics.add.overlap(
-      //   this.player,
-      //   gObj,
-      //   collisionGoalObject,
-      //   directionCollisonGoalObject,
-      //   this.scene
-      // );
-      // collision with the goal objects
-      // this.starLayer.setTileIndexCallback(19, this.collectStar, this); // the gem id is 19
-      // when the player overlaps with a tile with index 19, collectStar will be called    
+   
       this.physics.add.overlap(this.player, gObj, collisionGoalObject, directionCollisonGoalObject, this.scene);
     });
 
     // add the moving platforms as specified in the object layer of the map
     const plats = this.map.filterObjects("Platforms", p => p.name == "platform");
-    // const platformObjs: Array<MovingPlatform> = [];
     plats.forEach(p => {
       const plat = new MovingPlatform(this, p.x, p.y, 'platform');
       plat.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
       if (this.tiledObjectPropertyIsTrue('moveVertical', p)) {
-        // plat.moveVertically();
         plat.movesV = true;
       } else if(this.tiledObjectPropertyIsTrue('moveHorizontal', p)) {
-        // plat.moveHorizontally();
         plat.movesH = true;
       }
       if (plat.isFixed) {
@@ -230,31 +209,26 @@ export class HomeScene extends Phaser.Scene {
       const obstacleNumIdx = this.tiledObjectHasProperty('obstacleNum', p)
       if (obstacleNumIdx >= 0) {
         plat.objectNum = p.properties[obstacleNumIdx].value;
-        // console.log(`platform obstacle num: ${plat['objectNum']}`)
       }
       this.platformObjs.push(plat);
     });
-    this.physics.world.enable(this.platformObjs, Phaser.Physics.Arcade.DYNAMIC_BODY); // other option is Phaser.Physics.Arcade.STATIC_BODY
+    this.physics.world.enable(this.platformObjs, Phaser.Physics.Arcade.DYNAMIC_BODY);
 
-    // add the buttons to enable the player to interact with obstacles
-    // add the buttons as specified in the object layer of the map
+    // add the buttons (to enable the player to interact with obstacles) as specified in the object layer of the map
     const buttons = this.map.filterObjects("Buttons", p => p.name == "button");
-    // const buttonObjs: Array<ObstacleButton> = [];
     buttons.forEach(b => {
       const butt = new ObstacleButton(this, b.x, b.y, 'buttonOff');
       butt.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
       const obstacleNumIdx = this.tiledObjectHasProperty('obstacleNum', b)
       if (obstacleNumIdx >= 0) {
         butt.objectNum = b.properties[obstacleNumIdx].value;
-        // console.log(`platform obstacle num: ${plat['objectNum']}`)
       }
       this.buttonObjs.push(butt);
     });
     this.physics.world.enable(this.buttonObjs, Phaser.Physics.Arcade.STATIC_BODY);
 
-    // add the buttons as specified in the object layer of the map
+    // add the laser doors as specified in the object layer of the map
     const doors = this.map.filterObjects("Doors", p => p.name == "door");
-    // const buttonObjs: Array<ObstacleButton> = [];
     doors.forEach(d => {
       const partNameIdx: number = this.tiledObjectHasProperty('part', d);
       const partName: string = (partNameIdx >= 0) ? d.properties[partNameIdx].value : '';
@@ -264,14 +238,18 @@ export class HomeScene extends Phaser.Scene {
       const obstacleNumIdx: number = this.tiledObjectHasProperty('obstacleNum', d)
       if (obstacleNumIdx >= 0) {
         ld.objectNum = d.properties[obstacleNumIdx].value;
-        // console.log(`platform obstacle num: ${plat['objectNum']}`)
       }
       ld.part = partName;
       this.doorObjs.push(ld);
     });
+    // specify how collisons with door objects works
     this.physics.world.enable(this.doorObjs, Phaser.Physics.Arcade.STATIC_BODY);
     this.doorObjs.forEach(dObj => {
-      dObj.body.setSize((dObj.body.width - 10), dObj.body.height);
+      if (dObj.part === partNames.laser) {
+        dObj.body.setSize((dObj.body.width*0.30), dObj.body.height);
+      } else {
+        dObj.body.setSize((dObj.body.width - 10), dObj.body.height);
+      }
       this.physics.add.collider(dObj, this.player);
     });
     
@@ -281,14 +259,9 @@ export class HomeScene extends Phaser.Scene {
 
     // handle collisions with moving platforms
     this.buttonObjs.forEach(bObj => {
-
-      // bObj.body.coll
       bObj.body.setSize((bObj.body.width * 3 / 4), (bObj.body.height / 10));
-
       const collisionObstacleButton = () => {
-        // console.log(`collision with button # ${bObj.objectNum}`)
         if (bObj.body.touching.up && this.player.body.touching.down) {
-          // console.log('button pushed')
           if ( !(bObj.isFixed) ) { // activate if off
             bObj.isFixed = true
             this.fixObstacle(bObj);
@@ -297,11 +270,9 @@ export class HomeScene extends Phaser.Scene {
       };
 
       const directionCollisionObstacleButton = () => {
-        const buttonY: number = (bObj.body.y - bObj.body.height - 10); //(bObj.body.height / 4));
+        const buttonY: number = (bObj.body.y - bObj.body.height - 10);
         const isFromTop: boolean = buttonY > this.player.y;
-        // console.log(`${buttonY} > ${this.player.y} == ${isFromTop}`);
         if (isFromTop) {
-          // console.log('player pushing from top, returning true');
           return true;
         }
         return false;
@@ -349,7 +320,7 @@ export class HomeScene extends Phaser.Scene {
     this.pauseKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC.valueOf());
 
     // todo below is line to 'view whole world' will need to move to in-game phone option?
-    this.cameras.main.setBackgroundColor('#40739e');
+    this.cameras.main.setBackgroundColor(backgroundColor);
     this.cameras.main.setZoom(this.zoomFactor);
     // set bounds so the camera won't go outside the game world
     this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
@@ -396,8 +367,8 @@ export class HomeScene extends Phaser.Scene {
     });
 
     // text to show score, etc.
-    const textX = 0 - (this.gWidth / this.zoomFactor) / 5;
-    const textY = this.gHeight / this.zoomFactor - 400;
+    const textX = 0 - (width / this.zoomFactor) / 5;
+    const textY = height / this.zoomFactor - 400;
     console.log(`text location: ${textX}, ${textY}`);
     this.text = this.add.text(textX, textY, this.scoreString, {
       fontSize: '32px',
@@ -411,28 +382,28 @@ export class HomeScene extends Phaser.Scene {
     this.renderPlayer();
     // detect if the player wants to pause the game
     if (Phaser.Input.Keyboard.JustDown(this.pauseKey)) {
-      console.log('Pause button pushed!');
       if( !(this.scene.isPaused()) ) {
-        console.log('Game paused!');
-        this.scene.switch('PauseScene');
+        this.scene.switch(sceneNames.pause);
       }
     }
+    // todo this is broken, low priority
+    // this.goalObjs.forEach(g => {
+    //   if (g.part === partNames.creature && (g.body as Phaser.Physics.Arcade.Body).onFloor()) {
+    //     g.setFrame('creatureRed_stand.png')
+    //   }
+    // });
   }
 
   private renderPlayer(): void {
     this.player.setDragX(0);
     if (this.cursors.left.isDown) { // if the left arrow key is down
       (this.player.body as Phaser.Physics.Arcade.Body).setVelocityX(this.playerConfig.speed*-1); // move left
-      // this.player.anims.play('walk', true);
       this.player.flipX = true;
-      // console.log("blue player moving left");
     } else if (this.cursors.right.isDown) { // if the right arrow key is down
       (this.player.body as Phaser.Physics.Arcade.Body).setVelocityX(this.playerConfig.speed); // move right
-      // this.player.anims.play('walk', true);
       this.player.flipX = false;
-      // console.log("blue player moving right");
     } else {
-      this.player.setDragX(this.groundDrag);
+      this.player.setDragX(groundDrag);
       this.player.anims.play('idle', true);
     }
 
@@ -454,7 +425,7 @@ export class HomeScene extends Phaser.Scene {
     }
 
     if ((Phaser.Input.Keyboard.JustDown(this.cursors.space) || Phaser.Input.Keyboard.JustDown(this.cursors.up)) && this.playerConfig.numJumps < this.playerConfig.maxJumps) {
-      (this.player.body as Phaser.Physics.Arcade.Body).setVelocityY(this.gravity*-0.67); // jump up
+      (this.player.body as Phaser.Physics.Arcade.Body).setVelocityY(gravity*-0.67); // jump up
       this.playerConfig.numJumps++;
     }
 
@@ -474,16 +445,25 @@ export class HomeScene extends Phaser.Scene {
     return false;
   }
 
+  private triggerWinScreen(): void {
+    console.log('win screen triggered!');
+  }
+
   private triggerGoalReached(): boolean {
     console.log('goal reached!');
     this.goalReached = true;
     this.goalObjs.forEach(g => {
-      if(g.part === 'laser') {
+      if(g.part === partNames.laser) {
         g.destroy(true);
-      } else if (g.part === 'lever') {
+      } else if (g.part === partNames.lever) {
         g.setFrame(84, false, false);
+      } else if (g.part === partNames.creature) {
+        (g.body as Phaser.Physics.Arcade.Body).setVelocityY(gravity*-0.67); // jump up
+        g.setFrame('creatureRed_hit.png');
       }
     });
+    const pauseForWinScreen = new Phaser.Time.TimerEvent( {delay: 900, callback: this.triggerWinScreen} );
+    this.time.addEvent(pauseForWinScreen);
     return false;
   }
 
@@ -506,7 +486,6 @@ export class HomeScene extends Phaser.Scene {
   private updateScoreText() {
     this.scoreString = `Coins: ${this.numCoins} Gems: ${this.numGems} Stars: ${this.numStars}`;
     this.text.setText(this.scoreString);
-    // this.events.emit('updateScoreText', this.scoreString);
     eventsCenter.emit('updateScoreText', this.scoreString);
   }
 
@@ -517,13 +496,11 @@ export class HomeScene extends Phaser.Scene {
       var i = 0;
       tObj.properties.forEach(prop => {
         if (prop.hasOwnProperty('name') && prop['name'] === p) {
-          // propFound = true;
           propIdx = i;
         }
         i++;
       });
     }
-    // console.log(`tiledObjectHasProperty returning ${propFound} for property ${p}`);
     return propIdx;
   }
 
@@ -534,7 +511,6 @@ export class HomeScene extends Phaser.Scene {
         return true;
       }
     }
-    // console.log(`tiledObjectPropertyIsTrue returning false for property ${p}`);
     return false;
   }
 
@@ -561,15 +537,9 @@ export class HomeScene extends Phaser.Scene {
     this.doorObjs.forEach( d => {
       if (d.objectNum == ob.objectNum) {
         foundDoor = true;
-        console.log('obstacle found (door)!');
-        if (d.part === 'laser') {
-          console.log(`removing obstalce num ${d.objectNum} laser part`);
+        if (d.part === partNames.laser) {
           d.destroy(true);
-        } else if (d.part === 'base') {
-          console.log(`removing obstalce num ${d.objectNum} base part`);
-          // d.setFrame(89, false, false);
         }
-
       }
     });
     if (foundDoor) {
@@ -589,16 +559,16 @@ export class HomeScene extends Phaser.Scene {
   }
 
   private laserDoorPartToFrameNum(partName: string): number {
-    if (partName === 'base') {
+    if (partName === partNames.base_ground) {
       return 89; // 91 is the short one
     }
-    if (partName === 'base_down') {
+    if (partName === partNames.base_ceiling) {
       return 75;
     }
-    if (partName === 'laser') {
+    if (partName === partNames.laser) {
       return 78;
     }
-    if (partName === 'lever') {
+    if (partName === partNames.lever) {
       return 85;
     }
     return 1;

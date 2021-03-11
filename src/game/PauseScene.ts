@@ -1,4 +1,8 @@
 import 'phaser';
+import {
+  backgroundColor,
+  sceneNames
+} from './../Constants';
 
 export class PauseScene extends Phaser.Scene {
 
@@ -8,7 +12,7 @@ export class PauseScene extends Phaser.Scene {
 
   constructor() {
     super({
-      key: 'PauseScene'
+      key: sceneNames.pause
     });
   }
 
@@ -20,11 +24,12 @@ export class PauseScene extends Phaser.Scene {
   }
 
   create(): void {
+    this.cameras.main.setBackgroundColor(backgroundColor);
     this.pauseKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC.valueOf());
     // text to show pause menu text.
     this.textString = 'Game Paused'
-    const textX = (this.game.config.width.valueOf() as number) / 2; //0 - (this.gWidth / this.zoomFactor) / 5;
-    const textY = (this.game.config.height.valueOf() as number) / 2;;
+    const textX = (this.game.config.width.valueOf() as number) / 2; 
+    const textY = (this.game.config.height.valueOf() as number) / 2;
     console.log(`text location: ${textX}, ${textY}`);
     this.text = this.add.text(textX, textY, this.textString, {
       fontSize: '32px',
@@ -36,7 +41,7 @@ export class PauseScene extends Phaser.Scene {
   public update(time: number): void {
     if (Phaser.Input.Keyboard.JustDown(this.pauseKey)) {
       console.log('Pause button pushed (from pause menu)!');
-      this.scene.switch('HomeScene');
+      this.scene.switch(sceneNames.mainGame);
     }
   }
 
