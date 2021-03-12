@@ -18,6 +18,14 @@ const pauseKeyCode: number = Phaser.Input.Keyboard.KeyCodes.ESC.valueOf();
 
 const initScoreStr: string = `Coins: 0 Gems: 0 Stars: 0`;
 
+const textConfig: {
+  mainFillColor: string,
+  mainFontSize: string,
+} = {
+  mainFillColor: '#ffffff',
+  mainFontSize: '32px',
+};
+
 const partNames: {
   laser: string,
   base_ground: string,
@@ -66,6 +74,7 @@ export {
   backgroundColor,
   pauseKeyCode,
   initScoreStr,
+  textConfig,
   partNames,
   sceneNames,
   PlayerConfig,

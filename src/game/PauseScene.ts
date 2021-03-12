@@ -5,6 +5,7 @@ import {
   pauseKeyCode,
   width,
   height,
+  textConfig
 } from './../Constants';
 
 export class PauseScene extends Phaser.Scene {
@@ -34,8 +35,8 @@ export class PauseScene extends Phaser.Scene {
     const textX = width / 2; 
     const textY = height / 2;
     this.text = this.add.text(textX, textY, this.textString, {
-      fontSize: '32px',
-      fill: '#ffffff',
+      fontSize: textConfig.mainFontSize,
+      fill: textConfig.mainFillColor,
     }).setOrigin(0.5); // set origin makes it so we can center the text easily
     this.text.setScrollFactor(0);
   }

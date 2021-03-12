@@ -1,6 +1,11 @@
 import 'phaser';
 import eventsCenter from './EventsCenter';
-import { sceneNames, height, initScoreStr } from './../Constants';
+import {
+  sceneNames,
+  height,
+  initScoreStr,
+  textConfig
+} from './../Constants';
 
 export class HudMenu extends Phaser.Scene {
   constructor() {
@@ -24,8 +29,8 @@ export class HudMenu extends Phaser.Scene {
     const textX = 10;
     const textY = height - 35;
     this.text = this.add.text(textX, textY, this.scoreString, {
-      fontSize: '32px',
-      fill: '#ffffff'
+      fontSize: textConfig.mainFontSize,
+      fill: textConfig.mainFillColor
     });
     this.text.setScrollFactor(0);
   }
