@@ -42,8 +42,8 @@ export class HudMenu extends Phaser.Scene {
   }
 
   private updateScoreText(scoreText: string): void {
-    console.log('update from ui scene!');
-    console.log(scoreText);
+    // console.log('update from ui scene!');
+    // console.log(scoreText);
     this.scoreString = scoreText;
     this.text.setText(this.scoreString);
   }
