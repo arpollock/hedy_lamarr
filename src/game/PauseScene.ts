@@ -1,7 +1,10 @@
 import 'phaser';
 import {
   backgroundColor,
-  sceneNames
+  sceneNames,
+  pauseKeyCode,
+  width,
+  height,
 } from './../Constants';
 
 export class PauseScene extends Phaser.Scene {
@@ -16,21 +19,20 @@ export class PauseScene extends Phaser.Scene {
     });
   }
 
-  init(params): void {
+  public init(params): void {
     
   }
-  preload(): void {
+  public preload(): void {
     
   }
 
-  create(): void {
+  public create(): void {
     this.cameras.main.setBackgroundColor(backgroundColor);
-    this.pauseKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC.valueOf());
+    this.pauseKey = this.input.keyboard.addKey(pauseKeyCode);
     // text to show pause menu text.
-    this.textString = 'Game Paused'
-    const textX = (this.game.config.width.valueOf() as number) / 2; 
-    const textY = (this.game.config.height.valueOf() as number) / 2;
-    console.log(`text location: ${textX}, ${textY}`);
+    this.textString = 'Game Paused';
+    const textX = width / 2; 
+    const textY = height / 2;
     this.text = this.add.text(textX, textY, this.textString, {
       fontSize: '32px',
       fill: '#ffffff',

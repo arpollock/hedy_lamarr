@@ -14,7 +14,11 @@ import {
   backgroundColor,
   partNames,
   sceneNames, 
-  mapWidth} from './../Constants';
+  mapWidth,
+  pauseKeyCode,
+  initScoreStr
+} from './../Constants';
+import { Scene } from 'phaser';
 
 class PlayerSprite extends Phaser.Physics.Arcade.Sprite{
   public isOnPlatform: boolean;
@@ -34,7 +38,7 @@ export class HomeScene extends Phaser.Scene {
   private numGems: number;
   private numStars: number;
 
-  private text;
+  // private text;
   private scoreString: string;
 
   private player: PlayerSprite; // extends Phaser.Physics.Arcade.Sprite;
@@ -47,7 +51,7 @@ export class HomeScene extends Phaser.Scene {
   private goalObjs: Array<Goal>;
   private goalReached: boolean;
 
-  // private creatures: Phaser.Physics.Arcade.Sprite;
+  // private creatures: Phaser.Physics.Arcade.Sprite; // to do make goal creatures own group for efficiency
 
   private cursors;
   private pauseKey: Phaser.Input.Keyboard.Key;
@@ -72,8 +76,8 @@ export class HomeScene extends Phaser.Scene {
     this.playerConfig = {
       width: 66,
       height: 92,
-      x: mapWidth - 200, // 140, // player starting x loc
-      y: 10, // (mapHeight-70*5), // player starting y loc
+      x: 140, // player starting x loc // right next to goal for debugging mapWidth - 200,
+      y: (mapHeight-70*5), // player starting y loc // 10
       speed: 200,
       numJumps: 0,
       maxJumps: 2,
@@ -84,10 +88,11 @@ export class HomeScene extends Phaser.Scene {
     this.numCoins = 0;
     this.numGems = 0;
     this.numStars = 0;
-    this.scoreString = `Coins: ${this.numCoins} Gems: ${this.numGems} Stars: ${this.numStars}`;
+    this.scoreString = initScoreStr;
   }
   public preload(): void {
     this.scene.launch(sceneNames.hudMenu);
+    this.scene.bringToTop(sceneNames.hudMenu);
     // this.load.setBaseURL('./assets/');
     this.load.setBaseURL('./../tutorial/source/assets/');
     // map made with Tiled in JSON format
@@ -177,11 +182,9 @@ export class HomeScene extends Phaser.Scene {
 
     this.goalObjs.forEach(gObj => {
       const collisionGoalObject = () => {
-        // console.log('overlap with goal object');
         if(gObj.part === partNames.lever && !this.goalReached) {
           this.triggerGoalReached();
         }
-        // some stuff
       };
       const directionCollisonGoalObject = () => {
         if (gObj.part === partNames.lever) {
@@ -317,7 +320,7 @@ export class HomeScene extends Phaser.Scene {
     // get key object for print debugging
     this.printDebugKey = this.input.keyboard.addKey('P');
     // get key object for pausing the game (the escape button)
-    this.pauseKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC.valueOf());
+    this.pauseKey = this.input.keyboard.addKey(pauseKeyCode);
 
     // todo below is line to 'view whole world' will need to move to in-game phone option?
     this.cameras.main.setBackgroundColor(backgroundColor);
@@ -367,14 +370,14 @@ export class HomeScene extends Phaser.Scene {
     });
 
     // text to show score, etc.
-    const textX = 0 - (width / this.zoomFactor) / 5;
-    const textY = height / this.zoomFactor - 400;
-    console.log(`text location: ${textX}, ${textY}`);
-    this.text = this.add.text(textX, textY, this.scoreString, {
-      fontSize: '32px',
-      fill: '#ffffff'
-    });
-    this.text.setScrollFactor(0);
+    // const textX = 0 - (width / this.zoomFactor) / 5;
+    // const textY = height / this.zoomFactor - 400;
+    // console.log(`text location: ${textX}, ${textY}`);
+    // this.text = this.add.text(textX, textY, this.scoreString, {
+    //   fontSize: '32px',
+    //   fill: '#ffffff'
+    // });
+    // this.text.setScrollFactor(0);
 
   }
 
@@ -447,6 +450,8 @@ export class HomeScene extends Phaser.Scene {
 
   private triggerWinScreen(): void {
     console.log('win screen triggered!');
+    this.scene.stop(sceneNames.hudMenu);
+    this.scene.start(sceneNames.win);
   }
 
   private triggerGoalReached(): boolean {
@@ -462,7 +467,7 @@ export class HomeScene extends Phaser.Scene {
         g.setFrame('creatureRed_hit.png');
       }
     });
-    const pauseForWinScreen = new Phaser.Time.TimerEvent( {delay: 900, callback: this.triggerWinScreen} );
+    const pauseForWinScreen = new Phaser.Time.TimerEvent( {delay: 900, callback: this.triggerWinScreen, callbackScope: this} );
     this.time.addEvent(pauseForWinScreen);
     return false;
   }
@@ -485,7 +490,6 @@ export class HomeScene extends Phaser.Scene {
 
   private updateScoreText() {
     this.scoreString = `Coins: ${this.numCoins} Gems: ${this.numGems} Stars: ${this.numStars}`;
-    this.text.setText(this.scoreString);
     eventsCenter.emit('updateScoreText', this.scoreString);
   }
 

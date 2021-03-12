@@ -1,3 +1,5 @@
+import 'phaser';
+
 const gravity: number = 500;
 
 const width: number = 800; // game window width
@@ -11,6 +13,10 @@ const mapHeight: number = 1400; // map height: 20 tiles * 70 px/tile = 1400 px
 const groundDrag: number = 500;
 
 const backgroundColor: string = '#40739e';
+
+const pauseKeyCode: number = Phaser.Input.Keyboard.KeyCodes.ESC.valueOf();
+
+const initScoreStr: string = `Coins: 0 Gems: 0 Stars: 0`;
 
 const partNames: {
   laser: string,
@@ -29,11 +35,13 @@ const partNames: {
 const sceneNames: {
   mainGame: string,
   hudMenu: string,
-  pause: string
+  pause: string,
+  win: string
 } = {
   mainGame: 'HomeScene',
   hudMenu: 'HudMenu',
-  pause: 'PauseScene'
+  pause: 'PauseScene',
+  win: 'LevelWin'
 };
 
 interface PlayerConfig {
@@ -56,6 +64,8 @@ export {
   mapHeight,
   groundDrag,
   backgroundColor,
+  pauseKeyCode,
+  initScoreStr,
   partNames,
   sceneNames,
   PlayerConfig,

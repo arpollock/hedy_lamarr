@@ -2,13 +2,14 @@ import 'phaser';
 import { HomeScene } from './game/mainGame';
 import { PauseScene } from './game/PauseScene';
 import { HudMenu } from './game/HudMenu';
+import { LevelWin } from './game/LevelWin';
 import { gravity, width, height } from './Constants'
 
 const gameConfig: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   width: width,
   height: height,
-  scene: [HomeScene, HudMenu, PauseScene],
+  scene: [HomeScene, HudMenu, PauseScene, LevelWin],
   physics: {
       default: 'arcade',
       arcade: {
