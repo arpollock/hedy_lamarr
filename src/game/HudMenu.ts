@@ -8,6 +8,7 @@ import {
   textConfig,
   assetBaseURL
 } from './../Constants';
+import TabletMenu from './TabletMenu';
 
 export class HudMenu extends Phaser.Scene {
 
@@ -16,6 +17,7 @@ export class HudMenu extends Phaser.Scene {
 
   private tablet_button: Phaser.GameObjects.Sprite;
   private tablet_menu_open: boolean;
+  private tablet_menu: TabletMenu;
 
   constructor() {
     super({
@@ -23,6 +25,7 @@ export class HudMenu extends Phaser.Scene {
     });
     this.scoreString = initScoreStr;
     this.tablet_menu_open = false;
+    this.tablet_menu = null;
   }
 
   public init(params): void {
@@ -31,8 +34,11 @@ export class HudMenu extends Phaser.Scene {
 
   public preload(): void {
     this.load.setBaseURL(assetBaseURL);
+
+    this.load.image('tablet_menu_background', 'menuPanel_tab.png');
     this.load.image('tablet_button', 'tablet.png');
     this.load.image('tablet_button_hover', 'tablet_hover.png');
+
     this.cameras.main.setBackgroundColor();
     eventsCenter.on('updateScoreText', this.updateScoreText, this);
     // text to show score
@@ -54,6 +60,9 @@ export class HudMenu extends Phaser.Scene {
     this.tablet_button.on('pointerout', this.onTabletButtonHoverExit, this);
     this.tablet_button.on('pointerdown', this.toggleTabletMenu, this);
     this.input.on('pointerdown', this.anyClickDetected, this); // detect a click outside of the buttons
+
+    this.tablet_menu = new TabletMenu(this, width-70, height-80, 'tablet_menu_background');
+    this.tablet_menu.setVisible(false);
   }
 
   public update(time: number): void {
@@ -72,7 +81,7 @@ export class HudMenu extends Phaser.Scene {
 
   private anyClickDetected(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData) {
     if (this.tablet_menu_open) {
-      this.tablet_menu_open = false;
+      this.closeTabletMenu();
     }
   }
 
@@ -80,6 +89,11 @@ export class HudMenu extends Phaser.Scene {
     this.tablet_menu_open = !(this.tablet_menu_open);
     console.log(`toggling tablet menu to: ${this.tablet_menu_open}`);
     event.stopPropagation(); // stop it from detecting a click elsewhere, which is used to close the menu
+    if(this.tablet_menu_open) {
+      this.tablet_menu.setVisible(true);
+    } else {
+      this.closeTabletMenu();
+    }
   }
 
   private onTabletButtonHoverEnter(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData) {
@@ -88,5 +102,10 @@ export class HudMenu extends Phaser.Scene {
 
   private onTabletButtonHoverExit(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData) {
     this.tablet_button.setTexture('tablet_button');
+  }
+
+  private closeTabletMenu() {
+    this.tablet_menu_open = false;
+    this.tablet_menu.setVisible(false);
   }
 }
