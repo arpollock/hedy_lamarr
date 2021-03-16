@@ -12,6 +12,7 @@ import {
   height,
   mapHeight,
   backgroundColor,
+  assetBaseURL,
   partNames,
   sceneNames, 
   mapWidth,
@@ -94,7 +95,7 @@ export class HomeScene extends Phaser.Scene {
     this.scene.launch(sceneNames.hudMenu);
     this.scene.bringToTop(sceneNames.hudMenu);
     // this.load.setBaseURL('./assets/');
-    this.load.setBaseURL('./../tutorial/source/assets/');
+    this.load.setBaseURL(assetBaseURL);
     // map made with Tiled in JSON format
     this.load.tilemapTiledJSON('map', 'map_1.4.json');
     // tiles in spritesheet 

@@ -14,6 +14,8 @@ const groundDrag: number = 500;
 
 const backgroundColor: string = '#40739e';
 
+const assetBaseURL: string = './../tutorial/source/assets/';
+
 const pauseKeyCode: number = Phaser.Input.Keyboard.KeyCodes.ESC.valueOf();
 
 const initScoreStr: string = `Coins: 0 Gems: 0 Stars: 0`;
@@ -72,6 +74,7 @@ export {
   mapHeight,
   groundDrag,
   backgroundColor,
+  assetBaseURL,
   pauseKeyCode,
   initScoreStr,
   textConfig,
