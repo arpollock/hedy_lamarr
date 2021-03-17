@@ -22,9 +22,11 @@ const initScoreStr: string = `Coins: 0 Gems: 0 Stars: 0`;
 
 const textConfig: {
   mainFillColor: string,
+  secondaryFillColor: string,
   mainFontSize: string,
 } = {
   mainFillColor: '#ffffff',
+  secondaryFillColor: '#2f3640',
   mainFontSize: '32px',
 };
 
@@ -45,13 +47,29 @@ const partNames: {
 const sceneNames: {
   mainGame: string,
   hudMenu: string,
+  tabletMenu: string,
   pause: string,
   win: string
 } = {
   mainGame: 'HomeScene',
   hudMenu: 'HudMenu',
+  tabletMenu: 'TabletMenu',
   pause: 'PauseScene',
   win: 'LevelWin'
+};
+
+const eventNames: {
+  updateScoreText: string,
+  setConversionValues: string
+} = {
+  updateScoreText: 'updateScoreText',
+  setConversionValues: 'setConversionValues'
+};
+
+// describes the currency conversion values, in terms of how many coins they're worth
+interface conversionConfig { 
+  valStars: number,
+  valGems: number
 };
 
 interface PlayerConfig {
@@ -64,7 +82,7 @@ interface PlayerConfig {
   maxJumps: number,
   flipX: boolean,
   walkFrameRate: number,
-}
+};
 
 export {
   gravity,
@@ -80,5 +98,7 @@ export {
   textConfig,
   partNames,
   sceneNames,
+  eventNames,
+  conversionConfig,
   PlayerConfig,
  };

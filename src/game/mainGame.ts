@@ -8,6 +8,7 @@ import {
   gravity,
   groundDrag,
   PlayerConfig,
+  conversionConfig,
   width,
   height,
   mapHeight,
@@ -15,6 +16,7 @@ import {
   assetBaseURL,
   partNames,
   sceneNames, 
+  eventNames,
   mapWidth,
   pauseKeyCode,
   initScoreStr
@@ -93,6 +95,8 @@ export class HomeScene extends Phaser.Scene {
   }
   public preload(): void {
     this.scene.launch(sceneNames.hudMenu);
+    this.scene.launch(sceneNames.tabletMenu);
+    this.scene.sleep(sceneNames.tabletMenu);
     this.scene.bringToTop(sceneNames.hudMenu);
     // this.load.setBaseURL('./assets/');
     this.load.setBaseURL(assetBaseURL);
@@ -120,6 +124,12 @@ export class HomeScene extends Phaser.Scene {
   }
 
   public create(): void {
+    // todo, set these randomly according to difficulty config
+    const conversionValues: conversionConfig = {
+      valStars: 2,
+      valGems: 3
+    };
+    eventsCenter.emit(eventNames.setConversionValues, conversionValues);
 
     // load the map 
     this.map = this.make.tilemap({key: 'map'});
@@ -491,7 +501,7 @@ export class HomeScene extends Phaser.Scene {
 
   private updateScoreText() {
     this.scoreString = `Coins: ${this.numCoins} Gems: ${this.numGems} Stars: ${this.numStars}`;
-    eventsCenter.emit('updateScoreText', this.scoreString);
+    eventsCenter.emit(eventNames.updateScoreText, this.scoreString);
   }
 
   // returns -1 if prop is not found
