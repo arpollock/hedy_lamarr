@@ -49,21 +49,25 @@ const sceneNames: {
   hudMenu: string,
   tabletMenu: string,
   pause: string,
-  win: string
+  win: string,
+  obFixMenu: string
 } = {
   mainGame: 'HomeScene',
   hudMenu: 'HudMenu',
   tabletMenu: 'TabletMenu',
   pause: 'PauseScene',
-  win: 'LevelWin'
+  win: 'LevelWin',
+  obFixMenu: 'ObstacleFixMenu'
 };
 
 const eventNames: {
   updateScoreText: string,
-  setConversionValues: string
+  setConversionValues: string,
+  closeObFixMenu: string
 } = {
   updateScoreText: 'updateScoreText',
-  setConversionValues: 'setConversionValues'
+  setConversionValues: 'setConversionValues',
+  closeObFixMenu: 'closeObsFixMenu'
 };
 
 // describes the currency conversion values, in terms of how many coins they're worth

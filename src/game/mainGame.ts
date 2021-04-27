@@ -22,11 +22,12 @@ import {
   pauseKeyCode,
   initScoreStr
 } from './../Constants';
-import { Scene } from 'phaser';
+// import { Scene } from 'phaser';
 
-class PlayerSprite extends Phaser.Physics.Arcade.Sprite{
+class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
   public isOnPlatform: boolean;
   public currentPlatform: any;
+  public isOnObsOverlap: boolean;
 }
 
 export class HomeScene extends Phaser.Scene {
@@ -63,6 +64,8 @@ export class HomeScene extends Phaser.Scene {
   private pauseKey: Phaser.Input.Keyboard.Key;
   private printDebugKey: Phaser.Input.Keyboard.Key;
 
+  private isInObstacleMenu: boolean;
+
   constructor() {
     super({
       key: sceneNames.mainGame
@@ -96,6 +99,8 @@ export class HomeScene extends Phaser.Scene {
     this.numGems = 0;
     this.numStars = 0;
     this.scoreString = initScoreStr;
+
+    this.isInObstacleMenu = false;
   }
   public preload(): void {
     this.scene.launch(sceneNames.hudMenu);
@@ -136,6 +141,7 @@ export class HomeScene extends Phaser.Scene {
       valGems: 3
     };
     eventsCenter.emit(eventNames.setConversionValues, conversionValues);
+    eventsCenter.on(eventNames.closeObFixMenu, this.closeObFixMenu, this);
 
     // load the map 
     this.map = this.make.tilemap({key: 'map'});
@@ -169,6 +175,7 @@ export class HomeScene extends Phaser.Scene {
     this.player.setBounce(0.0);
     this.player.setCollideWorldBounds(true);
     this.player.setDepth(999);
+    this.player.isOnObsOverlap = false;
     // add the goal objects as specified in the object layer of the map
     const goals = this.map.filterObjects("Goal", p => p.name == "goal");
     goals.forEach(g => {
@@ -318,22 +325,38 @@ export class HomeScene extends Phaser.Scene {
 
     // handle collisions with the broken obstacle button overlays
     this.overlayObjs.forEach(overlayObj => {
-      const collisionObstacleOverlay = () => {
-        // TODO: trigger the obstacle fix scene from here, and then only do the below if was success
+      const obstacleOverlapTriggerFixMenu = () => {
+        
         const objectNum: number = overlayObj.objectNum;
         if (objectNum >= 0) {
           this.buttonObjs.forEach(bObj => {
             if (bObj.objectNum == objectNum) {
-              bObj.isEnabled = true;
-              overlayObj.destroy();
+              // TODO: trigger the obstacle fix scene from here, and then only do the below if was success
+              // bObj.isEnabled = true;
+              // overlayObj.destroy();
+              this.player.isOnObsOverlap = true;
+              this.player.setVelocity(0);
+              this.isInObstacleMenu = true;
+              // this.scene.switch(sceneNames.obFixMenu); // this is buggy, since overlap just re-calls it instantly
+              this.scene.launch(sceneNames.obFixMenu);
+              this.scene.bringToTop(sceneNames.obFixMenu);
             }
           });
         }
       };
+
+      const obstacleOverlapDetectFirstTime = () => {
+        if (!(this.player.isOnObsOverlap)) {
+          return true;
+        }
+        return false;
+      };
       this.physics.add.overlap(
         this.player,
         overlayObj,
-        collisionObstacleOverlay
+        obstacleOverlapTriggerFixMenu,
+        obstacleOverlapDetectFirstTime,
+        this.scene
       );
     });
 
@@ -419,11 +442,14 @@ export class HomeScene extends Phaser.Scene {
   }
 
   public update(time: number): void {
-    this.renderPlayer();
+    if (!this.isInObstacleMenu) {
+      this.renderPlayer();
+    }
     // detect if the player wants to pause the game
     if (Phaser.Input.Keyboard.JustDown(this.pauseKey)) {
       if( !(this.scene.isPaused()) ) {
         this.scene.switch(sceneNames.pause);
+        this.scene.bringToTop(sceneNames.pause);
       }
     }
     // todo this is broken, low priority
@@ -489,6 +515,19 @@ export class HomeScene extends Phaser.Scene {
     console.log('win screen triggered!');
     this.scene.stop(sceneNames.hudMenu);
     this.scene.start(sceneNames.win);
+  }
+
+  private triggerEnableObFixMenu(): void {
+    this.player.isOnObsOverlap = false;
+  }
+
+  private closeObFixMenu(): void {
+    this.isInObstacleMenu = false;
+    // create a window before the user can trigger the obstacle fix screen again
+    // not ideal but works (would prefer to detect first frame of overlap, low priority TODO fix)
+    // doesn't let the player trigger an obstacle screen until 5 seconds have passed
+    const retriggerWindowTimer = new Phaser.Time.TimerEvent( {delay: 5000, callback: this.triggerEnableObFixMenu, callbackScope: this} );
+    this.time.addEvent(retriggerWindowTimer);
   }
 
   private triggerGoalReached(): boolean {
