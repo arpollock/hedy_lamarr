@@ -1,6 +1,7 @@
 import 'phaser';
 import MovingPlatform from './MovingPlatform';
 import ObstacleButton from './ObstacleButton';
+import ObstacleOverlay from './ObstacleOverlay';
 import LaserDoor from './LaserDoor';
 import Goal from './Goal';
 import eventsCenter from './EventsCenter';
@@ -51,6 +52,8 @@ export class HomeScene extends Phaser.Scene {
   private platformObjs: Array<MovingPlatform>;
   private doorObjs: Array<LaserDoor>;
 
+  private overlayObjs: Array<ObstacleOverlay>;
+
   private goalObjs: Array<Goal>;
   private goalReached: boolean;
 
@@ -73,6 +76,7 @@ export class HomeScene extends Phaser.Scene {
     this.platformObjs = [];
     this.doorObjs = [];
     this.goalObjs = [];
+    this.overlayObjs = [];
 
     this.goalReached = false;
 
@@ -117,6 +121,8 @@ export class HomeScene extends Phaser.Scene {
     // the button (on and off) images
     this.load.image('buttonOff', 'buttonOff.png');
     this.load.image('buttonOn', 'buttonOn.png');
+    // the overlay sprite to fix an obstacle
+    this.load.image('obstacleFix', 'obstacleFix.png');
     // player animations
     this.load.atlas('player', 'player.png', 'player.json');
     // creatures to save + animations
@@ -229,17 +235,24 @@ export class HomeScene extends Phaser.Scene {
     this.physics.world.enable(this.platformObjs, Phaser.Physics.Arcade.DYNAMIC_BODY);
 
     // add the buttons (to enable the player to interact with obstacles) as specified in the object layer of the map
+    // also add the obstacle overlays (to enable the player to see broken obstacles)
+    // as specified in the object layer of the map
     const buttons = this.map.filterObjects("Buttons", p => p.name == "button");
     buttons.forEach(b => {
       const butt = new ObstacleButton(this, b.x, b.y, 'buttonOff');
+      const overlay = new ObstacleOverlay(this, b.x, b.y, 'obstacleFix');
       butt.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
+      overlay.setOrigin(0, 1);
       const obstacleNumIdx = this.tiledObjectHasProperty('obstacleNum', b)
       if (obstacleNumIdx >= 0) {
         butt.objectNum = b.properties[obstacleNumIdx].value;
+        overlay.objectNum = b.properties[obstacleNumIdx].value;
       }
       this.buttonObjs.push(butt);
+      this.overlayObjs.push(overlay);
     });
     this.physics.world.enable(this.buttonObjs, Phaser.Physics.Arcade.STATIC_BODY);
+    this.physics.world.enable(this.overlayObjs, Phaser.Physics.Arcade.STATIC_BODY);
 
     // add the laser doors as specified in the object layer of the map
     const doors = this.map.filterObjects("Doors", p => p.name == "door");
@@ -271,22 +284,24 @@ export class HomeScene extends Phaser.Scene {
     // keep the player from falling through the ground
     this.physics.add.collider(this.groundLayer, this.player);
 
-    // handle collisions with moving platforms
+    // handle collisions with the obstacle buttons
     this.buttonObjs.forEach(bObj => {
       bObj.body.setSize((bObj.body.width * 3 / 4), (bObj.body.height / 10));
       const collisionObstacleButton = () => {
         if (bObj.body.touching.up && this.player.body.touching.down) {
-          if ( !(bObj.isFixed) ) { // activate if off
-            bObj.isFixed = true
-            this.fixObstacle(bObj);
-          }    
+          if (bObj.isEnabled) { // only enable a collision if the button has been enabled (w/ user math screen)
+            if ( !(bObj.isFixed) ) { // activate if off
+              bObj.isFixed = true
+              this.fixObstacle(bObj);
+            }   
+          } 
         }
       };
 
       const directionCollisionObstacleButton = () => {
         const buttonY: number = (bObj.body.y - bObj.body.height - 10);
         const isFromTop: boolean = buttonY > this.player.y;
-        if (isFromTop) {
+        if (isFromTop && bObj.isEnabled) { // only enable a collision if the button has been enabled (w/ user math screen)
           return true;
         }
         return false;
@@ -298,6 +313,27 @@ export class HomeScene extends Phaser.Scene {
         collisionObstacleButton,
         directionCollisionObstacleButton,
         this.scene
+      );
+    });
+
+    // handle collisions with the broken obstacle button overlays
+    this.overlayObjs.forEach(overlayObj => {
+      const collisionObstacleOverlay = () => {
+        // TODO: trigger the obstacle fix scene from here, and then only do the below if was success
+        const objectNum: number = overlayObj.objectNum;
+        if (objectNum >= 0) {
+          this.buttonObjs.forEach(bObj => {
+            if (bObj.objectNum == objectNum) {
+              bObj.isEnabled = true;
+              overlayObj.destroy();
+            }
+          });
+        }
+      };
+      this.physics.add.overlap(
+        this.player,
+        overlayObj,
+        collisionObstacleOverlay
       );
     });
 
@@ -379,16 +415,6 @@ export class HomeScene extends Phaser.Scene {
       frameRate: 10,
       repeat: -1
     });
-
-    // text to show score, etc.
-    // const textX = 0 - (width / this.zoomFactor) / 5;
-    // const textY = height / this.zoomFactor - 400;
-    // console.log(`text location: ${textX}, ${textY}`);
-    // this.text = this.add.text(textX, textY, this.scoreString, {
-    //   fontSize: '32px',
-    //   fill: '#ffffff'
-    // });
-    // this.text.setScrollFactor(0);
 
   }
 
@@ -500,7 +526,9 @@ export class HomeScene extends Phaser.Scene {
   }
 
   private updateScoreText() {
-    this.scoreString = `Coins: ${this.numCoins} Gems: ${this.numGems} Stars: ${this.numStars}`;
+    // this.scoreString = `Coins: ${this.numCoins} Gems: ${this.numGems} Stars: ${this.numStars}`;
+    // todo: fix this bc right now spacing gets messed up if # of a given currency is > 1 digit
+    this.scoreString = `\t\t:${this.numCoins}  \t\t:${this.numGems}  \t\t:${this.numStars}`;
     eventsCenter.emit(eventNames.updateScoreText, this.scoreString);
   }
 
@@ -553,7 +581,7 @@ export class HomeScene extends Phaser.Scene {
       if (d.objectNum == ob.objectNum) {
         foundDoor = true;
         if (d.part === partNames.laser) {
-          d.destroy(true);
+          d.destroy(true); // todo
         }
       }
     });

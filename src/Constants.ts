@@ -18,7 +18,7 @@ const assetBaseURL: string = './../tutorial/source/assets/';
 
 const pauseKeyCode: number = Phaser.Input.Keyboard.KeyCodes.ESC.valueOf();
 
-const initScoreStr: string = `Coins: 0 Gems: 0 Stars: 0`;
+const initScoreStr: string = `\t\t:0  \t\t:0  \t\t:0`;// `Coins: 0 Gems: 0 Stars: 0`;
 
 const textConfig: {
   mainFillColor: string,

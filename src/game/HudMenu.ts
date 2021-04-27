@@ -38,22 +38,33 @@ export class HudMenu extends Phaser.Scene {
     this.load.image('tablet_button', 'tablet.png');
     this.load.image('tablet_button_hover', 'tablet_hover.png');
     this.load.image('hud_menu_background', 'menuPanel_tab.png');
+    this.load.image('coinHud', 'coin.png');
+    this.load.image('gemHud', 'gem.png');
+    this.load.image('starHud', 'star.png');
     this.cameras.main.setBackgroundColor(); // set background of hud menu to transparent
   }
 
   public create(): void {
     eventsCenter.on(eventNames.updateScoreText, this.updateScoreText, this);
 
-    const hudPanelX = 10;
-    const hudPanelY = height - 60;
+    const hudPanelX: number = 10;
+    const offsetY: number = 60;
+    const hudPanelY: number = height - offsetY;
     const hudPanelBG: Phaser.GameObjects.Sprite = this.add.sprite(hudPanelX, hudPanelY, 'hud_menu_background');
+    const hudPanelIconY: number = hudPanelY + offsetY / 2 + 5;
+    const hudPanelIconX: number = hudPanelX + offsetY / 2 + 10;
+    const hudPelIconXOffset: number = 115;
+    const coinSprite: Phaser.GameObjects.Sprite = this.add.sprite(hudPanelIconX, hudPanelIconY, 'coinHud');
+    const gemSprite: Phaser.GameObjects.Sprite = this.add.sprite(hudPanelIconX + hudPelIconXOffset, hudPanelIconY, 'gemHud');
+    const starSprite: Phaser.GameObjects.Sprite = this.add.sprite(hudPanelIconX + hudPelIconXOffset*2, hudPanelIconY, 'starHud');
     hudPanelBG.setOrigin(0,0);
     // text to show score
     const textX = hudPanelX + 25;
     const textY = hudPanelY + 20;
     this.text = this.add.text(textX, textY, this.scoreString, {
       fontSize: textConfig.mainFontSize,
-      fill: textConfig.mainFillColor
+      fill: textConfig.secondaryFillColor,
+      fontFamily: '"Courier New", "Courier", "monospace"'
     });
     this.text.setScrollFactor(0);
 

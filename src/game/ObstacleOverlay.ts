@@ -1,6 +1,6 @@
 import 'phaser';
 
-export default class ObstacleButton extends Phaser.Physics.Arcade.Sprite {
+export default class ObstacleOverlay extends Phaser.Physics.Arcade.Sprite {
 	/**
 	 * 
 	 * @param {Phaser.Scene} scene 
@@ -9,16 +9,12 @@ export default class ObstacleButton extends Phaser.Physics.Arcade.Sprite {
 	 * @param {string} texture 
 	 */
 
-	public isEnabled: boolean;
-  public isFixed: boolean;
-  public objectNum: number;
+	public objectNum: number;
 
 	constructor(scene, x, y, texture) {
 		super(scene, x, y, texture);
 		scene.add.existing(this);
 
-    this.isFixed = false;
-		this.isEnabled = false;
     this.objectNum = -1;
 	}
 }
