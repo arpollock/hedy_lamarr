@@ -10,6 +10,23 @@ import {
   currency_type
 } from '../Constants';
 
+class DraggableCurrencyTarget extends Phaser.GameObjects.Sprite {
+  private ct: currency_type;
+
+  constructor(scene: Phaser.Scene, x: number, y: number, texture: string, ct: currency_type) {
+		super(scene, x, y, texture);
+		scene.add.existing(this);
+    this.ct = ct;
+    this.setInteractive({
+      useHandCursor: false
+    });
+	}
+
+  public get_currency_type(): currency_type {
+    return this.ct;
+  }
+}
+
 class DraggableCurrency extends Phaser.GameObjects.Sprite {
   private ct: currency_type;
 
@@ -41,8 +58,10 @@ export class ObstacleFixMenu extends Phaser.Scene {
   private button_state_sprite: Phaser.GameObjects.Sprite;
 
   private draggable_currencies: DraggableCurrency[];
+  private draggable_currency_targets: DraggableCurrencyTarget[];
 
   private dc_original_x: number = 70;
+  private dc_target_x: number = width - 70;
   private coin_original_y: number = 70;
   private gem_original_y: number = 150;
   private star_original_y: number = 230;
@@ -56,7 +75,7 @@ export class ObstacleFixMenu extends Phaser.Scene {
     this.back_button = null;
     this.submit_button = null;
     this.draggable_currencies = [];
-    // this.curr_currency = null;
+    this.draggable_currency_targets = [];
   }
 
   public init(params): void {
@@ -74,6 +93,12 @@ export class ObstacleFixMenu extends Phaser.Scene {
     this.load.image('coinUi', 'coinUi.png');
     this.load.image('gemUi', 'gemUi.png');
     this.load.image('starUi', 'starUi.png');
+    this.load.image('coinUi_empty', 'coinUi_empty.png');
+    this.load.image('gemUi_empty', 'gemUi_empty.png');
+    this.load.image('starUi_empty', 'starUi_empty.png');
+    this.load.image('coinUi_accept', 'coinUi_accept.png');
+    this.load.image('gemUi_accept', 'gemUi_accept.png');
+    this.load.image('starUi_accept', 'starUi_accept.png');
 
     
     const closeMenuKeyCode: number = Phaser.Input.Keyboard.KeyCodes.E;
@@ -114,6 +139,13 @@ export class ObstacleFixMenu extends Phaser.Scene {
     // button to show the state of if they've paid enough
     this.button_state_sprite = this.add.sprite(width, height, 'buttonReject');
     this.button_state_sprite.setPosition(width - this.button_state_sprite.width / 2 - 10, height - this.button_state_sprite.height / 6);
+    // draggable currecny targets in order to accept payment
+    const temp_coinUiTarget_sprite = new DraggableCurrencyTarget(this, this.dc_target_x, this.coin_original_y, 'coinUi_empty', currency_type.coin);
+    this.draggable_currency_targets.push(temp_coinUiTarget_sprite);
+    const temp_gemUiTarget_sprite = new DraggableCurrencyTarget(this, this.dc_target_x, this.gem_original_y, 'gemUi_empty', currency_type.gem);
+    this.draggable_currency_targets.push(temp_gemUiTarget_sprite);
+    const temp_starUiTarget_sprite = new DraggableCurrencyTarget(this, this.dc_target_x, this.star_original_y, 'starUi_empty', currency_type.star);
+    this.draggable_currency_targets.push(temp_starUiTarget_sprite);
     // draggable currencies in order to pay
     const temp_coinUi_sprite = new DraggableCurrency(this, this.dc_original_x, this.coin_original_y, 'coinUi', currency_type.coin);
     this.draggable_currencies.push(temp_coinUi_sprite);
@@ -128,12 +160,7 @@ export class ObstacleFixMenu extends Phaser.Scene {
     this.input.on('drag', this.doDrag, this);
     this.input.on('dragstart', this.startDrag, this);
     this.input.on('dragend', this.stopDrag, this);
-    // https://photonstorm.github.io/phaser3-docs/Phaser.Input.Events.html#event:GAMEOBJECT_DRAG_START
-    // this.draggable_currencies.forEach(dc => {
-    //   // this.back_button.on('dragstart', this.startDrag, this);
-    //   this.back_button.on('drag', this.doDrag, this);
-    //   // this.back_button.on('dragend', this.stopDrag, this);
-    // });
+    
   }
 
   public update(time: number): void {
