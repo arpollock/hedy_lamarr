@@ -93,6 +93,12 @@ interface PlayerConfig {
   walkFrameRate: number,
 };
 
+enum currency_type {
+  coin,
+  gem,
+  star,
+}
+
 export {
   gravity,
   width,
@@ -111,4 +117,5 @@ export {
   eventNames,
   conversionConfig,
   PlayerConfig,
+  currency_type
  };
