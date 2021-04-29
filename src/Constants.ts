@@ -16,6 +16,8 @@ const backgroundColor: string = '#40739e';
 
 const assetBaseURL: string = './../tutorial/source/assets/';
 
+const assetObsUiURL: string = `${assetBaseURL}obstacle_ui/`;
+
 const pauseKeyCode: number = Phaser.Input.Keyboard.KeyCodes.ESC.valueOf();
 
 const initScoreStr: string = `\t\t:0  \t\t:0  \t\t:0`;// `Coins: 0 Gems: 0 Stars: 0`;
@@ -24,10 +26,12 @@ const textConfig: {
   mainFillColor: string,
   secondaryFillColor: string,
   mainFontSize: string,
+  fontFams: string,
 } = {
   mainFillColor: '#ffffff',
   secondaryFillColor: '#2f3640',
   mainFontSize: '32px',
+  fontFams: '"Courier New", "Courier", "monospace"',
 };
 
 const partNames: {
@@ -97,6 +101,7 @@ export {
   groundDrag,
   backgroundColor,
   assetBaseURL,
+  assetObsUiURL,
   pauseKeyCode,
   initScoreStr,
   textConfig,

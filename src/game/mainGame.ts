@@ -338,6 +338,10 @@ export class HomeScene extends Phaser.Scene {
               this.player.setVelocity(0);
               this.isInObstacleMenu = true;
               // this.scene.switch(sceneNames.obFixMenu); // this is buggy, since overlap just re-calls it instantly
+              if (this.scene.isActive(sceneNames.tabletMenu)) {
+                this.scene.sleep(sceneNames.tabletMenu);
+              }
+              this.scene.sleep(sceneNames.hudMenu);
               this.scene.launch(sceneNames.obFixMenu);
               this.scene.bringToTop(sceneNames.obFixMenu);
             }
@@ -528,6 +532,8 @@ export class HomeScene extends Phaser.Scene {
     // doesn't let the player trigger an obstacle screen until 5 seconds have passed
     const retriggerWindowTimer = new Phaser.Time.TimerEvent( {delay: 5000, callback: this.triggerEnableObFixMenu, callbackScope: this} );
     this.time.addEvent(retriggerWindowTimer);
+    this.scene.launch(sceneNames.hudMenu);
+    this.scene.bringToTop(sceneNames.hudMenu);
   }
 
   private triggerGoalReached(): boolean {

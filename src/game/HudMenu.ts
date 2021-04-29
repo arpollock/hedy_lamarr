@@ -64,7 +64,7 @@ export class HudMenu extends Phaser.Scene {
     this.text = this.add.text(textX, textY, this.scoreString, {
       fontSize: textConfig.mainFontSize,
       fill: textConfig.secondaryFillColor,
-      fontFamily: '"Courier New", "Courier", "monospace"'
+      // fontFamily: textConfig.fontFams,
     });
     this.text.setScrollFactor(0);
 
@@ -86,6 +86,8 @@ export class HudMenu extends Phaser.Scene {
   }
 
   private updateScoreText(scoreText: string): void {
+    console.log("score update");
+    console.log(this.text);
     this.scoreString = scoreText;
     this.text.setText(this.scoreString);
   }
