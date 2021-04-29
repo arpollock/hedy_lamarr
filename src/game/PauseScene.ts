@@ -34,6 +34,7 @@ export class PauseScene extends Phaser.Scene {
     this.textString = 'Game Paused';
     const textX = width / 2; 
     const textY = height / 2;
+    console.log(`w: ${width} h: ${height} x: ${textX} y: ${textY}`);
     this.text = this.add.text(textX, textY, this.textString, {
       fontSize: textConfig.mainFontSize,
       fill: textConfig.mainFillColor,

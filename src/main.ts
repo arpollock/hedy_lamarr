@@ -11,6 +11,7 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   width: width,
   height: height,
+  parent: 'game-container',
   scene: [HomeScene, HudMenu, TabletMenu, ObstacleFixMenu, PauseScene, LevelWin],
   physics: {
       default: 'arcade',
