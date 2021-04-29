@@ -42,6 +42,11 @@ export class ObstacleFixMenu extends Phaser.Scene {
 
   private draggable_currencies: DraggableCurrency[];
 
+  private dc_original_x: number = 70;
+  private coin_original_y: number = 70;
+  private gem_original_y: number = 150;
+  private star_original_y: number = 230;
+
   constructor() {
     super({
       key: sceneNames.obFixMenu
@@ -51,6 +56,7 @@ export class ObstacleFixMenu extends Phaser.Scene {
     this.back_button = null;
     this.submit_button = null;
     this.draggable_currencies = [];
+    // this.curr_currency = null;
   }
 
   public init(params): void {
@@ -109,19 +115,19 @@ export class ObstacleFixMenu extends Phaser.Scene {
     this.button_state_sprite = this.add.sprite(width, height, 'buttonReject');
     this.button_state_sprite.setPosition(width - this.button_state_sprite.width / 2 - 10, height - this.button_state_sprite.height / 6);
     // draggable currencies in order to pay
-    const dc_start_x: number = 70;
-    const coinUi_start_x: number = 70;
-    const temp_coinUi_sprite = new DraggableCurrency(this, dc_start_x, coinUi_start_x, 'coinUi', currency_type.coin);
+    const temp_coinUi_sprite = new DraggableCurrency(this, this.dc_original_x, this.coin_original_y, 'coinUi', currency_type.coin);
     this.draggable_currencies.push(temp_coinUi_sprite);
-    const gemUi_start_x: number = 140;
-    const temp_gemUi_sprite = new DraggableCurrency(this, dc_start_x, gemUi_start_x, 'gemUi', currency_type.gem);
+    const temp_gemUi_sprite = new DraggableCurrency(this, this.dc_original_x, this.gem_original_y, 'gemUi', currency_type.gem);
     this.draggable_currencies.push(temp_gemUi_sprite);
-    const starUi_start_x: number = 210;
-    const temp_starUi_sprite = new DraggableCurrency(this, dc_start_x, starUi_start_x, 'starUi', currency_type.star);
+    const temp_starUi_sprite = new DraggableCurrency(this, this.dc_original_x, this.star_original_y, 'starUi', currency_type.star);
     this.draggable_currencies.push(temp_starUi_sprite);
     
+    // set the draggability of the user's currencies
+    // https://photonstorm.github.io/phaser3-docs/Phaser.Input.Events.html#
     this.input.setDraggable(this.draggable_currencies);
     this.input.on('drag', this.doDrag, this);
+    this.input.on('dragstart', this.startDrag, this);
+    this.input.on('dragend', this.stopDrag, this);
     // https://photonstorm.github.io/phaser3-docs/Phaser.Input.Events.html#event:GAMEOBJECT_DRAG_START
     // this.draggable_currencies.forEach(dc => {
     //   // this.back_button.on('dragstart', this.startDrag, this);
@@ -164,22 +170,29 @@ export class ObstacleFixMenu extends Phaser.Scene {
     this.scene.sleep(sceneNames.obFixMenu);
   }
 
-  // private startDrag(pointer: Phaser.Input.Pointer, dragX: number, dragY: number) {
-  //   this.input.off('pointerdown', this.startDrag, this);
-  //   // this.dragObj = event.
-  //   // this.input.on('pointerdown', this.startDrag, this);
-  //   console.log("Drag Start");
-  //   // pointer.
-  // }
+  private startDrag(pointer: Phaser.Input.Pointer, gameObject: DraggableCurrency) {
+    console.log('start drag');
+  }
 
-  private doDrag(pointer: Phaser.Input.Pointer, gameObject: Phaser.GameObjects.Sprite, dragX: number, dragY: number) {
+  private doDrag(pointer: Phaser.Input.Pointer, gameObject: DraggableCurrency, dragX: number, dragY: number) {
     console.log("dragging");
     gameObject.x = dragX;
     gameObject.y = dragY;
   }
 
-  // private stopDrag(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData) {
-  //   console.log("Drag Stop");
-  //   // this.input.off('pointerdown', this.startDrag, this);
-  // }
+  private stopDrag(pointer: Phaser.Input.Pointer, gameObject: DraggableCurrency) {
+    console.log('start drag');
+    gameObject.x = this.dc_original_x;
+    switch(gameObject.get_currency_type()) {
+      case currency_type.coin:
+        gameObject.y = this.coin_original_y;
+        break;
+      case currency_type.gem:
+        gameObject.y = this.gem_original_y;
+        break;
+      case currency_type.star:
+        gameObject.y = this.star_original_y;
+        break;
+    };
+  }
 }
