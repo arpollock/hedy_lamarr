@@ -68,11 +68,13 @@ const sceneNames: {
 const eventNames: {
   updateScoreText: string,
   setConversionValues: string,
-  closeObFixMenu: string
+  closeObFixMenu: string,
+  updateCurrency: string
 } = {
   updateScoreText: 'updateScoreText',
   setConversionValues: 'setConversionValues',
-  closeObFixMenu: 'closeObsFixMenu'
+  closeObFixMenu: 'closeObsFixMenu',
+  updateCurrency: 'updateCurrency',
 };
 
 // describes the currency conversion values, in terms of how many coins they're worth
@@ -93,11 +95,38 @@ interface PlayerConfig {
   walkFrameRate: number,
 };
 
+interface ObFixConfig {
+  numCoins: number,
+  numGems: number,
+  numStars: number,
+  goalCoins: number,
+  goalGems: number,
+  goalStars: number,
+};
+
 enum currency_type {
   coin,
   gem,
   star,
 }
+
+function currency_type_to_str(ct: currency_type): string {
+  switch(ct) {
+    case currency_type.coin:
+      return 'coin';
+    case currency_type.gem:
+      return 'gem';
+    case currency_type.star:
+      return 'star';
+  }
+}
+
+// obstacle fix constants
+const dc_original_x: number = 70;
+const dc_target_x: number = width - 70;
+const coin_original_y: number = 70;
+const gem_original_y: number = 150;
+const star_original_y: number = 230;
 
 export {
   gravity,
@@ -117,5 +146,12 @@ export {
   eventNames,
   conversionConfig,
   PlayerConfig,
-  currency_type
+  ObFixConfig,
+  currency_type,
+  currency_type_to_str,
+  dc_original_x,
+  dc_target_x,
+  coin_original_y,
+  gem_original_y,
+  star_original_y
  };

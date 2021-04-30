@@ -29,7 +29,7 @@ export class HudMenu extends Phaser.Scene {
   }
 
   public init(params): void {
-
+    eventsCenter.on(eventNames.updateScoreText, this.updateScoreText, this);
   }
 
   public preload(): void {
@@ -45,8 +45,6 @@ export class HudMenu extends Phaser.Scene {
   }
 
   public create(): void {
-    eventsCenter.on(eventNames.updateScoreText, this.updateScoreText, this);
-
     const hudPanelX: number = 10;
     const offsetY: number = 60;
     const hudPanelY: number = height - offsetY;

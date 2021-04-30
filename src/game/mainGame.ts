@@ -9,6 +9,7 @@ import {
   gravity,
   groundDrag,
   PlayerConfig,
+  ObFixConfig,
   conversionConfig,
   width,
   height,
@@ -22,7 +23,7 @@ import {
   pauseKeyCode,
   initScoreStr
 } from './../Constants';
-// import { Scene } from 'phaser';
+import { ObstacleFixMenu } from './ObstacleFixMenu';
 
 class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
   public isOnPlatform: boolean;
@@ -66,6 +67,8 @@ export class HomeScene extends Phaser.Scene {
 
   private isInObstacleMenu: boolean;
 
+  private conversionValues: conversionConfig;
+
   constructor() {
     super({
       key: sceneNames.mainGame
@@ -101,12 +104,14 @@ export class HomeScene extends Phaser.Scene {
     this.scoreString = initScoreStr;
 
     this.isInObstacleMenu = false;
+
+    // todo, set these randomly according to difficulty config
+    this.conversionValues = {
+      valStars: 2,
+      valGems: 3
+    };
   }
   public preload(): void {
-    this.scene.launch(sceneNames.hudMenu);
-    this.scene.launch(sceneNames.tabletMenu);
-    this.scene.sleep(sceneNames.tabletMenu);
-    this.scene.bringToTop(sceneNames.hudMenu);
     // this.load.setBaseURL('./assets/');
     this.load.setBaseURL(assetBaseURL);
     // map made with Tiled in JSON format
@@ -135,13 +140,12 @@ export class HomeScene extends Phaser.Scene {
   }
 
   public create(): void {
-    // todo, set these randomly according to difficulty config
-    const conversionValues: conversionConfig = {
-      valStars: 2,
-      valGems: 3
-    };
-    eventsCenter.emit(eventNames.setConversionValues, conversionValues);
     eventsCenter.on(eventNames.closeObFixMenu, this.closeObFixMenu, this);
+    this.scene.launch(sceneNames.hudMenu);
+    this.scene.launch(sceneNames.tabletMenu, this.conversionValues);
+    this.scene.sleep(sceneNames.tabletMenu);
+    this.scene.bringToTop(sceneNames.hudMenu);
+    // eventsCenter.emit(eventNames.setConversionValues, conversionValues);
 
     // load the map 
     this.map = this.make.tilemap({key: 'map'});
@@ -342,7 +346,17 @@ export class HomeScene extends Phaser.Scene {
                 this.scene.sleep(sceneNames.tabletMenu);
               }
               this.scene.sleep(sceneNames.hudMenu);
-              this.scene.launch(sceneNames.obFixMenu);
+              const obFixData: ObFixConfig = {
+                numCoins: this.numCoins,
+                numGems: this.numGems,
+                numStars: this.numStars,
+                goalCoins: 1,
+                goalGems: 1,
+                goalStars: 1,
+              };
+              this.scene.pause(sceneNames.mainGame);
+              this.scene.add(sceneNames.obFixMenu, ObstacleFixMenu, false);
+              this.scene.launch(sceneNames.obFixMenu, obFixData);
               this.scene.bringToTop(sceneNames.obFixMenu);
             }
           });
@@ -532,7 +546,10 @@ export class HomeScene extends Phaser.Scene {
     // doesn't let the player trigger an obstacle screen until 5 seconds have passed
     const retriggerWindowTimer = new Phaser.Time.TimerEvent( {delay: 5000, callback: this.triggerEnableObFixMenu, callbackScope: this} );
     this.time.addEvent(retriggerWindowTimer);
-    this.scene.launch(sceneNames.hudMenu);
+    this.scene.stop(sceneNames.obFixMenu);
+    this.scene.remove(sceneNames.obFixMenu);
+    this.scene.resume(sceneNames.mainGame);
+    this.scene.wake(sceneNames.hudMenu);
     this.scene.bringToTop(sceneNames.hudMenu);
   }
 
