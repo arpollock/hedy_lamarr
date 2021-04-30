@@ -43,7 +43,7 @@ export class TabletMenu extends Phaser.Scene { // Phaser.GameObjects.Sprite {
     const textY = height * 0.25;
     this.conversionText = this.add.text(textX, textY, this.conversionString, {
       fontSize: textConfig.mainFontSize,
-      fill: textConfig.secondaryFillColor
+      color: textConfig.secondaryFillColor
     });
     this.conversionText.setDepth(1);
     // this.conversionText.setScrollFactor(0);

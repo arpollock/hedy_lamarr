@@ -33,7 +33,7 @@ class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
 
 export class HomeScene extends Phaser.Scene {
   private zoomFactor: number;
-  private map;// : Phaser.Physics.Arcade.World; or Phaser.Tilemaps.Tilemap
+  private map: Phaser.Tilemaps.Tilemap;
 
   private groundLayer;
   private coinLayer;
@@ -153,21 +153,21 @@ export class HomeScene extends Phaser.Scene {
     // tiles for the ground layer
     var groundTiles = this.map.addTilesetImage('tiles');
     // create the ground layer
-    this.groundLayer = this.map.createDynamicLayer('World', groundTiles, 0, 0);
+    this.groundLayer = this.map.createLayer('World', groundTiles, 0, 0);
     // the player will collide with this layer
     this.groundLayer.setCollisionByExclusion([-1]);
     // coin image used as tileset
     const coinTiles = this.map.addTilesetImage('coin');
     // add coins as tiles
-    this.coinLayer = this.map.createDynamicLayer('Coins', coinTiles, 0, 0);
+    this.coinLayer = this.map.createLayer('Coins', coinTiles, 0, 0);
     // star image used as tileset
     const starTiles = this.map.addTilesetImage('star');
     // // add stars as tiles
-    this.starLayer = this.map.createDynamicLayer('Stars', starTiles, 0, 0);
+    this.starLayer = this.map.createLayer('Stars', starTiles, 0, 0);
     // // star image used as tileset
     const gemTiles = this.map.addTilesetImage('gem');
     // // add stars as tiles
-    this.gemLayer = this.map.createDynamicLayer('Gems', gemTiles, 0, 0);
+    this.gemLayer = this.map.createLayer('Gems', gemTiles, 0, 0);
 
     // set the boundaries of our game world
     this.physics.world.bounds.width = this.groundLayer.width;
@@ -339,9 +339,11 @@ export class HomeScene extends Phaser.Scene {
               // bObj.isEnabled = true;
               // overlayObj.destroy();
               this.player.isOnObsOverlap = true;
-              this.player.setVelocity(0);
               this.isInObstacleMenu = true;
-              // this.scene.switch(sceneNames.obFixMenu); // this is buggy, since overlap just re-calls it instantly
+              this.player.setVelocity(0); // pause the player
+              if(this.playerOnFloor()) { // stop any animations
+                this.player.anims.play('idle', true);
+              }
               if (this.scene.isActive(sceneNames.tabletMenu)) {
                 this.scene.sleep(sceneNames.tabletMenu);
               }
@@ -354,9 +356,9 @@ export class HomeScene extends Phaser.Scene {
                 goalGems: 1,
                 goalStars: 1,
               };
-              this.scene.pause(sceneNames.mainGame);
-              this.scene.add(sceneNames.obFixMenu, ObstacleFixMenu, false);
-              this.scene.launch(sceneNames.obFixMenu, obFixData);
+              // this.scene.pause(sceneNames.mainGame);
+              this.scene.add(sceneNames.obFixMenu, ObstacleFixMenu, true, obFixData);
+              // this.scene.launch(sceneNames.obFixMenu, obFixData);
               this.scene.bringToTop(sceneNames.obFixMenu);
             }
           });
@@ -548,9 +550,9 @@ export class HomeScene extends Phaser.Scene {
     this.time.addEvent(retriggerWindowTimer);
     this.scene.stop(sceneNames.obFixMenu);
     this.scene.remove(sceneNames.obFixMenu);
-    this.scene.resume(sceneNames.mainGame);
-    this.scene.wake(sceneNames.hudMenu);
+    this.scene.run(sceneNames.hudMenu);
     this.scene.bringToTop(sceneNames.hudMenu);
+    this.player.setVelocity(0);
   }
 
   private triggerGoalReached(): boolean {
@@ -558,7 +560,7 @@ export class HomeScene extends Phaser.Scene {
     this.goalReached = true;
     this.goalObjs.forEach(g => {
       if(g.part === partNames.laser) {
-        g.destroy(true);
+        g.destroy();
       } else if (g.part === partNames.lever) {
         g.setFrame(84, false, false);
       } else if (g.part === partNames.creature) {
@@ -643,7 +645,7 @@ export class HomeScene extends Phaser.Scene {
       if (d.objectNum == ob.objectNum) {
         foundDoor = true;
         if (d.part === partNames.laser) {
-          d.destroy(true); // todo
+          d.destroy(); // todo
         }
       }
     });

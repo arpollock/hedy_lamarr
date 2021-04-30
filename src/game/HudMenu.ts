@@ -61,7 +61,7 @@ export class HudMenu extends Phaser.Scene {
     const textY = hudPanelY + 20;
     this.text = this.add.text(textX, textY, this.scoreString, {
       fontSize: textConfig.mainFontSize,
-      fill: textConfig.secondaryFillColor,
+      color: textConfig.secondaryFillColor,
       fontFamily: textConfig.fontFams,
       padding: {
         x: 0,
