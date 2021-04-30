@@ -335,9 +335,7 @@ export class HomeScene extends Phaser.Scene {
         if (objectNum >= 0) {
           this.buttonObjs.forEach(bObj => {
             if (bObj.objectNum == objectNum) {
-              // TODO: trigger the obstacle fix scene from here, and then only do the below if was success
-              // bObj.isEnabled = true;
-              // overlayObj.destroy();
+              // trigger the obstacle fix scene
               this.player.isOnObsOverlap = true;
               this.isInObstacleMenu = true;
               this.player.setVelocity(0); // pause the player
@@ -355,6 +353,7 @@ export class HomeScene extends Phaser.Scene {
                 goalCoins: 1,
                 goalGems: 1,
                 goalStars: 1,
+                buttonObj: bObj,
               };
               // this.scene.pause(sceneNames.mainGame);
               this.scene.add(sceneNames.obFixMenu, ObstacleFixMenu, true, obFixData);
@@ -541,7 +540,7 @@ export class HomeScene extends Phaser.Scene {
     this.player.isOnObsOverlap = false;
   }
 
-  private closeObFixMenu(): void {
+  private closeObFixMenu(params: { success: boolean, num_coins_consumed: number, num_gems_consumed: number, num_stars_consumed: number, buttonObj: ObstacleButton }): void {
     this.isInObstacleMenu = false;
     // create a window before the user can trigger the obstacle fix screen again
     // not ideal but works (would prefer to detect first frame of overlap, low priority TODO fix)
@@ -553,6 +552,21 @@ export class HomeScene extends Phaser.Scene {
     this.scene.run(sceneNames.hudMenu);
     this.scene.bringToTop(sceneNames.hudMenu);
     this.player.setVelocity(0);
+
+    if (params.success) {
+      params.buttonObj.isEnabled = true;
+      this.numCoins -= params.num_coins_consumed;
+      this.numGems -= params.num_gems_consumed;
+      this.numStars -= params.num_stars_consumed;
+      this.updateScoreText();
+      this.overlayObjs.forEach(overlayObj => {
+        const objectNum: number = overlayObj.objectNum;
+        if (params.buttonObj.objectNum == objectNum) {
+          overlayObj.destroy();
+        }
+      });
+    }
+    
   }
 
   private triggerGoalReached(): boolean {

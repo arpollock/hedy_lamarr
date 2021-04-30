@@ -1,5 +1,6 @@
 import 'phaser';
 import eventsCenter from './EventsCenter';
+import ObstacleButton from './ObstacleButton';
 import {
   sceneNames,
   assetObsUiURL,
@@ -8,6 +9,7 @@ import {
   textConfig,
   ObFixConfig,
   eventNames,
+  numCurrencies,
   currency_type,
   currency_type_to_str,
   dc_original_x,
@@ -173,6 +175,8 @@ export class ObstacleFixMenu extends Phaser.Scene {
   private num_stars_str: string;
   private num_stars_text: Phaser.GameObjects.Text;
 
+  private ob: ObstacleButton;
+
   constructor() {
     super({
       key: sceneNames.obFixMenu
@@ -206,6 +210,8 @@ export class ObstacleFixMenu extends Phaser.Scene {
     this.num_coins = data.numCoins;
     this.num_gems = data.numGems;
     this.num_stars = data.numStars;
+
+    this.ob = data.buttonObj;
   }
 
   public preload(): void {
@@ -235,7 +241,6 @@ export class ObstacleFixMenu extends Phaser.Scene {
     const closeMenuKeyCode: number = Phaser.Input.Keyboard.KeyCodes.E;
     this.pauseKey = this.input.keyboard.addKey(closeMenuKeyCode);
     this.cameras.main.setBackgroundColor(); // set background of hud menu to transparent
-    // eventsCenter.on(eventNames.updateCurrency, this.updateCurrencyWrapper, this);
     console.log("In obstacle fix screen");
     this.filler_text_string = 'Obstacle Fixing Menu';
     const textX = width / 2; 
@@ -261,6 +266,12 @@ export class ObstacleFixMenu extends Phaser.Scene {
     this.submit_button.on('pointerover', this.onSubmitButtonHoverEnter, this);
     this.submit_button.on('pointerout', this.onSubmitButtonHoverExit, this);
     this.submit_button.on('pointerdown', this.completeObstacle, this);
+    // button to show the state of if they've paid enough
+    this.button_state_sprite = this.add.sprite(width, height, 'buttonReject');
+    this.button_state_sprite.setPosition(width - this.button_state_sprite.width / 2 - 10, height - this.button_state_sprite.height / 6);
+    this.button_state_sprite.setDepth(999);
+    // hide the submit button until the criteria is met
+    this.disableSubmit();
     // clear button click detection
     this.clear_button = this.add.sprite(100, height-150,'clear_button').setOrigin(0,0);
     this.clear_button.setInteractive({
@@ -273,10 +284,7 @@ export class ObstacleFixMenu extends Phaser.Scene {
     this.backgroundPanel_left = this.add.sprite(0, (height/2), 'bgPanelLeft'); // new Phaser.GameObjects.Sprite(this, width-70, height-80, 'tablet_menu_background');
     // right panel - showing the user how much currency they have to pay
     this.backgroundPanel_right = this.add.sprite(width, (height/2), 'bgPanelRight');
-    // button to show the state of if they've paid enough
-    this.button_state_sprite = this.add.sprite(width, height, 'buttonReject');
-    this.button_state_sprite.setPosition(width - this.button_state_sprite.width / 2 - 10, height - this.button_state_sprite.height / 6);
-    // draggable currecny targets in order to accept payment
+    // draggable currency targets in order to accept payment
     // todo calc offset horiz for each type dept on tot #
     for(let i = 0; i < this.num_coins_needed; i++) {
       const temp_coinUiTarget_sprite = new DraggableCurrencyTarget(this, dc_target_x, coin_original_y, 'coinUi_empty', currency_type.coin);
@@ -364,7 +372,7 @@ export class ObstacleFixMenu extends Phaser.Scene {
   private goBackToLevel(): void {
     console.log('Back button pushed (from Obstacle Fix menu).');
     // todo, add a param to indicate success or not
-    eventsCenter.emit(eventNames.closeObFixMenu); // enable the user to move the player again
+    eventsCenter.emit(eventNames.closeObFixMenu, { success: false, }); // enable the user to move the player again
   }
 
   private onSubmitButtonHoverEnter(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData): void {
@@ -377,8 +385,14 @@ export class ObstacleFixMenu extends Phaser.Scene {
 
   private completeObstacle(): void {
     console.log('Submit button pushed (from Obstacle Fix menu).');
-    // todo, add a param to indicate success or not'
-    eventsCenter.emit(eventNames.closeObFixMenu); // enable the user to move the player again
+    const ncs: numCurrencies = this.countCurrencySpent();
+    eventsCenter.emit(eventNames.closeObFixMenu, {
+      success: true,
+      num_coins_consumed: ncs.coins,
+      num_gems_consumed: ncs.gems,
+      num_stars_consumed: ncs.stars,
+      buttonObj: this.ob,
+    }); // enable the user to move the player again
   }
 
   private onClearButtonHoverEnter(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData): void {
@@ -389,9 +403,12 @@ export class ObstacleFixMenu extends Phaser.Scene {
     // this.back_button.setTexture('tablet_button');
   }
 
-  private clearButton(): void {
-    console.log('Clear button pushed.');
-    // there's probs a better way to do this...
+  private countCurrencySpent(): numCurrencies {
+    let retVal: numCurrencies = {
+      coins: 0,
+      gems: 0,
+      stars: 0
+    };
     let coins_cleared = 0;
     let gems_cleared = 0;
     let stars_cleared = 0;
@@ -412,19 +429,29 @@ export class ObstacleFixMenu extends Phaser.Scene {
       }
     });
     console.log(`${coins_cleared}; ${gems_cleared}; ${stars_cleared};`)
+    retVal.coins = coins_cleared;
+    retVal.gems = gems_cleared;
+    retVal.stars = stars_cleared;
+    return retVal;
+  }
+
+  private clearButton(): void {
+    console.log('Clear button pushed.');
+    // there's probs a better way to do this...
+    const ncs: numCurrencies = this.countCurrencySpent();
     // todo update the #s next to the currencies once created
-    this.updateCurrencyChanges(coins_cleared, gems_cleared, stars_cleared);
+    this.updateCurrencyChanges(ncs.coins, ncs.gems, ncs.stars);
   }
 
   private updateCurrencyChanges(change_coins: number, change_gems: number, change_stars: number):void {
-    console.log('updateCurrency!')
-    console.log(`${change_coins}; ${change_gems}; ${change_stars};`)
+    // console.log('updateCurrency!')
+    // console.log(`${change_coins}; ${change_gems}; ${change_stars};`)
     this.num_coins += change_coins;
-    this.num_coins_needed -= change_coins;
+    this.num_coins_needed += change_coins;
     this.num_gems += change_gems;
-    this.num_gems_needed -= change_stars;
+    this.num_gems_needed += change_gems;
     this.num_stars += change_stars;
-    this.num_stars_needed -= change_stars;
+    this.num_stars_needed += change_stars;
     this.draggable_currencies.forEach((dc) => {
       switch(dc.get_currency_type()) {
         case currency_type.coin:
@@ -432,8 +459,6 @@ export class ObstacleFixMenu extends Phaser.Scene {
             for(let i = 0; i < change_coins; i++) {
               dc.increment_count();
             }
-          } else {
-            console.log("is negative???");
           }
           break;
         case currency_type.gem:
@@ -441,8 +466,6 @@ export class ObstacleFixMenu extends Phaser.Scene {
             for(let i = 0; i < change_gems; i++) {
               dc.increment_count();
             }
-          } else {
-            console.log("is negative???");
           }
           break; 
         case currency_type.star:
@@ -450,8 +473,6 @@ export class ObstacleFixMenu extends Phaser.Scene {
             for(let i = 0; i < change_stars; i++) {
               dc.increment_count();
             }
-          } else {
-            console.log("is negative???");
           }
           break;
       }
@@ -461,7 +482,9 @@ export class ObstacleFixMenu extends Phaser.Scene {
   }
 
   private updateCurrencyChangesFromDraggables(): void {
+    // console.log(`Before needed: ${this.num_coins_needed}; ${this.num_gems_needed}; ${this.num_stars_needed}`);
     this.draggable_currencies.forEach((dc) => {
+      dc.updated_flag = false;
       switch (dc.get_currency_type()) {
         case currency_type.coin:
           this.num_coins_needed -= (this.num_coins - dc.get_count());
@@ -477,24 +500,44 @@ export class ObstacleFixMenu extends Phaser.Scene {
           break;
       }
     }, this);
+    // console.log(`After needs: ${this.num_coins_needed}; ${this.num_gems_needed}; ${this.num_stars_needed}`);
     this.updateCurrency();
   }
 
-  private updateCurrency():void {
+  private areAllZero(conds: number[]): boolean {
+    for(const cond of conds ) {
+      if (cond != 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private disableSubmit(): void {
+    this.submit_button.setVisible(false);
+    this.submit_button.disableInteractive();
+    this.button_state_sprite.setTexture('buttonReject');
+  }
+
+  private enableSubmit(): void {
+    this.submit_button.setVisible(true);
+    this.submit_button.setInteractive();
+    this.button_state_sprite.setTexture('buttonAccept');
+  }
+
+  private updateCurrency(): void {
+    if (this.areAllZero([this.num_coins_needed, this.num_gems_needed, this.num_stars_needed])) {
+      this.enableSubmit();
+    } else {
+      this.disableSubmit();
+    }
     this.num_coins_str = `${this.num_coins}`;
     this.num_gems_str = `${this.num_gems}`;
     this.num_stars_str = `${this.num_stars}`;
     if (this.num_coins_text != null && this.num_gems_text != null && this.num_stars_text != null) {
-      console.log('in here lolz');
-      console.log(this);
       this.num_coins_text.setText(this.num_coins_str);
       this.num_gems_text.setText(this.num_gems_str);
       this.num_stars_text.setText(this.num_stars_str);
     }
   }
-
-  private updateCurrencyWrapper(params: any): void {
-    this.updateCurrencyChanges(params.change_coins, params.change_gems, params.change_stars);
-  }
-
 }

@@ -1,5 +1,7 @@
 import 'phaser';
 
+import ObstacleButton from './game/ObstacleButton';
+
 const gravity: number = 500;
 
 const width: number = 800; // game window width
@@ -102,6 +104,13 @@ interface ObFixConfig {
   goalCoins: number,
   goalGems: number,
   goalStars: number,
+  buttonObj: ObstacleButton
+};
+
+interface numCurrencies {
+  coins: number,
+  gems: number,
+  stars: number
 };
 
 enum currency_type {
@@ -147,6 +156,7 @@ export {
   conversionConfig,
   PlayerConfig,
   ObFixConfig,
+  numCurrencies,
   currency_type,
   currency_type_to_str,
   dc_original_x,
