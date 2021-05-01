@@ -28,7 +28,7 @@ import { ObstacleFixMenu } from './ObstacleFixMenu';
 class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
   public isOnPlatform: boolean;
   public currentPlatform: any;
-  public isOnObsOverlap: boolean;
+  public isOnObsOverlap: boolean; // todo, make this clickable instead of the overlap instead(?)
 }
 
 export class HomeScene extends Phaser.Scene {
@@ -350,9 +350,11 @@ export class HomeScene extends Phaser.Scene {
                 numCoins: this.numCoins,
                 numGems: this.numGems,
                 numStars: this.numStars,
-                goalCoins: 1,
+                // todo get this from the map and load it into the button
+                // or probs generate it randomly once and keep it true for the whole scene?
+                goalCoins: 3,
                 goalGems: 1,
-                goalStars: 1,
+                goalStars: 2,
                 buttonObj: bObj,
               };
               // this.scene.pause(sceneNames.mainGame);

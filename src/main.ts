@@ -36,5 +36,6 @@ function preload () {
 }
 
 function create () {
-  
+  // todo make game fullscreen:
+  // https://phaser.io/examples/v3/view/scalemanager/full-screen-game#
 }

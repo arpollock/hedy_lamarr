@@ -16,7 +16,10 @@ import {
   dc_target_x,
   coin_original_y,
   gem_original_y,
-  star_original_y
+  star_original_y,
+  coinDraggable_original_y,
+  gemDraggable_original_y,
+  starDraggable_original_y
 } from '../Constants';
 
 class DraggableCurrencyTarget extends Phaser.GameObjects.Sprite {
@@ -94,13 +97,13 @@ class DraggableCurrency extends Phaser.GameObjects.Sprite {
     this.x = dc_original_x;
     switch(this.get_currency_type()) {
       case currency_type.coin:
-        this.y = coin_original_y;
+        this.y = coinDraggable_original_y;
         break;
       case currency_type.gem:
-        this.y = gem_original_y;
+        this.y = gemDraggable_original_y;
         break;
       case currency_type.star:
-        this.y = star_original_y;
+        this.y = starDraggable_original_y;
         break;
     };
   }
@@ -285,28 +288,34 @@ export class ObstacleFixMenu extends Phaser.Scene {
     // right panel - showing the user how much currency they have to pay
     this.backgroundPanel_right = this.add.sprite(width, (height/2), 'bgPanelRight');
     // draggable currency targets in order to accept payment
-    // todo calc offset horiz for each type dept on tot #
+    // calc offset horiz for each type dept on tot #
     for(let i = 0; i < this.num_coins_needed; i++) {
       const temp_coinUiTarget_sprite = new DraggableCurrencyTarget(this, dc_target_x, coin_original_y, 'coinUi_empty', currency_type.coin);
+      const offset_step = temp_coinUiTarget_sprite.width + 10;
+      temp_coinUiTarget_sprite.setX(dc_target_x - offset_step * i);
       this.draggable_currency_targets.push(temp_coinUiTarget_sprite);
     }
-    for(let i = 0; i < this.num_coins_needed; i++) {
+    for(let i = 0; i < this.num_gems_needed; i++) {
       const temp_gemUiTarget_sprite = new DraggableCurrencyTarget(this, dc_target_x, gem_original_y, 'gemUi_empty', currency_type.gem);
+      const offset_step = temp_gemUiTarget_sprite.width + 10;
+      temp_gemUiTarget_sprite.setX(dc_target_x - offset_step * i);
       this.draggable_currency_targets.push(temp_gemUiTarget_sprite);
     }
-    for(let i = 0; i < this.num_coins_needed; i++) {
+    for(let i = 0; i < this.num_stars_needed; i++) {
       const temp_starUiTarget_sprite = new DraggableCurrencyTarget(this, dc_target_x, star_original_y, 'starUi_empty', currency_type.star);
+      const offset_step = temp_starUiTarget_sprite.width + 10;
+      temp_starUiTarget_sprite.setX(dc_target_x - offset_step * i);
       this.draggable_currency_targets.push(temp_starUiTarget_sprite);
     }
     // draggable currencies in order to pay
-    const coinUi_zero_sprite = this.add.sprite(dc_original_x, coin_original_y, 'coinUi_zero');
-    const temp_coinUi_sprite = new DraggableCurrency(this, dc_original_x, coin_original_y, 'coinUi', currency_type.coin, this.num_coins);
+    const coinUi_zero_sprite = this.add.sprite(dc_original_x, coinDraggable_original_y, 'coinUi_zero');
+    const temp_coinUi_sprite = new DraggableCurrency(this, dc_original_x, coinDraggable_original_y, 'coinUi', currency_type.coin, this.num_coins);
     this.draggable_currencies.push(temp_coinUi_sprite);
-    const gemUi_zero_sprite = this.add.sprite(dc_original_x, gem_original_y, 'gemUi_zero');
-    const temp_gemUi_sprite = new DraggableCurrency(this, dc_original_x, gem_original_y, 'gemUi', currency_type.gem, this.num_gems);
+    const gemUi_zero_sprite = this.add.sprite(dc_original_x, gemDraggable_original_y, 'gemUi_zero');
+    const temp_gemUi_sprite = new DraggableCurrency(this, dc_original_x, gemDraggable_original_y, 'gemUi', currency_type.gem, this.num_gems);
     this.draggable_currencies.push(temp_gemUi_sprite);
-    const starUi_zero_sprite = this.add.sprite(dc_original_x, star_original_y, 'starUi_zero');
-    const temp_starUi_sprite = new DraggableCurrency(this, dc_original_x, star_original_y, 'starUi', currency_type.star, this.num_stars);
+    const starUi_zero_sprite = this.add.sprite(dc_original_x, starDraggable_original_y, 'starUi_zero');
+    const temp_starUi_sprite = new DraggableCurrency(this, dc_original_x, starDraggable_original_y, 'starUi', currency_type.star, this.num_stars);
     this.draggable_currencies.push(temp_starUi_sprite);
     // set the draggability of the user's currencies
     // https://photonstorm.github.io/phaser3-docs/Phaser.Input.Events.html#
@@ -371,7 +380,6 @@ export class ObstacleFixMenu extends Phaser.Scene {
 
   private goBackToLevel(): void {
     console.log('Back button pushed (from Obstacle Fix menu).');
-    // todo, add a param to indicate success or not
     eventsCenter.emit(eventNames.closeObFixMenu, { success: false, }); // enable the user to move the player again
   }
 
@@ -439,7 +447,7 @@ export class ObstacleFixMenu extends Phaser.Scene {
     console.log('Clear button pushed.');
     // there's probs a better way to do this...
     const ncs: numCurrencies = this.countCurrencySpent();
-    // todo update the #s next to the currencies once created
+    // update the #s next to the currencies once created
     this.updateCurrencyChanges(ncs.coins, ncs.gems, ncs.stars);
   }
 

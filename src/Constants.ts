@@ -133,9 +133,15 @@ function currency_type_to_str(ct: currency_type): string {
 // obstacle fix constants
 const dc_original_x: number = 70;
 const dc_target_x: number = width - 70;
-const coin_original_y: number = 70;
-const gem_original_y: number = 150;
-const star_original_y: number = 230;
+const gem_original_y: number = height / 2;
+const offset_y = 150;
+const coin_original_y: number = gem_original_y - offset_y;
+const star_original_y: number = gem_original_y + offset_y;
+
+const gemDraggable_original_y: number = height / 2;
+const offsetDraggable_y = 100;
+const coinDraggable_original_y: number = gem_original_y - offsetDraggable_y;
+const starDraggable_original_y: number = gem_original_y + offsetDraggable_y;
 
 export {
   gravity,
@@ -163,5 +169,8 @@ export {
   dc_target_x,
   coin_original_y,
   gem_original_y,
-  star_original_y
+  star_original_y,
+  coinDraggable_original_y,
+  gemDraggable_original_y,
+  starDraggable_original_y
  };
