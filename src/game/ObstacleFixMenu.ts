@@ -28,14 +28,14 @@ import {
 class DraggableCurrencyTarget extends Phaser.GameObjects.Sprite {
   private ct: currency_type;
   private filled: boolean;
+  private converter: DraggableCurrencyConverter;
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string, ct: currency_type) {
 		super(scene, x, y, texture);
     this.ct = ct;
     this.filled = false;
-    this.setInteractive({
-      useHandCursor: false
-    }, this.dropped_on, true);
+    this.converter = null;
+    this.makeDragDropTarget();
     scene.add.existing(this);
 	}
 
@@ -49,16 +49,72 @@ class DraggableCurrencyTarget extends Phaser.GameObjects.Sprite {
     return this.filled;
   }
 
+  public isConverterFull(): boolean {
+    if (this.hasConverter()) {
+      if (this.texture.key.indexOf('0') == -1) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public hasConverter(): boolean {
+    if (this.converter == null) {
+      return false;
+    }
+    return true;
+  }
+
+  public getConverter(): DraggableCurrencyConverter {
+    return this.converter;
+  }
+
   public setFilled(): void {
     this.setTexture(`${currency_type_to_str(this.ct)}Ui_accept`);
     this.filled = true;
   }
 
+  public setConverterFilled(converter: DraggableCurrencyConverter): void {
+    this.removeDragDropTarget();
+    this.setTexture(converter.texture.key);
+    this.filled = true;
+    this.converter = converter;
+    this.makeDragDropTarget();
+    // console.log(converter);
+  }
+
+  public fillConverter(): void {
+    const oldTextureStr: string = this.texture.key;
+    const zeroIdx: number = oldTextureStr.indexOf('0')
+    const newTextureStr: string = oldTextureStr.substring(0, zeroIdx) + '1' + oldTextureStr.substring(zeroIdx + 1);
+    console.log(`${oldTextureStr} --> ${newTextureStr}`);
+    this.setTexture(newTextureStr);
+    // this.filled = true;
+  }
+
   public dump(): void {
     if (this.filled) {
+      this.removeDragDropTarget();
       this.setTexture(`${currency_type_to_str(this.ct)}Ui_empty`);
       this.filled = false;
+      this.converter = null;
+      this.makeDragDropTarget();
     }
+  }
+
+  private makeDragDropTarget(): void {
+    this.setInteractive({
+      useHandCursor: false,
+      dropZone: true,
+      customHitArea: true,
+      hitArea: this.getBounds(),
+    }, this.dropped_on, true);
+    console.log('Set drop target w:');
+    console.log(this.getBounds());
+  }
+
+  private removeDragDropTarget(): void {
+    this.disableInteractive();
   }
 }
 
@@ -112,20 +168,25 @@ class DraggableCurrency extends Phaser.GameObjects.Sprite {
   }
 
   public dragDrop(pointer: Phaser.Input.Pointer, target: Phaser.GameObjects.GameObject): void {
+    console.log('currency dropped on: ');
+    console.log(target);
     if (target != null && target instanceof DraggableCurrencyTarget) {
-      if (target.get_currency_type() === this.ct && !(target.isFilled())) { // dropped on a correct, empty slot
-        // pointer.event.stopImmediatePropagation();
+      if (target.get_currency_type() === this.ct && !(target.isFilled()) ) {
+        // target does not have a converter
+        // dropped on a correct, empty slot
         target.setFilled();
         this.decrement_count();
-        // const cc = (target.get_currency_type() == 0) ? -1 : 0;
-        // const cg = (target.get_currency_type() == 1) ? -1 : 0;
-        // const cs = (target.get_currency_type() == 2) ? -1 : 0;
-        // eventsCenter.emit(eventNames.updateCurrency, {
-        //   change_coins: cc,
-        //   change_gems: cg,
-        //   change_stars: cs
-        // });
-      } // wrong currency or is already filled => ignore
+      } else if ( target.isFilled() && target.hasConverter() ) {
+        // target has a converter
+        if (target.getConverter().getOutCt() === this.ct) {
+          // dropped on a correct conversion slot
+          if (target.texture.key.indexOf('0') > -1) {
+            // there is an empty slot in the converter
+            target.fillConverter();
+            this.decrement_count();
+          }
+        }
+      } // dropped on a wrong currency type/converter -> ignore
     }
   }
 
@@ -172,8 +233,12 @@ class DraggableCurrencyConverter extends Phaser.GameObjects.Sprite {
     scene.add.existing(this);
 	}
 
+  public getOutCt(): currency_type {
+    return this.out_ct;
+  }
+
   public startDrag(pointer: Phaser.Input.Pointer, dragX: number, dragY: number): void {
-    console.log('start converter drag');
+    // console.log('start converter drag');
   }
 
   public doDrag(pointer: Phaser.Input.Pointer, dragX: number, dragY: number): void {
@@ -182,11 +247,26 @@ class DraggableCurrencyConverter extends Phaser.GameObjects.Sprite {
   }
 
   public stopDrag(pointer: Phaser.Input.Pointer, dragX: number, dragY: number): void {
-    console.log('stop converter drag');
+    // console.log('stop converter drag');
+    this.x = dc_original_x;
+    switch(this.in_ct) {
+      case currency_type.gem:
+        this.y = gemToCoinConverter_original_y;
+        break;
+      case currency_type.star:
+        this.y = starToCoinConverter_original_y;
+        break;
+    };
   }
 
   public dragDrop(pointer: Phaser.Input.Pointer, target: Phaser.GameObjects.GameObject): void {
     console.log('drop converter drag');
+    if (target != null && target instanceof DraggableCurrencyTarget) {
+      if (target.get_currency_type() === this.in_ct && !(target.isFilled())) { // dropped the converter on the right target
+        // target.setFilled();
+        target.setConverterFilled(this);
+      }
+    }
   }
 }
 
@@ -497,19 +577,40 @@ export class ObstacleFixMenu extends Phaser.Scene {
     let gems_cleared = 0;
     let stars_cleared = 0;
     this.draggable_currency_targets.forEach((dct) => {
-      if (dct.isFilled()) {
-        dct.dump();
-        switch(dct.get_currency_type()) {
-          case currency_type.coin:
-            coins_cleared++;
-            break;
-          case currency_type.gem:
-            gems_cleared++;
-            break; 
-          case currency_type.star:
-            stars_cleared++;
-            break;
+      if ( dct.isFilled() ) {
+        if ( !(dct.hasConverter()) ) {
+          switch(dct.get_currency_type()) {
+            case currency_type.coin:
+              coins_cleared++;
+              break;
+            case currency_type.gem:
+              gems_cleared++;
+              break; 
+            case currency_type.star:
+              stars_cleared++;
+              break;
+          }
+        } else { // used a converter
+          const currCt: currency_type = dct.getConverter().getOutCt();
+          let numOnes: number = 0;
+          for(let c of dct.texture.key) {
+            if (c == '1') {
+              numOnes++;
+            }
+          }
+          switch(currCt) {
+            case currency_type.coin:
+              coins_cleared += numOnes;
+              break;
+            case currency_type.gem:
+              coins_cleared += numOnes;
+              break; 
+            case currency_type.star:
+              coins_cleared += numOnes;
+              break;
+          }
         }
+        dct.dump();
       }
     });
     console.log(`${coins_cleared}; ${gems_cleared}; ${stars_cleared};`)
@@ -527,15 +628,51 @@ export class ObstacleFixMenu extends Phaser.Scene {
     this.updateCurrencyChanges(ncs.coins, ncs.gems, ncs.stars);
   }
 
+  private getNeededCurrenciesFromTargets(): void {
+    let new_num_coins: number = 0;
+    let new_num_gems: number = 0;
+    let new_num_stars: number = 0;
+    this.draggable_currency_targets.forEach((dct) => {
+      if (!(dct.isFilled())) {
+        switch(dct.get_currency_type()) {
+          case currency_type.coin:
+            new_num_coins += 1;
+            break;
+          case currency_type.gem:
+            new_num_gems += 1;
+            break; 
+          case currency_type.star:
+            new_num_stars += 1;
+            break;
+        }
+      } else if ( dct.isFilled() && dct.hasConverter() && !(dct.isConverterFull()) ) {
+        switch(dct.get_currency_type()) {
+          case currency_type.coin:
+            new_num_coins += 1;
+            break;
+          case currency_type.gem:
+            new_num_gems += 1;
+            break; 
+          case currency_type.star:
+            new_num_stars += 1;
+            break;
+        }
+      }
+    });
+    this.num_coins_needed = new_num_coins;
+    this.num_gems_needed = new_num_gems;
+    this.num_stars_needed = new_num_stars;
+  }
+
   private updateCurrencyChanges(change_coins: number, change_gems: number, change_stars: number):void {
     // console.log('updateCurrency!')
     // console.log(`${change_coins}; ${change_gems}; ${change_stars};`)
     this.num_coins += change_coins;
-    this.num_coins_needed += change_coins;
+    // this.num_coins_needed += change_coins;
     this.num_gems += change_gems;
-    this.num_gems_needed += change_gems;
+    // this.num_gems_needed += change_gems;
     this.num_stars += change_stars;
-    this.num_stars_needed += change_stars;
+    // this.num_stars_needed += change_stars;
     this.draggable_currencies.forEach((dc) => {
       switch(dc.get_currency_type()) {
         case currency_type.coin:
@@ -561,30 +698,32 @@ export class ObstacleFixMenu extends Phaser.Scene {
           break;
       }
     });
-    
+    this.getNeededCurrenciesFromTargets();
     this.updateCurrency();
   }
 
   private updateCurrencyChangesFromDraggables(): void {
     // console.log(`Before needed: ${this.num_coins_needed}; ${this.num_gems_needed}; ${this.num_stars_needed}`);
+    // todo, need to fix this to understand when a currency is being used in a conversion
     this.draggable_currencies.forEach((dc) => {
       dc.updated_flag = false;
       switch (dc.get_currency_type()) {
         case currency_type.coin:
-          this.num_coins_needed -= (this.num_coins - dc.get_count());
+          // this.num_coins_needed -= (this.num_coins - dc.get_count());
           this.num_coins = dc.get_count();
           break;
         case currency_type.gem:
-          this.num_gems_needed -= (this.num_gems - dc.get_count());
+          // this.num_gems_needed -= (this.num_gems - dc.get_count());
           this.num_gems = dc.get_count();
           break;
         case currency_type.star:
-          this.num_stars_needed -= (this.num_stars - dc.get_count());
+          // this.num_stars_needed -= (this.num_stars - dc.get_count());
           this.num_stars = dc.get_count();
           break;
       }
     }, this);
-    // console.log(`After needs: ${this.num_coins_needed}; ${this.num_gems_needed}; ${this.num_stars_needed}`);
+    this.getNeededCurrenciesFromTargets();
+    console.log(`After needs: ${this.num_coins_needed}; ${this.num_gems_needed}; ${this.num_stars_needed}`);
     this.updateCurrency();
   }
 

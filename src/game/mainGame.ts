@@ -350,8 +350,8 @@ export class HomeScene extends Phaser.Scene {
                 // todo get this from the map and load it into the button
                 // or probs generate it randomly once and keep it true for the whole scene?
                 goalCoins: 3,
-                goalGems: 1,
-                goalStars: 2,
+                goalGems: 0, // 1,
+                goalStars: 1, // 2,
                 buttonObj: bObj,
                 conversions: this.conversionValues
               };

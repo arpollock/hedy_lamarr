@@ -135,7 +135,7 @@ function currency_type_to_str(ct: currency_type): string {
 const dc_original_x: number = 70;
 const dc_target_x: number = width - 70;
 const gem_original_y: number = height / 2;
-const offset_y = 150;
+const offset_y = 100;
 const coin_original_y: number = gem_original_y - offset_y;
 const star_original_y: number = gem_original_y + offset_y;
 
@@ -144,8 +144,8 @@ const offsetDraggable_y = 100;
 const coinDraggable_original_y: number = gem_original_y - offsetDraggable_y;
 const starDraggable_original_y: number = gem_original_y + offsetDraggable_y;
 
-const gemToCoinConverter_original_y: number = gem_original_y + (offsetDraggable_y * 2);
-const starToCoinConverter_original_y: number = gem_original_y + (offsetDraggable_y * 3);
+const gemToCoinConverter_original_y: number = gem_original_y - (offsetDraggable_y * 3);
+const starToCoinConverter_original_y: number = gem_original_y - (offsetDraggable_y * 4);
 
 export {
   gravity,
