@@ -353,6 +353,7 @@ export class HomeScene extends Phaser.Scene {
                 goalGems: 1,
                 goalStars: 2,
                 buttonObj: bObj,
+                conversions: this.conversionValues
               };
               // this.scene.pause(sceneNames.mainGame);
               this.scene.add(sceneNames.obFixMenu, ObstacleFixMenu, true, obFixData);

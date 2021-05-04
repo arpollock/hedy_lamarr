@@ -7,6 +7,7 @@ import {
   width,
   height,
   textConfig,
+  conversionConfig,
   ObFixConfig,
   eventNames,
   numCurrencies,
@@ -19,7 +20,9 @@ import {
   star_original_y,
   coinDraggable_original_y,
   gemDraggable_original_y,
-  starDraggable_original_y
+  starDraggable_original_y,
+  gemToCoinConverter_original_y,
+  starToCoinConverter_original_y
 } from '../Constants';
 
 class DraggableCurrencyTarget extends Phaser.GameObjects.Sprite {
@@ -147,6 +150,46 @@ class DraggableCurrency extends Phaser.GameObjects.Sprite {
   }
 }
 
+class DraggableCurrencyConverter extends Phaser.GameObjects.Sprite {
+  private in_ct: currency_type;
+  private out_ct: currency_type;
+  private needed: number;
+
+  constructor(scene: Phaser.Scene, x: number, y: number, ict: currency_type, oct: currency_type, num_oct: number) {
+    // const coversionVal: number = (currency_type_to_str(ict) === 'gem') ? ;
+    let numZeros: string = '';
+    for(let i = 0; i < num_oct; i++) {
+      numZeros += '0';
+    }
+    const texture: string = `${currency_type_to_str(ict)}_${num_oct}${currency_type_to_str(oct)}_${numZeros}`;
+		super(scene, x, y, texture);
+    this.in_ct = ict;
+    this.out_ct = oct;
+    // this.needed = 
+    this.setInteractive({
+      useHandCursor: true
+    });
+    scene.add.existing(this);
+	}
+
+  public startDrag(pointer: Phaser.Input.Pointer, dragX: number, dragY: number): void {
+    console.log('start converter drag');
+  }
+
+  public doDrag(pointer: Phaser.Input.Pointer, dragX: number, dragY: number): void {
+    this.x = dragX;
+    this.y = dragY;
+  }
+
+  public stopDrag(pointer: Phaser.Input.Pointer, dragX: number, dragY: number): void {
+    console.log('stop converter drag');
+  }
+
+  public dragDrop(pointer: Phaser.Input.Pointer, target: Phaser.GameObjects.GameObject): void {
+    console.log('drop converter drag');
+  }
+}
+
 export class ObstacleFixMenu extends Phaser.Scene {
 
   private pauseKey: Phaser.Input.Keyboard.Key;
@@ -161,7 +204,10 @@ export class ObstacleFixMenu extends Phaser.Scene {
   private backgroundPanel_right: Phaser.GameObjects.Sprite;
   private button_state_sprite: Phaser.GameObjects.Sprite;
 
+  private conversion_values: conversionConfig;
+
   private draggable_currencies: DraggableCurrency[];
+  private draggable_currency_converters: DraggableCurrencyConverter[];
   private draggable_currency_targets: DraggableCurrencyTarget[];
 
   private num_coins_needed: number;
@@ -194,6 +240,7 @@ export class ObstacleFixMenu extends Phaser.Scene {
     this.back_button = null;
     this.submit_button = null;
     this.draggable_currencies = [];
+    this.draggable_currency_converters = [];
     this.draggable_currency_targets = [];
     this.clear_button = null;
 
@@ -215,6 +262,8 @@ export class ObstacleFixMenu extends Phaser.Scene {
     this.num_stars = data.numStars;
 
     this.ob = data.buttonObj;
+
+    this.conversion_values = data.conversions;
   }
 
   public preload(): void {
@@ -238,6 +287,14 @@ export class ObstacleFixMenu extends Phaser.Scene {
     this.load.image('coinUi_zero', 'coinUi_zero.png');
     this.load.image('gemUi_zero', 'gemUi_zero.png');
     this.load.image('starUi_zero', 'starUi_zero.png');
+    // converter module assets
+    this.load.image('gem_2coin_00', 'gem_2coin_00.png');
+    this.load.image('gem_2coin_10', 'gem_2coin_10.png');
+    this.load.image('gem_2coin_11', 'gem_2coin_11.png');
+    this.load.image('star_3coin_000', 'star_3coin_000.png');
+    this.load.image('star_3coin_100', 'star_3coin_100.png');
+    this.load.image('star_3coin_110', 'star_3coin_110.png');
+    this.load.image('star_3coin_111', 'star_3coin_111.png');
   }
 
   public create(): void {
@@ -356,7 +413,26 @@ export class ObstacleFixMenu extends Phaser.Scene {
     console.log('end create');
     console.log(this.scene);
     this.updateCurrency();
+
+    // currency conversion modules -- so they can actually use and learn fractions
+    const temp_gem_to_coin = new DraggableCurrencyConverter(this, dc_original_x, gemToCoinConverter_original_y, currency_type.gem, currency_type.coin, this.conversion_values.valGems);
+    this.draggable_currency_converters.push(temp_gem_to_coin);
+    const temp_star_to_coin = new DraggableCurrencyConverter(this, dc_original_x, starToCoinConverter_original_y, currency_type.star, currency_type.coin, this.conversion_values.valStars);
+    this.draggable_currency_converters.push(temp_star_to_coin);
+    // set the draggability of the user's currencies
+    // https://photonstorm.github.io/phaser3-docs/Phaser.Input.Events.html#
+    this.input.setDraggable(this.draggable_currency_converters);
+    this.draggable_currency_converters.forEach((dcc) => {
+      // if (dc != null) {
+        // this.input.setDraggable(dc);
+        dcc.on('dragstart', dcc.startDrag, dcc);
+        dcc.on('dragend', dcc.stopDrag, dcc);
+        dcc.on('drag', dcc.doDrag, dcc);
+        dcc.on('drop', dcc.dragDrop, dcc);
+      // }
+    }, this);
   }
+  
 
   public update(time: number): void {
     // this.updateCurrency();

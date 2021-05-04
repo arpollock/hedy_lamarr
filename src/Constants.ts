@@ -104,7 +104,8 @@ interface ObFixConfig {
   goalCoins: number,
   goalGems: number,
   goalStars: number,
-  buttonObj: ObstacleButton
+  buttonObj: ObstacleButton,
+  conversions: conversionConfig
 };
 
 interface numCurrencies {
@@ -143,6 +144,9 @@ const offsetDraggable_y = 100;
 const coinDraggable_original_y: number = gem_original_y - offsetDraggable_y;
 const starDraggable_original_y: number = gem_original_y + offsetDraggable_y;
 
+const gemToCoinConverter_original_y: number = gem_original_y + (offsetDraggable_y * 2);
+const starToCoinConverter_original_y: number = gem_original_y + (offsetDraggable_y * 3);
+
 export {
   gravity,
   width,
@@ -172,5 +176,7 @@ export {
   star_original_y,
   coinDraggable_original_y,
   gemDraggable_original_y,
-  starDraggable_original_y
+  starDraggable_original_y,
+  gemToCoinConverter_original_y,
+  starToCoinConverter_original_y
  };
