@@ -107,8 +107,8 @@ export class HomeScene extends Phaser.Scene {
 
     // todo, set these randomly according to difficulty config
     this.conversionValues = {
-      valStars: 2,
-      valGems: 3
+      valGems: 2,
+      valStars: 3,
     };
   }
   public preload(): void {
@@ -341,9 +341,6 @@ export class HomeScene extends Phaser.Scene {
               this.player.setVelocity(0); // pause the player
               if(this.playerOnFloor()) { // stop any animations
                 this.player.anims.play('idle', true);
-              }
-              if (this.scene.isActive(sceneNames.tabletMenu)) {
-                this.scene.sleep(sceneNames.tabletMenu);
               }
               this.scene.sleep(sceneNames.hudMenu);
               const obFixData: ObFixConfig = {

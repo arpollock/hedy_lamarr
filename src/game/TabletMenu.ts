@@ -24,7 +24,7 @@ export class TabletMenu extends Phaser.Scene { // Phaser.GameObjects.Sprite {
     });
     this.backgroundPanel = null;
     this.conversionText = null;
-    this.conversionString = `Conversion Notes:\nX coins = X stars\nX coins = X gems\nX stars = X gems`;
+    this.conversionString = `Conversion Notes:\nX coins = X gems\nX coins = X stars\nX gems = X stars`;
   }
 
   public init(params: conversionConfig): void {
@@ -67,9 +67,10 @@ export class TabletMenu extends Phaser.Scene { // Phaser.GameObjects.Sprite {
     const cToG: string = this.conversionValues.valGems.toString();
     const gToC: string = '1';
     // todo make this so sToG is a whole number for easier levels
-    const sToG: string = (this.conversionValues.valStars / this.conversionValues.valGems).toFixed(2).toString();
-    const gToS: string = '1'; // (conversionValues.valGems / conversionValues.valStars).toFixed(2).toString();
-    this.conversionString = `Conversion Notes:\n${cToS} coins = ${sToC} star\n${cToG} coins = ${gToC} gem\n${sToG} stars = ${gToS} gem`;
+    const numGsPerS: number = this.conversionValues.valGems
+    const gToS: string = `${numGsPerS}`; // (conversionValues.valGems / conversionValues.valStars).toFixed(2).toString();
+    const sToG: string = (numGsPerS * (this.conversionValues.valStars / this.conversionValues.valGems)).toString();
+    this.conversionString = `Conversion Notes:\n${cToG} coins = ${gToC} gem\n${cToS} coins = ${sToC} star\n${gToS} gems = ${sToG} stars`;
     this.conversionText.setText(this.conversionString);
   }
 }

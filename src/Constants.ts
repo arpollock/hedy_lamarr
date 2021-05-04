@@ -81,8 +81,8 @@ const eventNames: {
 
 // describes the currency conversion values, in terms of how many coins they're worth
 interface conversionConfig { 
-  valStars: number,
-  valGems: number
+  valGems: number,
+  valStars: number,  
 };
 
 interface PlayerConfig {

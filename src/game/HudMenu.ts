@@ -45,6 +45,7 @@ export class HudMenu extends Phaser.Scene {
   }
 
   public create(): void {
+    this.events.on('sleep', this.onSleep, this);
     const hudPanelX: number = 10;
     const offsetY: number = 60;
     const hudPanelY: number = height - offsetY;
@@ -128,5 +129,9 @@ export class HudMenu extends Phaser.Scene {
   private closeTabletMenu() {
     this.tablet_menu_open = false;
     this.scene.sleep(sceneNames.tabletMenu);
+  }
+
+  private onSleep(): void {
+    this.closeTabletMenu();
   }
 }
