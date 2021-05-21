@@ -16,7 +16,7 @@ const groundDrag: number = 500;
 
 const backgroundColor: string = '#40739e';
 
-const assetBaseURL: string = './../tutorial/source/assets/';
+const assetBaseURL: string = './assets/';
 
 const assetObsUiURL: string = `${assetBaseURL}obstacle_ui/`;
 
