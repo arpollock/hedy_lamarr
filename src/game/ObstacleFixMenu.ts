@@ -15,6 +15,7 @@ import {
   currency_type_to_str,
   dc_original_x,
   dc_target_x,
+  dcm_original_x,
   coin_original_y,
   gem_original_y,
   star_original_y,
@@ -22,7 +23,8 @@ import {
   gemDraggable_original_y,
   starDraggable_original_y,
   gemToCoinConverter_original_y,
-  starToCoinConverter_original_y
+  starToCoinConverter_original_y,
+  screenEdgePadding
 } from '../Constants';
 
 class DraggableCurrencyTarget extends Phaser.GameObjects.Sprite {
@@ -35,6 +37,7 @@ class DraggableCurrencyTarget extends Phaser.GameObjects.Sprite {
     this.ct = ct;
     this.filled = false;
     this.converter = null;
+    this.setOrigin(0.5, 1); // bottom middle origin
     this.makeDragDropTarget();
     scene.add.existing(this);
 	}
@@ -230,6 +233,7 @@ class DraggableCurrencyConverter extends Phaser.GameObjects.Sprite {
     this.setInteractive({
       useHandCursor: true
     });
+    this.setOrigin(0.5, 1); // bottom middle origin
     scene.add.existing(this);
 	}
 
@@ -248,7 +252,7 @@ class DraggableCurrencyConverter extends Phaser.GameObjects.Sprite {
 
   public stopDrag(pointer: Phaser.Input.Pointer, dragX: number, dragY: number): void {
     // console.log('stop converter drag');
-    this.x = dc_original_x;
+    this.x = dcm_original_x;
     switch(this.in_ct) {
       case currency_type.gem:
         this.y = gemToCoinConverter_original_y;
@@ -381,6 +385,7 @@ export class ObstacleFixMenu extends Phaser.Scene {
     const closeMenuKeyCode: number = Phaser.Input.Keyboard.KeyCodes.E;
     this.pauseKey = this.input.keyboard.addKey(closeMenuKeyCode);
     this.cameras.main.setBackgroundColor(); // set background of hud menu to transparent
+    // this.cameras.main.setZoom(0.5);
     console.log("In obstacle fix screen");
     this.filler_text_string = 'Obstacle Fixing Menu';
     const textX = width / 2; 
@@ -390,58 +395,59 @@ export class ObstacleFixMenu extends Phaser.Scene {
       color: textConfig.mainFillColor,
     }).setOrigin(0.5); // set origin makes it so we can center the text easily
     this.filler_text.setScrollFactor(0);
+    // left panel - showing the user how much currency they have
+    this.backgroundPanel_left = this.add.sprite(0, (height/2) + 35, 'bgPanelLeft'); // new Phaser.GameObjects.Sprite(this, width-70, height-80, 'tablet_menu_background');
+    // right panel - showing the user how much currency they have to pay
+    this.backgroundPanel_right = this.add.sprite(width, (height/2), 'bgPanelRight');
+    this.backgroundPanel_right.setX(width - (this.backgroundPanel_right.width / 3));
     // back button click detection
-    this.back_button = this.add.sprite(50, height-70,'back_button').setOrigin(0,0);
+    this.back_button = this.add.sprite(screenEdgePadding, screenEdgePadding / 2,'back_button').setOrigin(0,0);
     this.back_button.setInteractive({
       useHandCursor: true
     });
     this.back_button.on('pointerover', this.onBackButtonHoverEnter, this);
     this.back_button.on('pointerout', this.onBackButtonHoverExit, this);
     this.back_button.on('pointerdown', this.goBackToLevel, this);
+    // button to show the state of if they've paid enough
+    this.button_state_sprite = this.add.sprite(width, height, 'buttonReject');
+    this.button_state_sprite.setPosition(width - this.button_state_sprite.width / 2 - screenEdgePadding, height - this.button_state_sprite.height / 6);
+    this.button_state_sprite.setDepth(80);
     // submit button click detection
-    this.submit_button = this.add.sprite(100, height-70,'submit_button').setOrigin(0,0);
+    this.submit_button = this.add.sprite(width - this.button_state_sprite.width - (screenEdgePadding * 2), height - screenEdgePadding,'submit_button').setOrigin(1);
     this.submit_button.setInteractive({
       useHandCursor: true
     });
     this.submit_button.on('pointerover', this.onSubmitButtonHoverEnter, this);
     this.submit_button.on('pointerout', this.onSubmitButtonHoverExit, this);
     this.submit_button.on('pointerdown', this.completeObstacle, this);
-    // button to show the state of if they've paid enough
-    this.button_state_sprite = this.add.sprite(width, height, 'buttonReject');
-    this.button_state_sprite.setPosition(width - this.button_state_sprite.width / 2 - 10, height - this.button_state_sprite.height / 6);
-    this.button_state_sprite.setDepth(999);
     // hide the submit button until the criteria is met
     this.disableSubmit();
     // clear button click detection
-    this.clear_button = this.add.sprite(100, height-150,'clear_button').setOrigin(0,0);
+    this.clear_button = this.add.sprite(width - screenEdgePadding, screenEdgePadding,'clear_button').setOrigin(1,0);
     this.clear_button.setInteractive({
       useHandCursor: true
     });
     this.clear_button.on('pointerover', this.onClearButtonHoverEnter, this);
     this.clear_button.on('pointerout', this.onClearButtonHoverExit, this);
     this.clear_button.on('pointerdown', this.clearButton, this);
-    // left panel - showing the user how much currency they have
-    this.backgroundPanel_left = this.add.sprite(0, (height/2), 'bgPanelLeft'); // new Phaser.GameObjects.Sprite(this, width-70, height-80, 'tablet_menu_background');
-    // right panel - showing the user how much currency they have to pay
-    this.backgroundPanel_right = this.add.sprite(width, (height/2), 'bgPanelRight');
     // draggable currency targets in order to accept payment
     // calc offset horiz for each type dept on tot #
     for(let i = 0; i < this.num_coins_needed; i++) {
       const temp_coinUiTarget_sprite = new DraggableCurrencyTarget(this, dc_target_x, coin_original_y, 'coinUi_empty', currency_type.coin);
       const offset_step = temp_coinUiTarget_sprite.width + 10;
-      temp_coinUiTarget_sprite.setX(dc_target_x - offset_step * i);
+      temp_coinUiTarget_sprite.setX(dc_target_x + offset_step * i);
       this.draggable_currency_targets.push(temp_coinUiTarget_sprite);
     }
     for(let i = 0; i < this.num_gems_needed; i++) {
       const temp_gemUiTarget_sprite = new DraggableCurrencyTarget(this, dc_target_x, gem_original_y, 'gemUi_empty', currency_type.gem);
       const offset_step = temp_gemUiTarget_sprite.width + 10;
-      temp_gemUiTarget_sprite.setX(dc_target_x - offset_step * i);
+      temp_gemUiTarget_sprite.setX(dc_target_x + offset_step * i);
       this.draggable_currency_targets.push(temp_gemUiTarget_sprite);
     }
     for(let i = 0; i < this.num_stars_needed; i++) {
       const temp_starUiTarget_sprite = new DraggableCurrencyTarget(this, dc_target_x, star_original_y, 'starUi_empty', currency_type.star);
       const offset_step = temp_starUiTarget_sprite.width + 10;
-      temp_starUiTarget_sprite.setX(dc_target_x - offset_step * i);
+      temp_starUiTarget_sprite.setX(dc_target_x + offset_step * i);
       this.draggable_currency_targets.push(temp_starUiTarget_sprite);
     }
     // draggable currencies in order to pay
@@ -471,20 +477,20 @@ export class ObstacleFixMenu extends Phaser.Scene {
     this.num_coins_str = `${this.num_coins}`;
     this.num_gems_str = `${this.num_gems}`;
     this.num_stars_str = `${this.num_stars}`;
-    const currency_text_x = dc_original_x - 35;
-    this.num_coins_text = this.add.text(currency_text_x, coin_original_y, this.num_coins_str, {
+    const currency_text_x = dc_original_x - 45;
+    this.num_coins_text = this.add.text(currency_text_x, coinDraggable_original_y, this.num_coins_str, {
       fontSize: textConfig.mainFontSize,
       color: textConfig.mainFillColor,
       align: 'right',
     }).setOrigin(0.5); // set origin makes it so we can center the text easily
     this.num_coins_text.setScrollFactor(0);
-    this.num_gems_text = this.add.text(currency_text_x, gem_original_y, this.num_gems_str, {
+    this.num_gems_text = this.add.text(currency_text_x, gemDraggable_original_y, this.num_gems_str, {
       fontSize: textConfig.mainFontSize,
       color: textConfig.mainFillColor,
       align: 'right',
     }).setOrigin(0.5); // set origin makes it so we can center the text easily
     this.num_gems_text.setScrollFactor(0);
-    this.num_stars_text = this.add.text(currency_text_x, star_original_y, this.num_gems_str, {
+    this.num_stars_text = this.add.text(currency_text_x, starDraggable_original_y, this.num_gems_str, {
       fontSize: textConfig.mainFontSize,
       color: textConfig.mainFillColor,
       align: 'right',
@@ -495,9 +501,9 @@ export class ObstacleFixMenu extends Phaser.Scene {
     this.updateCurrency();
 
     // currency conversion modules -- so they can actually use and learn fractions
-    const temp_gem_to_coin = new DraggableCurrencyConverter(this, dc_original_x, gemToCoinConverter_original_y, currency_type.gem, currency_type.coin, this.conversion_values.valGems);
+    const temp_gem_to_coin = new DraggableCurrencyConverter(this, dcm_original_x, gemToCoinConverter_original_y, currency_type.gem, currency_type.coin, this.conversion_values.valGems);
     this.draggable_currency_converters.push(temp_gem_to_coin);
-    const temp_star_to_coin = new DraggableCurrencyConverter(this, dc_original_x, starToCoinConverter_original_y, currency_type.star, currency_type.coin, this.conversion_values.valStars);
+    const temp_star_to_coin = new DraggableCurrencyConverter(this, dcm_original_x, starToCoinConverter_original_y, currency_type.star, currency_type.coin, this.conversion_values.valStars);
     this.draggable_currency_converters.push(temp_star_to_coin);
     // set the draggability of the user's currencies
     // https://photonstorm.github.io/phaser3-docs/Phaser.Input.Events.html#
@@ -511,6 +517,7 @@ export class ObstacleFixMenu extends Phaser.Scene {
         dcc.on('drop', dcc.dragDrop, dcc);
       // }
     }, this);
+    this.submit_button.setDepth(100); // bring to front
   }
   
 

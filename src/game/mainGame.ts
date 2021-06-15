@@ -348,9 +348,10 @@ export class HomeScene extends Phaser.Scene {
                 numGems: this.numGems,
                 numStars: this.numStars,
                 // todo get this from the map and load it into the button
-                // or probs generate it randomly once and keep it true for the whole scene?
+                // or probs generate it randomly once and keep it true for the whole scene? - so can channge difficulty indept of level
+                // todo also need to figure out how to lay out mult currnecies when they are convertable
                 goalCoins: 3,
-                goalGems: 0, // 1,
+                goalGems: 1, // 1,
                 goalStars: 1, // 2,
                 buttonObj: bObj,
                 conversions: this.conversionValues

@@ -16,7 +16,7 @@ const groundDrag: number = 500;
 
 const backgroundColor: string = '#40739e';
 
-const assetBaseURL: string = './assets/';
+const assetBaseURL: string = './src/assets/';
 
 const assetObsUiURL: string = `${assetBaseURL}obstacle_ui/`;
 
@@ -132,20 +132,24 @@ function currency_type_to_str(ct: currency_type): string {
 }
 
 // obstacle fix constants
+const screenEdgePadding: number = 10;
 const dc_original_x: number = 70;
-const dc_target_x: number = width - 70;
-const gem_original_y: number = height / 2;
-const offset_y = 100;
+const dcm_original_x: number = dc_original_x + 50;
+const dc_target_x: number = width / 2 + 20;//- 70;
+const offset_y = 70 * 3;
+const gem_original_y: number = height / 2 + 6;
 const coin_original_y: number = gem_original_y - offset_y;
 const star_original_y: number = gem_original_y + offset_y;
 
-const gemDraggable_original_y: number = height / 2;
-const offsetDraggable_y = 100;
-const coinDraggable_original_y: number = gem_original_y - offsetDraggable_y;
-const starDraggable_original_y: number = gem_original_y + offsetDraggable_y;
+const offsetDraggable_y = 50;
+const coinDraggable_original_y: number = 120;
+const gemDraggable_original_y: number = coinDraggable_original_y + offsetDraggable_y;
+const starDraggable_original_y: number = coinDraggable_original_y + (offsetDraggable_y * 2);
 
-const gemToCoinConverter_original_y: number = gem_original_y - (offsetDraggable_y * 3);
-const starToCoinConverter_original_y: number = gem_original_y - (offsetDraggable_y * 4);
+const gemToCoinConverter_original_y: number = height - (screenEdgePadding * 1.5) - (offsetDraggable_y * 3.33);// coinDraggable_original_y + (offsetDraggable_y * 4);
+const starToCoinConverter_original_y: number = height - (screenEdgePadding * 1.5);// coinDraggable_original_y + (offsetDraggable_y * 6);
+
+
 
 export {
   gravity,
@@ -169,8 +173,10 @@ export {
   numCurrencies,
   currency_type,
   currency_type_to_str,
+  screenEdgePadding,
   dc_original_x,
   dc_target_x,
+  dcm_original_x,
   coin_original_y,
   gem_original_y,
   star_original_y,
@@ -179,4 +185,4 @@ export {
   starDraggable_original_y,
   gemToCoinConverter_original_y,
   starToCoinConverter_original_y
- };
+};
