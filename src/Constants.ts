@@ -2,6 +2,8 @@ import 'phaser';
 
 import ObstacleButton from './game/ObstacleButton';
 
+const gameName: string = 'Ratio Rocket Rescue';
+
 const gravity: number = 500;
 
 const width: number = 800; // game window width
@@ -16,6 +18,8 @@ const groundDrag: number = 500;
 
 const backgroundColor: string = '#40739e';
 
+const altBackgroundColor: string = '#fbc531';
+
 const assetBaseURL: string = './src/assets/';
 
 const assetObsUiURL: string = `${assetBaseURL}obstacle_ui/`;
@@ -24,16 +28,22 @@ const pauseKeyCode: number = Phaser.Input.Keyboard.KeyCodes.ESC.valueOf();
 
 const initScoreStr: string = `\t\t:0  \t\t:0  \t\t:0`;// `Coins: 0 Gems: 0 Stars: 0`;
 
+const numDifficulties: number = 3; // 3, 4, 5 grade
+
 // https://photonstorm.github.io/phaser3-docs/Phaser.Types.GameObjects.Text.html#.TextStyle
 const textConfig: {
   mainFillColor: string,
   secondaryFillColor: string,
   mainFontSize: string,
+  mainTitleFontSize: string,
+  secondaryTitleFontSize: string,
   fontFams: string,
 } = {
   mainFillColor: '#ffffff',
   secondaryFillColor: '#2f3640',
   mainFontSize: '32px',
+  mainTitleFontSize: '64px',
+  secondaryTitleFontSize: '24px',
   fontFams: '"Courier New", "Courier", "monospace"',
 };
 
@@ -57,14 +67,16 @@ const sceneNames: {
   tabletMenu: string,
   pause: string,
   win: string,
-  obFixMenu: string
+  obFixMenu: string,
+  start: string
 } = {
   mainGame: 'HomeScene',
   hudMenu: 'HudMenu',
   tabletMenu: 'TabletMenu',
   pause: 'PauseScene',
   win: 'LevelWin',
-  obFixMenu: 'ObstacleFixMenu'
+  obFixMenu: 'ObstacleFixMenu',
+  start: 'Start'
 };
 
 const eventNames: {
@@ -152,6 +164,7 @@ const starToCoinConverter_original_y: number = height - (screenEdgePadding * 1.5
 
 
 export {
+  gameName,
   gravity,
   width,
   height,
@@ -159,10 +172,12 @@ export {
   mapHeight,
   groundDrag,
   backgroundColor,
+  altBackgroundColor,
   assetBaseURL,
   assetObsUiURL,
   pauseKeyCode,
   initScoreStr,
+  numDifficulties,
   textConfig,
   partNames,
   sceneNames,
