@@ -106,9 +106,10 @@ export class HomeScene extends Phaser.Scene {
     this.isInObstacleMenu = false;
 
     // todo, set these randomly according to difficulty config
+    // todo, create double converters, converters that accept converters, and/or n star : m gem converters
     this.conversionValues = {
-      valGems: 2,
-      valStars: 3,
+      valGems: 2, // can also be: 3
+      valStars: 3, // can also be: 4
     };
   }
   public preload(): void {

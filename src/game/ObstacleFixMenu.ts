@@ -277,8 +277,8 @@ class DraggableCurrencyConverter extends Phaser.GameObjects.Sprite {
 export class ObstacleFixMenu extends Phaser.Scene {
 
   private pauseKey: Phaser.Input.Keyboard.Key;
-  private filler_text: Phaser.GameObjects.Text;
-  private filler_text_string: string;
+  // private filler_text: Phaser.GameObjects.Text;
+  // private filler_text_string: string;
 
   private back_button: Phaser.GameObjects.Sprite;
   private submit_button: Phaser.GameObjects.Sprite;
@@ -372,29 +372,32 @@ export class ObstacleFixMenu extends Phaser.Scene {
     this.load.image('gemUi_zero', 'gemUi_zero.png');
     this.load.image('starUi_zero', 'starUi_zero.png');
     // converter module assets
+    // 1 gem = 2 coin
     this.load.image('gem_2coin_00', 'gem_2coin_00.png');
     this.load.image('gem_2coin_10', 'gem_2coin_10.png');
     this.load.image('gem_2coin_11', 'gem_2coin_11.png');
+    // 1 gem = 3 coin
+    this.load.image('gem_3coin_000', 'gem_3coin_000.png');
+    this.load.image('gem_3coin_100', 'gem_3coin_100.png');
+    this.load.image('gem_3coin_110', 'gem_3coin_110.png');
+    this.load.image('gem_3coin_111', 'gem_3coin_111.png');
+    // 1 star = 3 coin
     this.load.image('star_3coin_000', 'star_3coin_000.png');
     this.load.image('star_3coin_100', 'star_3coin_100.png');
     this.load.image('star_3coin_110', 'star_3coin_110.png');
     this.load.image('star_3coin_111', 'star_3coin_111.png');
+    // 1 star = 4 coin
+    this.load.image('star_4coin_0000', 'star_4coin_0000.png');
+    this.load.image('star_4coin_1000', 'star_4coin_1000.png');
+    this.load.image('star_4coin_1100', 'star_4coin_1100.png');
+    this.load.image('star_4coin_1110', 'star_4coin_1110.png');
+    this.load.image('star_4coin_1111', 'star_4coin_1111.png');
   }
 
   public create(): void {
     const closeMenuKeyCode: number = Phaser.Input.Keyboard.KeyCodes.E;
     this.pauseKey = this.input.keyboard.addKey(closeMenuKeyCode);
-    this.cameras.main.setBackgroundColor(); // set background of hud menu to transparent
-    // this.cameras.main.setZoom(0.5);
-    console.log("In obstacle fix screen");
-    this.filler_text_string = 'Obstacle Fixing Menu';
-    const textX = width / 2; 
-    const textY = height / 3;
-    this.filler_text = this.add.text(textX, textY, this.filler_text_string, {
-      fontSize: textConfig.mainFontSize,
-      color: textConfig.mainFillColor,
-    }).setOrigin(0.5); // set origin makes it so we can center the text easily
-    this.filler_text.setScrollFactor(0);
+    this.cameras.main.setBackgroundColor('rgba(0,0,0,0.5)'); // set background to be dark but transparent
     // left panel - showing the user how much currency they have
     this.backgroundPanel_left = this.add.sprite(0, (height/2) + 35, 'bgPanelLeft'); // new Phaser.GameObjects.Sprite(this, width-70, height-80, 'tablet_menu_background');
     // right panel - showing the user how much currency they have to pay
@@ -509,13 +512,10 @@ export class ObstacleFixMenu extends Phaser.Scene {
     // https://photonstorm.github.io/phaser3-docs/Phaser.Input.Events.html#
     this.input.setDraggable(this.draggable_currency_converters);
     this.draggable_currency_converters.forEach((dcc) => {
-      // if (dc != null) {
-        // this.input.setDraggable(dc);
         dcc.on('dragstart', dcc.startDrag, dcc);
         dcc.on('dragend', dcc.stopDrag, dcc);
         dcc.on('drag', dcc.doDrag, dcc);
         dcc.on('drop', dcc.dragDrop, dcc);
-      // }
     }, this);
     this.submit_button.setDepth(100); // bring to front
   }
@@ -546,6 +546,7 @@ export class ObstacleFixMenu extends Phaser.Scene {
     eventsCenter.emit(eventNames.closeObFixMenu, { success: false, }); // enable the user to move the player again
   }
 
+  // todo, set hover outlines for buttons, low priority
   private onSubmitButtonHoverEnter(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData): void {
     // this.back_button.setTexture('tablet_button_hover');
   }
