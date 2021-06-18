@@ -182,6 +182,7 @@ export class HomeScene extends Phaser.Scene {
 
   public create(): void {
     eventsCenter.on(eventNames.closeObFixMenu, this.closeObFixMenu, this);
+    eventsCenter.on(eventNames.pauseGame, this.pauseGame, this);
     const hudConfig: HudMenuConfig = {
       containsStars: this.containsStars
     };
@@ -508,16 +509,20 @@ export class HomeScene extends Phaser.Scene {
 
   }
 
+  public pauseGame() {
+    if( !(this.scene.isPaused()) ) {
+      this.scene.switch(sceneNames.pause);
+      this.scene.bringToTop(sceneNames.pause);
+    }
+  }
+
   public update(time: number): void {
     if (!this.isInObstacleMenu) {
       this.renderPlayer();
     }
     // detect if the player wants to pause the game
     if (Phaser.Input.Keyboard.JustDown(this.pauseKey)) {
-      if( !(this.scene.isPaused()) ) {
-        this.scene.switch(sceneNames.pause);
-        this.scene.bringToTop(sceneNames.pause);
-      }
+      this.pauseGame();
     }
     // todo this is broken, low priority
     // this.goalObjs.forEach(g => {

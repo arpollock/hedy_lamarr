@@ -85,12 +85,14 @@ const eventNames: {
   updateScoreText: string,
   setConversionValues: string,
   closeObFixMenu: string,
-  updateCurrency: string
+  updateCurrency: string,
+  pauseGame: string
 } = {
   updateScoreText: 'updateScoreText',
   setConversionValues: 'setConversionValues',
   closeObFixMenu: 'closeObsFixMenu',
   updateCurrency: 'updateCurrency',
+  pauseGame: 'pause'
 };
 
 // describes the currency conversion values, in terms of how many coins they're worth

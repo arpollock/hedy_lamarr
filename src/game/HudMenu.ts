@@ -20,6 +20,8 @@ export class HudMenu extends Phaser.Scene {
   private tablet_button: Phaser.GameObjects.Sprite;
   private tablet_menu_open: boolean;
 
+  private pause_button: Phaser.GameObjects.Sprite;
+
   private containsStars: boolean;
   // private tablet_menu: TabletMenu;
 
@@ -44,6 +46,7 @@ export class HudMenu extends Phaser.Scene {
     this.load.image('tablet_button', 'tablet.png');
     this.load.image('tablet_button_hover', 'tablet_hover.png');
     this.load.image('hud_menu_background', 'menuPanel_tab.png');
+    this.load.image('pause_button', 'pause.png');
     this.load.image('coinHud', 'coin.png');
     this.load.image('gemHud', 'gem.png');
     this.load.image('starHud', 'star.png');
@@ -91,6 +94,13 @@ export class HudMenu extends Phaser.Scene {
     this.tablet_button.on('pointerout', this.onTabletButtonHoverExit, this);
     this.tablet_button.on('pointerdown', this.toggleTabletMenu, this);
     this.input.on('pointerdown', this.anyClickDetected, this); // detect a click outside of the buttons
+    this.pause_button = this.add.sprite(10, 10,'pause_button').setOrigin(0);
+    this.pause_button.setInteractive({
+      useHandCursor: true
+    });
+    this.pause_button.on('pointerover', this.onPauseButtonHoverEnter, this);
+    this.pause_button.on('pointerout', this.onPauseButtonHoverExit, this);
+    this.pause_button.on('pointerdown', this.pauseGame, this);
   }
 
   public update(time: number): void {
@@ -137,6 +147,14 @@ export class HudMenu extends Phaser.Scene {
   private closeTabletMenu() {
     this.tablet_menu_open = false;
     this.scene.sleep(sceneNames.tabletMenu);
+  }
+
+  private onPauseButtonHoverEnter(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData) { }
+
+  private onPauseButtonHoverExit(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData) { }
+
+  private pauseGame() {
+    eventsCenter.emit(eventNames.pauseGame);
   }
 
   private onSleep(): void {
