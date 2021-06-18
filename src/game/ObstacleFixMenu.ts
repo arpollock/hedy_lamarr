@@ -7,7 +7,7 @@ import {
   width,
   height,
   textConfig,
-  conversionConfig,
+  ConversionConfig,
   ObFixConfig,
   eventNames,
   numCurrencies,
@@ -288,7 +288,7 @@ export class ObstacleFixMenu extends Phaser.Scene {
   private backgroundPanel_right: Phaser.GameObjects.Sprite;
   private button_state_sprite: Phaser.GameObjects.Sprite;
 
-  private conversion_values: conversionConfig;
+  private conversion_values: ConversionConfig;
 
   private draggable_currencies: DraggableCurrency[];
   private draggable_currency_converters: DraggableCurrencyConverter[];

@@ -8,9 +8,11 @@ import eventsCenter from './EventsCenter';
 import {
   gravity,
   groundDrag,
+  MainGameConfig,
+  HudMenuConfig,
   PlayerConfig,
   ObFixConfig,
-  conversionConfig,
+  ConversionConfig,
   width,
   height,
   mapHeight,
@@ -21,7 +23,8 @@ import {
   eventNames,
   mapWidth,
   pauseKeyCode,
-  initScoreStr
+  initScoreStr,
+  initScoreStr_noStars
 } from './../Constants';
 import { ObstacleFixMenu } from './ObstacleFixMenu';
 
@@ -43,6 +46,9 @@ export class HomeScene extends Phaser.Scene {
   private numCoins: number;
   private numGems: number;
   private numStars: number;
+
+  private gradeLevel: number;
+  private containsStars: boolean;
 
   // private text;
   private scoreString: string;
@@ -67,14 +73,24 @@ export class HomeScene extends Phaser.Scene {
 
   private isInObstacleMenu: boolean;
 
-  private conversionValues: conversionConfig;
+  private conversionValues: ConversionConfig;
 
   constructor() {
     super({
       key: sceneNames.mainGame
     });
   }
-  public init(params): void {
+  public init(data: MainGameConfig): void {
+
+    console.log(data);
+
+    this.gradeLevel = data.grade_level;
+    this.containsStars = this.gradeLevel > 3 ? true : false;
+
+    this.numCoins = 0;
+    this.numGems = 0;
+    this.numStars = 0;
+    this.scoreString = this.containsStars ? initScoreStr : initScoreStr_noStars;
 
     this.zoomFactor = 0.5;
 
@@ -98,18 +114,42 @@ export class HomeScene extends Phaser.Scene {
       walkFrameRate: 15,
     };
 
-    this.numCoins = 0;
-    this.numGems = 0;
-    this.numStars = 0;
-    this.scoreString = initScoreStr;
-
     this.isInObstacleMenu = false;
 
     // todo, set these randomly according to difficulty config
     // todo, create double converters, converters that accept converters, and/or n star : m gem converters
+    const possibleGemValues: number[] = [];
+    const possibleStarValues: number[] = [];
+    switch(this.gradeLevel) {
+      // 4th and 5th grade worry about coins, gems, and stars
+      // 5th does everything 4th and 3rd can do, 4th can do anything 3rd, etc. 
+      // might change ^ if teachers feel is appropriate,
+      // probs would have to change w/ ML update to how game updates as you play
+
+      // currently have the graphics to support min conversions for:
+      // Gems : Coins ==> 2, 3
+      // Gems : Stars ==> 3, 4
+      case 5:
+        possibleStarValues.push(3);
+      case 4: 
+        possibleStarValues.push(4);
+      case 3: // 3rd grade only worries about coins and gems
+        possibleGemValues.push(2);
+        possibleGemValues.push(3);
+        break;
+      default:
+          break;
+    }
+    if (possibleStarValues.length === 0) {
+      possibleStarValues.push(0);
+    }
+    // this.conversionValues = {
+    //   valGems: 2, // can also be: 3
+    //   valStars: 3, // can also be: 4
+    // };
     this.conversionValues = {
-      valGems: 2, // can also be: 3
-      valStars: 3, // can also be: 4
+      valGems: possibleGemValues[Math.floor(Math.random() * possibleGemValues.length)], // can also be: 3
+      valStars: possibleStarValues[Math.floor(Math.random() * possibleStarValues.length)], // can also be: 4
     };
   }
   public preload(): void {
@@ -142,7 +182,10 @@ export class HomeScene extends Phaser.Scene {
 
   public create(): void {
     eventsCenter.on(eventNames.closeObFixMenu, this.closeObFixMenu, this);
-    this.scene.launch(sceneNames.hudMenu);
+    const hudConfig: HudMenuConfig = {
+      containsStars: this.containsStars
+    };
+    this.scene.launch(sceneNames.hudMenu, hudConfig);
     this.scene.launch(sceneNames.tabletMenu, this.conversionValues);
     this.scene.sleep(sceneNames.tabletMenu);
     this.scene.bringToTop(sceneNames.hudMenu);
@@ -162,9 +205,9 @@ export class HomeScene extends Phaser.Scene {
     // add coins as tiles
     this.coinLayer = this.map.createLayer('Coins', coinTiles, 0, 0);
     // star image used as tileset
-    const starTiles = this.map.addTilesetImage('star');
+    const starTiles = this.containsStars ? this.map.addTilesetImage('star') : null;
     // // add stars as tiles
-    this.starLayer = this.map.createLayer('Stars', starTiles, 0, 0);
+    this.starLayer = this.containsStars ? this.map.createLayer('Stars', starTiles, 0, 0) : null;
     // // star image used as tileset
     const gemTiles = this.map.addTilesetImage('gem');
     // // add stars as tiles
@@ -430,11 +473,12 @@ export class HomeScene extends Phaser.Scene {
     this.gemLayer.setTileIndexCallback(18, this.collectGem, this); // the gem id is 17
     // when the player overlaps with a tile with index 18, collectGem will be called    
     this.physics.add.overlap(this.player, this.gemLayer);
-
     // collision with the star tiles
-    this.starLayer.setTileIndexCallback(19, this.collectStar, this); // the gem id is 19
-    // when the player overlaps with a tile with index 19, collectStar will be called    
-    this.physics.add.overlap(this.player, this.starLayer);
+    if (this.containsStars) {
+      this.starLayer.setTileIndexCallback(19, this.collectStar, this); // the gem id is 19
+      // when the player overlaps with a tile with index 19, collectStar will be called    
+      this.physics.add.overlap(this.player, this.starLayer);
+    }
 
     // animate the player walking
     this.anims.create({
@@ -608,7 +652,10 @@ export class HomeScene extends Phaser.Scene {
   private updateScoreText() {
     // this.scoreString = `Coins: ${this.numCoins} Gems: ${this.numGems} Stars: ${this.numStars}`;
     // todo: fix this bc right now spacing gets messed up if # of a given currency is > 1 digit
-    this.scoreString = `\t\t:${this.numCoins}  \t\t:${this.numGems}  \t\t:${this.numStars}`;
+    this.scoreString = `\t\t:${this.numCoins}  \t\t:${this.numGems}`;
+    if (this.containsStars) {
+      this.scoreString = this.scoreString + `  \t\t:${this.numStars}`;
+    }
     eventsCenter.emit(eventNames.updateScoreText, this.scoreString);
   }
 

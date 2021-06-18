@@ -28,6 +28,8 @@ const pauseKeyCode: number = Phaser.Input.Keyboard.KeyCodes.ESC.valueOf();
 
 const initScoreStr: string = `\t\t:0  \t\t:0  \t\t:0`;// `Coins: 0 Gems: 0 Stars: 0`;
 
+const initScoreStr_noStars: string = `\t\t:0  \t\t:0`;// `Coins: 0 Gems: 0`;
+
 const numDifficulties: number = 3; // 3, 4, 5 grade
 
 // https://photonstorm.github.io/phaser3-docs/Phaser.Types.GameObjects.Text.html#.TextStyle
@@ -92,10 +94,18 @@ const eventNames: {
 };
 
 // describes the currency conversion values, in terms of how many coins they're worth
-interface conversionConfig { 
+interface MainGameConfig {
+  grade_level: number
+}
+
+interface ConversionConfig { 
   valGems: number,
   valStars: number,  
 };
+
+interface HudMenuConfig {
+  containsStars: boolean
+}
 
 interface PlayerConfig {
   x: number,
@@ -117,7 +127,7 @@ interface ObFixConfig {
   goalGems: number,
   goalStars: number,
   buttonObj: ObstacleButton,
-  conversions: conversionConfig
+  conversions: ConversionConfig
 };
 
 interface numCurrencies {
@@ -177,12 +187,15 @@ export {
   assetObsUiURL,
   pauseKeyCode,
   initScoreStr,
+  initScoreStr_noStars,
   numDifficulties,
   textConfig,
   partNames,
   sceneNames,
   eventNames,
-  conversionConfig,
+  MainGameConfig,
+  ConversionConfig,
+  HudMenuConfig,
   PlayerConfig,
   ObFixConfig,
   numCurrencies,

@@ -4,10 +4,12 @@ import {
   sceneNames,
   width,
   height,
-  initScoreStr,
   textConfig,
   assetBaseURL,
-  eventNames
+  eventNames,
+  HudMenuConfig,
+  initScoreStr,
+  initScoreStr_noStars,
 } from './../Constants';
 
 export class HudMenu extends Phaser.Scene {
@@ -17,19 +19,23 @@ export class HudMenu extends Phaser.Scene {
 
   private tablet_button: Phaser.GameObjects.Sprite;
   private tablet_menu_open: boolean;
+
+  private containsStars: boolean;
   // private tablet_menu: TabletMenu;
 
   constructor() {
     super({
       key: sceneNames.hudMenu
     });
-    this.scoreString = initScoreStr;
+    // this.scoreString = initScoreStr;
     this.tablet_menu_open = false;
     // this.tablet_menu = null;
   }
 
-  public init(params): void {
+  public init(data: HudMenuConfig): void {
     eventsCenter.on(eventNames.updateScoreText, this.updateScoreText, this);
+    this.containsStars = data.containsStars;
+    this.scoreString = this.containsStars ? initScoreStr : initScoreStr_noStars;
   }
 
   public preload(): void {
@@ -55,7 +61,9 @@ export class HudMenu extends Phaser.Scene {
     const hudPelIconXOffset: number = 115;
     const coinSprite: Phaser.GameObjects.Sprite = this.add.sprite(hudPanelIconX, hudPanelIconY, 'coinHud');
     const gemSprite: Phaser.GameObjects.Sprite = this.add.sprite(hudPanelIconX + hudPelIconXOffset, hudPanelIconY, 'gemHud');
-    const starSprite: Phaser.GameObjects.Sprite = this.add.sprite(hudPanelIconX + hudPelIconXOffset*2, hudPanelIconY, 'starHud');
+    if (this.containsStars) {
+      const starSprite: Phaser.GameObjects.Sprite = this.add.sprite(hudPanelIconX + hudPelIconXOffset*2, hudPanelIconY, 'starHud');
+    }
     hudPanelBG.setOrigin(0,0);
     // text to show score
     const textX = hudPanelX + 25;

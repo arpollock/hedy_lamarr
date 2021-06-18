@@ -7,8 +7,25 @@ import {
   width,
   height,
   textConfig,
-  numDifficulties
+  numDifficulties,
+  MainGameConfig
 } from './../Constants';
+
+class DifficultyLevelButton extends Phaser.GameObjects.Sprite {
+  private difficulty: number;
+
+  constructor(scene: Phaser.Scene, x: number, y: number, texture: string, d: number) {
+		super(scene, x, y, texture);
+    this.difficulty = d;
+    this.setOrigin(0.5);
+    scene.add.existing(this);
+	}
+
+  public get_difficulty() {
+    return this.difficulty;
+  }
+
+}
 
 export class StartScene extends Phaser.Scene {
 
@@ -17,7 +34,7 @@ export class StartScene extends Phaser.Scene {
   private difficultyText: Phaser.GameObjects.Text;
   private difficultyTextString: string;
   private startGameButton: Phaser.GameObjects.Sprite;
-  private difficultyLevelButtons: Phaser.GameObjects.Sprite[];
+  private difficultyLevelButtons: DifficultyLevelButton[];
   private activeGradeLevel: number;
 
   constructor() {
@@ -42,6 +59,9 @@ export class StartScene extends Phaser.Scene {
     this.load.image('difficulty3_hover', 'difficulty3_hover.png');
     this.load.image('difficulty4_hover', 'difficulty4_hover.png');
     this.load.image('difficulty5_hover', 'difficulty5_hover.png');
+    this.load.image('difficulty3_active', 'difficulty3_active.png');
+    this.load.image('difficulty4_active', 'difficulty4_active.png');
+    this.load.image('difficulty5_active', 'difficulty5_active.png');
   }
 
   public create(): void {
@@ -68,24 +88,33 @@ export class StartScene extends Phaser.Scene {
     for(let i = 0; i < numDifficulties; i++) {
       const horizontalOffset: number = 200;
       const currGrade: number = i + 3;// i = 0 ==> grade 3
-      const tempButtonSpr = this.add.sprite((centerX - horizontalOffset + (i * horizontalOffset)), 0,`difficulty${currGrade}`).setOrigin(0.5);
+      const tempButtonSpr = new DifficultyLevelButton(this, (centerX - horizontalOffset + (i * horizontalOffset)), 0, `difficulty${currGrade}`,currGrade);//this.add.sprite().setOrigin(0.5);
       tempButtonSpr.setScale(0.33);
       tempButtonSpr.setInteractive({
         useHandCursor: true
       });
       const difficultyButtonY: number = difficultyTextY + (tempButtonSpr.displayHeight / 2) + padding;
       tempButtonSpr.setY(difficultyButtonY)
+      if (this.activeGradeLevel === currGrade) {
+        tempButtonSpr.setTexture(`difficulty${currGrade}_active`);
+      }
       tempButtonSpr.on('pointerover', (pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData) => {
         tempButtonSpr.setTexture(`difficulty${currGrade}_hover`);
       }, tempButtonSpr);
-      tempButtonSpr.on('pointerout', (pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData) => {
-        tempButtonSpr.setTexture(`difficulty${currGrade}`);
-      }, tempButtonSpr);
+      tempButtonSpr.on('pointerout', (pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData, d:number=this.activeGradeLevel) => {
+        if (tempButtonSpr.get_difficulty() != d) {
+          tempButtonSpr.setTexture(`difficulty${currGrade}`);
+        } else {
+          tempButtonSpr.setTexture(`difficulty${currGrade}_active`);
+        }
+      }, this);
       tempButtonSpr.on('pointerdown', () => {
         this.activeGradeLevel = currGrade;
         this.difficultyLevelButtons.forEach( (btn) => {
-          if (btn.texture.key.charAt(btn.texture.key.length - 1).toString() === 'r') { // todo, this is a lil janky
-            btn.setTexture(`${btn.texture.key.substring(0, 11)}`);
+          if (this.activeGradeLevel == btn.get_difficulty()) {
+            btn.setTexture(`difficulty${currGrade}_active`);
+          } else {
+            btn.setTexture(`difficulty${btn.get_difficulty()}`);
           }
         });
       }, this);
@@ -104,31 +133,17 @@ export class StartScene extends Phaser.Scene {
   }
 
   public update(time: number): void {
-    this.difficultyLevelButtons.forEach( (btn) => {
-      if (btn.texture.key.charAt(btn.texture.key.length - 1).toString() === this.activeGradeLevel.toString()) { // todo, only works for single digit difficulty choices
-        btn.setTexture(`${btn.texture.key}_hover`);
-      }
-    });
+
   }
 
-  private onStartGameButtonHoverEnter(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData): void {
-    // this.back_button.setTexture('tablet_button_hover');
-  }
+  private onStartGameButtonHoverEnter(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData): void { }
 
-  private onStartGameButtonHoverExit(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData): void {
-    // this.back_button.setTexture('tablet_button');
-  }
+  private onStartGameButtonHoverExit(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData): void { }
 
   private startGame(): void {
-    this.scene.start(sceneNames.mainGame);
+    const mainGameData: MainGameConfig = {
+      grade_level: this.activeGradeLevel,
+    };
+    this.scene.start(sceneNames.mainGame, mainGameData);
   }
-
-  private onDifficultyButtonHoverEnter(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData): void {
-    // this.back_button.setTexture('tablet_button_hover');
-  }
-
-  private onDifficultyButtonHoverExit(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData): void {
-    // this.back_button.setTexture('tablet_button');
-  }
-
 };

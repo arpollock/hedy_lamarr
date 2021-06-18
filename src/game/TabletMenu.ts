@@ -6,7 +6,7 @@ import {
   width,
   height,
   textConfig,
-  conversionConfig,
+  ConversionConfig,
   eventNames
 } from './../Constants';
 import eventsCenter from './EventsCenter';
@@ -16,7 +16,7 @@ export class TabletMenu extends Phaser.Scene { // Phaser.GameObjects.Sprite {
   private backgroundPanel: Phaser.GameObjects.Sprite;
   private conversionText: Phaser.GameObjects.Text;
   private conversionString: string;
-  private conversionValues: conversionConfig;
+  private conversionValues: ConversionConfig;
 
    constructor() {
     super({
@@ -27,7 +27,7 @@ export class TabletMenu extends Phaser.Scene { // Phaser.GameObjects.Sprite {
     this.conversionString = `Conversion Notes:\nX coins = X gems\nX coins = X stars\nX gems = X stars`;
   }
 
-  public init(params: conversionConfig): void {
+  public init(params: ConversionConfig): void {
     this.conversionValues = params;
   }
 
@@ -59,18 +59,33 @@ export class TabletMenu extends Phaser.Scene { // Phaser.GameObjects.Sprite {
     }
   }
 
+  private findLCM(a: number, b: number): number {    //assume a is greater than b
+    let lcm = a;
+    let i = 2;
+    while(lcm % b != 0) {    //try to find number which is multiple of b
+       lcm = a * i;
+       i++;
+    }
+    return lcm;    //the lcm of a and b
+ }
+
+ private findConversionValue(currentCoinValue: number, lcm: number): number {
+   return Math.floor(lcm / currentCoinValue);
+ }
+
   public setConversionText(): void {
     console.log('Setting that conversion text!');
     console.log(this.conversionValues);
-    const cToS: string = this.conversionValues.valStars.toString();
-    const sToC: string = '1';
-    const cToG: string = this.conversionValues.valGems.toString();
-    const gToC: string = '1';
-    // todo make this so sToG is a whole number for easier levels
-    const numGsPerS: number = this.conversionValues.valGems
-    const gToS: string = `${numGsPerS}`; // (conversionValues.valGems / conversionValues.valStars).toFixed(2).toString();
-    const sToG: string = (numGsPerS * (this.conversionValues.valStars / this.conversionValues.valGems)).toString();
-    this.conversionString = `Conversion Notes:\n${cToG} coins = ${gToC} gem\n${cToS} coins = ${sToC} star\n${gToS} gems = ${sToG} stars`;
+    const cToS: string = this.conversionValues.valStars > 0 ? `${this.conversionValues.valStars.toString()} coins = ` : '';
+    const sToC: string = this.conversionValues.valStars > 0 ? '1 star' : '';
+    const cToG: string = `${this.conversionValues.valGems.toString()} coins = `;
+    const gToC: string = '1 gem';
+    const gToS: string = this.conversionValues.valStars > 0 ? `${this.findConversionValue(this.conversionValues.valGems, this.findLCM(this.conversionValues.valGems, this.conversionValues.valStars))} gems = ` : '';
+    const sToG: string = this.conversionValues.valStars > 0 ? `${this.findConversionValue(this.conversionValues.valStars, this.findLCM(this.conversionValues.valStars, this.conversionValues.valGems))} stars` : '';
+    this.conversionString = `Conversion Notes:\n${cToG}${gToC}\n${cToS}${sToC}\n${gToS}${sToG}`;
+    if (sToG === '1') {
+      this.conversionString = this.conversionString.substring(0, this.conversionString.length - 1);
+    }
     this.conversionText.setText(this.conversionString);
   }
 }
