@@ -295,7 +295,7 @@ export class HomeScene extends Phaser.Scene {
     const buttons = this.map.filterObjects("Buttons", p => p.name == "button");
     buttons.forEach(b => {
       const butt = new ObstacleButton(this, b.x, b.y, 'buttonOff');
-      const overlay = new ObstacleOverlay(this, b.x, b.y, 'obstacleFix');
+      const overlay = new ObstacleOverlay(this, b.x, b.y, 'obstacleFix', this.containsStars, this.gradeLevel);
       butt.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
       overlay.setOrigin(0, 1);
       const obstacleNumIdx = this.tiledObjectHasProperty('obstacleNum', b)
@@ -387,6 +387,7 @@ export class HomeScene extends Phaser.Scene {
                 this.player.anims.play('idle', true);
               }
               this.scene.sleep(sceneNames.hudMenu);
+              // todo, fixypoo
               const obFixData: ObFixConfig = {
                 numCoins: this.numCoins,
                 numGems: this.numGems,
@@ -394,11 +395,12 @@ export class HomeScene extends Phaser.Scene {
                 // todo get this from the map and load it into the button
                 // or probs generate it randomly once and keep it true for the whole scene? - so can channge difficulty indept of level
                 // todo also need to figure out how to lay out mult currnecies when they are convertable
-                goalCoins: 3,
-                goalGems: 1, // 1,
-                goalStars: 1, // 2,
+                goalCoins: overlayObj.getCoinsNeeded(), // 3
+                goalGems: overlayObj.getGemsNeeded(), // 1,
+                goalStars: overlayObj.getStarsNeeded(), // 2,
                 buttonObj: bObj,
-                conversions: this.conversionValues
+                conversions: this.conversionValues,
+                containsStars: this.containsStars
               };
               // this.scene.pause(sceneNames.mainGame);
               this.scene.add(sceneNames.obFixMenu, ObstacleFixMenu, true, obFixData);

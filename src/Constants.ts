@@ -127,7 +127,8 @@ interface ObFixConfig {
   goalGems: number,
   goalStars: number,
   buttonObj: ObstacleButton,
-  conversions: ConversionConfig
+  conversions: ConversionConfig,
+  containsStars: boolean
 };
 
 interface numCurrencies {

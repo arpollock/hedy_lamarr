@@ -308,6 +308,8 @@ export class ObstacleFixMenu extends Phaser.Scene {
   private num_stars_str: string;
   private num_stars_text: Phaser.GameObjects.Text;
 
+  private containsStars: boolean;
+
   private ob: ObstacleButton;
 
   constructor() {
@@ -348,6 +350,8 @@ export class ObstacleFixMenu extends Phaser.Scene {
     this.ob = data.buttonObj;
 
     this.conversion_values = data.conversions;
+
+    this.containsStars = data.containsStars;
   }
 
   public preload(): void {
@@ -447,11 +451,13 @@ export class ObstacleFixMenu extends Phaser.Scene {
       temp_gemUiTarget_sprite.setX(dc_target_x + offset_step * i);
       this.draggable_currency_targets.push(temp_gemUiTarget_sprite);
     }
-    for(let i = 0; i < this.num_stars_needed; i++) {
-      const temp_starUiTarget_sprite = new DraggableCurrencyTarget(this, dc_target_x, star_original_y, 'starUi_empty', currency_type.star);
-      const offset_step = temp_starUiTarget_sprite.width + 10;
-      temp_starUiTarget_sprite.setX(dc_target_x + offset_step * i);
-      this.draggable_currency_targets.push(temp_starUiTarget_sprite);
+    if (this.containsStars) {
+      for(let i = 0; i < this.num_stars_needed; i++) {
+        const temp_starUiTarget_sprite = new DraggableCurrencyTarget(this, dc_target_x, star_original_y, 'starUi_empty', currency_type.star);
+        const offset_step = temp_starUiTarget_sprite.width + 10;
+        temp_starUiTarget_sprite.setX(dc_target_x + offset_step * i);
+        this.draggable_currency_targets.push(temp_starUiTarget_sprite);
+      }
     }
     // draggable currencies in order to pay
     const coinUi_zero_sprite = this.add.sprite(dc_original_x, coinDraggable_original_y, 'coinUi_zero');
@@ -460,9 +466,11 @@ export class ObstacleFixMenu extends Phaser.Scene {
     const gemUi_zero_sprite = this.add.sprite(dc_original_x, gemDraggable_original_y, 'gemUi_zero');
     const temp_gemUi_sprite = new DraggableCurrency(this, dc_original_x, gemDraggable_original_y, 'gemUi', currency_type.gem, this.num_gems);
     this.draggable_currencies.push(temp_gemUi_sprite);
-    const starUi_zero_sprite = this.add.sprite(dc_original_x, starDraggable_original_y, 'starUi_zero');
-    const temp_starUi_sprite = new DraggableCurrency(this, dc_original_x, starDraggable_original_y, 'starUi', currency_type.star, this.num_stars);
-    this.draggable_currencies.push(temp_starUi_sprite);
+    if (this.containsStars) {
+      const starUi_zero_sprite = this.add.sprite(dc_original_x, starDraggable_original_y, 'starUi_zero');
+      const temp_starUi_sprite = new DraggableCurrency(this, dc_original_x, starDraggable_original_y, 'starUi', currency_type.star, this.num_stars);
+      this.draggable_currencies.push(temp_starUi_sprite);
+    }
     // set the draggability of the user's currencies
     // https://photonstorm.github.io/phaser3-docs/Phaser.Input.Events.html#
     this.input.setDraggable(this.draggable_currencies);
@@ -479,7 +487,7 @@ export class ObstacleFixMenu extends Phaser.Scene {
     // text for showing the user how much they have of each currency
     this.num_coins_str = `${this.num_coins}`;
     this.num_gems_str = `${this.num_gems}`;
-    this.num_stars_str = `${this.num_stars}`;
+    this.num_stars_str = this.containsStars ? `${this.num_stars}` : '';
     const currency_text_x = dc_original_x - 45;
     this.num_coins_text = this.add.text(currency_text_x, coinDraggable_original_y, this.num_coins_str, {
       fontSize: textConfig.mainFontSize,
@@ -493,7 +501,7 @@ export class ObstacleFixMenu extends Phaser.Scene {
       align: 'right',
     }).setOrigin(0.5); // set origin makes it so we can center the text easily
     this.num_gems_text.setScrollFactor(0);
-    this.num_stars_text = this.add.text(currency_text_x, starDraggable_original_y, this.num_gems_str, {
+    this.num_stars_text = this.add.text(currency_text_x, starDraggable_original_y, this.num_stars_str, {
       fontSize: textConfig.mainFontSize,
       color: textConfig.mainFillColor,
       align: 'right',
@@ -506,8 +514,10 @@ export class ObstacleFixMenu extends Phaser.Scene {
     // currency conversion modules -- so they can actually use and learn fractions
     const temp_gem_to_coin = new DraggableCurrencyConverter(this, dcm_original_x, gemToCoinConverter_original_y, currency_type.gem, currency_type.coin, this.conversion_values.valGems);
     this.draggable_currency_converters.push(temp_gem_to_coin);
-    const temp_star_to_coin = new DraggableCurrencyConverter(this, dcm_original_x, starToCoinConverter_original_y, currency_type.star, currency_type.coin, this.conversion_values.valStars);
-    this.draggable_currency_converters.push(temp_star_to_coin);
+    if (this.containsStars) {
+      const temp_star_to_coin = new DraggableCurrencyConverter(this, dcm_original_x, starToCoinConverter_original_y, currency_type.star, currency_type.coin, this.conversion_values.valStars);
+      this.draggable_currency_converters.push(temp_star_to_coin);
+    }
     // set the draggability of the user's currencies
     // https://photonstorm.github.io/phaser3-docs/Phaser.Input.Events.html#
     this.input.setDraggable(this.draggable_currency_converters);
@@ -764,7 +774,7 @@ export class ObstacleFixMenu extends Phaser.Scene {
     }
     this.num_coins_str = `${this.num_coins}`;
     this.num_gems_str = `${this.num_gems}`;
-    this.num_stars_str = `${this.num_stars}`;
+    this.num_stars_str = this.containsStars ? `${this.num_stars}` : '';
     if (this.num_coins_text != null && this.num_gems_text != null && this.num_stars_text != null) {
       this.num_coins_text.setText(this.num_coins_str);
       this.num_gems_text.setText(this.num_gems_str);
