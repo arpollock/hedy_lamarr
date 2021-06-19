@@ -7,9 +7,9 @@ import {
   height,
   textConfig,
   ConversionConfig,
-  eventNames
+  // eventNames
 } from './../Constants';
-import eventsCenter from './EventsCenter';
+// import eventsCenter from './EventsCenter';
 
 export class TabletMenu extends Phaser.Scene { // Phaser.GameObjects.Sprite {
 
@@ -17,6 +17,9 @@ export class TabletMenu extends Phaser.Scene { // Phaser.GameObjects.Sprite {
   private conversionText: Phaser.GameObjects.Text;
   private conversionString: string;
   private conversionValues: ConversionConfig;
+  private containsStars: boolean;
+
+  private currencySprites: Phaser.GameObjects.Sprite[];
 
    constructor() {
     super({
@@ -25,6 +28,8 @@ export class TabletMenu extends Phaser.Scene { // Phaser.GameObjects.Sprite {
     this.backgroundPanel = null;
     this.conversionText = null;
     this.conversionString = `Conversion Notes:\nX coins = X gems\nX coins = X stars\nX gems = X stars`;
+    this.currencySprites = [];
+    this.containsStars = true;
   }
 
   public init(params: ConversionConfig): void {
@@ -37,6 +42,10 @@ export class TabletMenu extends Phaser.Scene { // Phaser.GameObjects.Sprite {
   }
 
   public create(): void {
+
+    if (this.conversionValues.valStars <= 0) {
+      this.containsStars = false;
+    }
     // eventsCenter.on(eventNames.setConversionValues, this.setConversionText, this);
     // text to show score
     const textX = width * 0.40;
@@ -50,6 +59,33 @@ export class TabletMenu extends Phaser.Scene { // Phaser.GameObjects.Sprite {
     this.backgroundPanel = this.add.sprite(width-70, height-80, 'tablet_menu_background'); // new Phaser.GameObjects.Sprite(this, width-70, height-80, 'tablet_menu_background');
     this.backgroundPanel.setOrigin(1,1);
     this.backgroundPanel.setDepth(0);
+
+    // create cute images for them to see the conversion values
+    const firstColX: number = textX + 45;
+    const secondColX: number = firstColX + 120;
+    const vertOffset: number = 68;
+    const starOffset: number = -4; // yeah I know this is janky
+
+    const firstRowY: number = textY + 50;
+    let currencySprite: Phaser.GameObjects.Sprite = this.add.sprite(firstColX, firstRowY, 'coinHud');
+    this.currencySprites.push(currencySprite);
+    currencySprite = this.add.sprite(secondColX, firstRowY, 'gemHud');
+    this.currencySprites.push(currencySprite);
+
+    if (this.containsStars) {
+      const secondRowY: number = firstRowY + vertOffset;
+      currencySprite = this.add.sprite(firstColX, secondRowY, 'coinHud');
+      this.currencySprites.push(currencySprite);
+      currencySprite = this.add.sprite(secondColX, secondRowY+starOffset, 'starHud');
+      this.currencySprites.push(currencySprite);
+
+      const thirdRowY: number = secondRowY + vertOffset;
+      currencySprite = this.add.sprite(firstColX, thirdRowY, 'gemHud');
+      this.currencySprites.push(currencySprite);
+      currencySprite = this.add.sprite(secondColX, thirdRowY+starOffset, 'starHud');
+      this.currencySprites.push(currencySprite);
+    }
+    // set the text to correspond to the pretty images above, about the conversion values
     this.setConversionText();
   }
 
@@ -76,16 +112,16 @@ export class TabletMenu extends Phaser.Scene { // Phaser.GameObjects.Sprite {
   public setConversionText(): void {
     console.log('Setting that conversion text!');
     console.log(this.conversionValues);
-    const cToS: string = this.conversionValues.valStars > 0 ? `${this.conversionValues.valStars.toString()} coins = ` : '';
-    const sToC: string = this.conversionValues.valStars > 0 ? '1 star' : '';
-    const cToG: string = `${this.conversionValues.valGems.toString()} coins = `;
-    const gToC: string = '1 gem';
-    const gToS: string = this.conversionValues.valStars > 0 ? `${this.findConversionValue(this.conversionValues.valGems, this.findLCM(this.conversionValues.valGems, this.conversionValues.valStars))} gems = ` : '';
-    const sToG: string = this.conversionValues.valStars > 0 ? `${this.findConversionValue(this.conversionValues.valStars, this.findLCM(this.conversionValues.valStars, this.conversionValues.valGems))} stars` : '';
-    this.conversionString = `Conversion Notes:\n${cToG}${gToC}\n${cToS}${sToC}\n${gToS}${sToG}`;
-    if (sToG === '1') {
-      this.conversionString = this.conversionString.substring(0, this.conversionString.length - 1);
-    }
+    const cToS: string = this.containsStars ? `${this.conversionValues.valStars.toString()} \t = ` : '';
+    const sToC: string = this.containsStars? '1 \t' : '';
+    const cToG: string = `${this.conversionValues.valGems.toString()} \t = `;
+    const gToC: string = '1 \t';
+    const gToS: string = this.containsStars ? `${this.findConversionValue(this.conversionValues.valGems, this.findLCM(this.conversionValues.valGems, this.conversionValues.valStars))} \t = ` : '';
+    const sToG: string = this.containsStars ? `${this.findConversionValue(this.conversionValues.valStars, this.findLCM(this.conversionValues.valStars, this.conversionValues.valGems))} \t` : '';
+    this.conversionString = `Conversion Notes:\n${cToG}${gToC}\n\n${cToS}${sToC}\n\n${gToS}${sToG}`;
+    // if (sToG === '1') {
+    //   this.conversionString = this.conversionString.substring(0, this.conversionString.length - 1);
+    // }
     this.conversionText.setText(this.conversionString);
   }
 }
