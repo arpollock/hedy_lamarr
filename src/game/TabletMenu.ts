@@ -52,7 +52,8 @@ export class TabletMenu extends Phaser.Scene { // Phaser.GameObjects.Sprite {
     const textY = height * 0.25;
     this.conversionText = this.add.text(textX, textY, this.conversionString, {
       fontSize: textConfig.mainFontSize,
-      color: textConfig.secondaryFillColor
+      color: textConfig.secondaryFillColor,
+      fontFamily: textConfig.fontFams,
     });
     this.conversionText.setDepth(1);
     // this.conversionText.setScrollFactor(0);
@@ -62,7 +63,7 @@ export class TabletMenu extends Phaser.Scene { // Phaser.GameObjects.Sprite {
 
     // create cute images for them to see the conversion values
     const firstColX: number = textX + 45;
-    const secondColX: number = firstColX + 120;
+    const secondColX: number = firstColX + 115;
     const vertOffset: number = 68;
     const starOffset: number = -4; // yeah I know this is janky
 
@@ -112,16 +113,14 @@ export class TabletMenu extends Phaser.Scene { // Phaser.GameObjects.Sprite {
   public setConversionText(): void {
     console.log('Setting that conversion text!');
     console.log(this.conversionValues);
-    const cToS: string = this.containsStars ? `${this.conversionValues.valStars.toString()} \t = ` : '';
-    const sToC: string = this.containsStars? '1 \t' : '';
-    const cToG: string = `${this.conversionValues.valGems.toString()} \t = `;
-    const gToC: string = '1 \t';
-    const gToS: string = this.containsStars ? `${this.findConversionValue(this.conversionValues.valGems, this.findLCM(this.conversionValues.valGems, this.conversionValues.valStars))} \t = ` : '';
-    const sToG: string = this.containsStars ? `${this.findConversionValue(this.conversionValues.valStars, this.findLCM(this.conversionValues.valStars, this.conversionValues.valGems))} \t` : '';
+    const spriteSpaces: string = "       "; // 6 spaces
+    const cToS: string = this.containsStars ? `${this.conversionValues.valStars.toString()}${spriteSpaces}= ` : '';
+    const sToC: string = this.containsStars? '1' : '';
+    const cToG: string = `${this.conversionValues.valGems.toString()}${spriteSpaces}= `;
+    const gToC: string = '1';
+    const gToS: string = this.containsStars ? `${this.findConversionValue(this.conversionValues.valGems, this.findLCM(this.conversionValues.valGems, this.conversionValues.valStars))}${spriteSpaces}= ` : '';
+    const sToG: string = this.containsStars ? `${this.findConversionValue(this.conversionValues.valStars, this.findLCM(this.conversionValues.valStars, this.conversionValues.valGems))}` : '';
     this.conversionString = `Conversion Notes:\n${cToG}${gToC}\n\n${cToS}${sToC}\n\n${gToS}${sToG}`;
-    // if (sToG === '1') {
-    //   this.conversionString = this.conversionString.substring(0, this.conversionString.length - 1);
-    // }
     this.conversionText.setText(this.conversionString);
   }
 }

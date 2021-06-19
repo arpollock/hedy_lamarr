@@ -50,7 +50,6 @@ export class HomeScene extends Phaser.Scene {
   private gradeLevel: number;
   private containsStars: boolean;
 
-  // private text;
   private scoreString: string;
 
   private player: PlayerSprite; // extends Phaser.Physics.Arcade.Sprite;
@@ -141,12 +140,8 @@ export class HomeScene extends Phaser.Scene {
           break;
     }
     if (possibleStarValues.length === 0) {
-      possibleStarValues.push(0);
+      possibleStarValues.push(0); // == 0 used to hide star sprites, etc. throughout misc. scenes
     }
-    // this.conversionValues = {
-    //   valGems: 2, // can also be: 3
-    //   valStars: 3, // can also be: 4
-    // };
     this.conversionValues = {
       valGems: possibleGemValues[Math.floor(Math.random() * possibleGemValues.length)], // can also be: 3
       valStars: possibleStarValues[Math.floor(Math.random() * possibleStarValues.length)], // can also be: 4
@@ -190,7 +185,6 @@ export class HomeScene extends Phaser.Scene {
     this.scene.launch(sceneNames.tabletMenu, this.conversionValues);
     this.scene.sleep(sceneNames.tabletMenu);
     this.scene.bringToTop(sceneNames.hudMenu);
-    // eventsCenter.emit(eventNames.setConversionValues, conversionValues);
 
     // load the map 
     this.map = this.make.tilemap({key: 'map'});
@@ -247,11 +241,9 @@ export class HomeScene extends Phaser.Scene {
       const obstacleNumIdx = this.tiledObjectHasProperty('obstacleNum', g);
       if (obstacleNumIdx >= 0) {
         goal['objectNum'] = g.properties[obstacleNumIdx].value;
-        // console.log(`platform obstacle num: ${plat['objectNum']}`)
       }
       this.goalObjs.push(goal);
     });
-    // this.physics.world.enable(this.goalObjs, Phaser.Physics.Arcade.STATIC_BODY);
 
     this.goalObjs.forEach(gObj => {
       const collisionGoalObject = () => {
@@ -403,9 +395,7 @@ export class HomeScene extends Phaser.Scene {
                 conversions: this.conversionValues,
                 containsStars: this.containsStars
               };
-              // this.scene.pause(sceneNames.mainGame);
               this.scene.add(sceneNames.obFixMenu, ObstacleFixMenu, true, obFixData);
-              // this.scene.launch(sceneNames.obFixMenu, obFixData);
               this.scene.bringToTop(sceneNames.obFixMenu);
             }
           });
@@ -438,7 +428,7 @@ export class HomeScene extends Phaser.Scene {
           this.player.currentPlatform = pObj;      
         }
       };
-      //Only allow collisions from top
+      // Only allow collisions from top
       const isCollisionFromTop = () => {
         return pObj.body.y > this.player.body.y;
       };
@@ -623,7 +613,7 @@ export class HomeScene extends Phaser.Scene {
   }
 
   private triggerGoalReached(): boolean {
-    console.log('goal reached!');
+    // console.log('goal reached!');
     this.goalReached = true;
     this.goalObjs.forEach(g => {
       if(g.part === partNames.laser) {
@@ -641,7 +631,7 @@ export class HomeScene extends Phaser.Scene {
   }
 
   private collectGem(sprite: any, tile: any): boolean {
-    console.log("Gem collected!")
+    // console.log("Gem collected!")
     this.gemLayer.removeTileAt(tile.x, tile.y);
     this.numGems++;
     this.updateScoreText();
@@ -649,7 +639,7 @@ export class HomeScene extends Phaser.Scene {
   }
 
   private collectStar(sprite: any, tile: any): boolean {
-    console.log("Star collected!")
+    // console.log("Star collected!")
     this.starLayer.removeTileAt(tile.x, tile.y);
     this.numStars++;
     this.updateScoreText();
@@ -657,11 +647,11 @@ export class HomeScene extends Phaser.Scene {
   }
 
   private updateScoreText() {
-    // this.scoreString = `Coins: ${this.numCoins} Gems: ${this.numGems} Stars: ${this.numStars}`;
     // todo: fix this bc right now spacing gets messed up if # of a given currency is > 1 digit
-    this.scoreString = `\t\t:${this.numCoins}  \t\t:${this.numGems}`;
+    // this todo is double listed in Constants.ts
+    this.scoreString = `\t\t\t\t\t:${this.numCoins}  \t\t\t\t\t\t\t\t:${this.numGems}`;
     if (this.containsStars) {
-      this.scoreString = this.scoreString + `  \t\t:${this.numStars}`;
+      this.scoreString = this.scoreString + `  \t\t\t\t\t\t\t\t\t:${this.numStars}`;
     }
     eventsCenter.emit(eventNames.updateScoreText, this.scoreString);
   }
@@ -699,10 +689,10 @@ export class HomeScene extends Phaser.Scene {
   }
 
   private fixObstacle(ob: ObstacleButton): void {
-    console.log(`fixing obstacle num: ${ob.objectNum}`)
+    // console.log(`fixing obstacle num: ${ob.objectNum}`)
     this.platformObjs.forEach( p => {
       if (p.objectNum == ob.objectNum) {
-        console.log('obstacle found (platform)!')
+        // console.log('obstacle found (platform)!')
         ob.setTexture('buttonOn');
         ob.body.setSize(ob.body.width, 0); // change the height of the collison box to match a pressed button
         p.isFixed = true;

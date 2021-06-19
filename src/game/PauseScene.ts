@@ -38,6 +38,7 @@ export class PauseScene extends Phaser.Scene {
     this.text = this.add.text(textX, textY, this.textString, {
       fontSize: textConfig.mainFontSize,
       color: textConfig.mainFillColor,
+      fontFamily: textConfig.fontFams
     }).setOrigin(0.5); // set origin makes it so we can center the text easily
     this.text.setScrollFactor(0);
   }

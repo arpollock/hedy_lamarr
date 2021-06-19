@@ -3,7 +3,8 @@ import {
   sceneNames,
   backgroundColor,
   width,
-  height
+  height,
+  textConfig
 } from './../Constants';
 
 export class LevelWin extends Phaser.Scene {
@@ -32,8 +33,9 @@ export class LevelWin extends Phaser.Scene {
     const textX = width / 2; 
     const textY = height / 3;
     this.text = this.add.text(textX, textY, this.textString, {
-      fontSize: '32px',
-      color: '#ffffff',
+      fontSize: textConfig.mainFontSize,
+      color: textConfig.mainFillColor,
+      fontFamily: textConfig.fontFams
     }).setOrigin(0.5); // set origin makes it so we can center the text easily
     this.text.setScrollFactor(0);
   }

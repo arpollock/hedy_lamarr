@@ -2,7 +2,7 @@ import 'phaser';
 
 import ObstacleButton from './game/ObstacleButton';
 
-const gameName: string = 'Ratio Rocket Rescue';
+const gameName: string = 'Ratio Rocket\nRescue';
 
 const gravity: number = 500;
 
@@ -26,9 +26,10 @@ const assetObsUiURL: string = `${assetBaseURL}obstacle_ui/`;
 
 const pauseKeyCode: number = Phaser.Input.Keyboard.KeyCodes.ESC.valueOf();
 
-const initScoreStr: string = `\t\t:0  \t\t:0  \t\t:0`;// `Coins: 0 Gems: 0 Stars: 0`;
+// todo, break these up into individual currencies and coordinates for hud menu
+const initScoreStr: string = `\t\t\t\t\t:0  \t\t\t\t\t\t\t\t:0  \t\t\t\t\t\t\t\t\t:0`;// `Coins: 0 Gems: 0 Stars: 0`;
 
-const initScoreStr_noStars: string = `\t\t:0  \t\t:0`;// `Coins: 0 Gems: 0`;
+const initScoreStr_noStars: string = `\t\t\t\t\t:0  \t\t\t\t\t\t\t\t:0`;// `Coins: 0 Gems: 0`;
 
 const numDifficulties: number = 3; // 3, 4, 5 grade
 
@@ -46,7 +47,7 @@ const textConfig: {
   mainFontSize: '32px',
   mainTitleFontSize: '64px',
   secondaryTitleFontSize: '24px',
-  fontFams: '"Courier New", "Courier", "monospace"',
+  fontFams: '"KenvectorFuture", "Courier New", "Courier", "monospace"',
 };
 
 const partNames: {

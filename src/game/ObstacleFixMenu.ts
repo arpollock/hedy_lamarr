@@ -493,22 +493,23 @@ export class ObstacleFixMenu extends Phaser.Scene {
       fontSize: textConfig.mainFontSize,
       color: textConfig.mainFillColor,
       align: 'right',
+      fontFamily: textConfig.fontFams,
     }).setOrigin(0.5); // set origin makes it so we can center the text easily
     this.num_coins_text.setScrollFactor(0);
     this.num_gems_text = this.add.text(currency_text_x, gemDraggable_original_y, this.num_gems_str, {
       fontSize: textConfig.mainFontSize,
       color: textConfig.mainFillColor,
       align: 'right',
+      fontFamily: textConfig.fontFams,
     }).setOrigin(0.5); // set origin makes it so we can center the text easily
     this.num_gems_text.setScrollFactor(0);
     this.num_stars_text = this.add.text(currency_text_x, starDraggable_original_y, this.num_stars_str, {
       fontSize: textConfig.mainFontSize,
       color: textConfig.mainFillColor,
       align: 'right',
+      fontFamily: textConfig.fontFams,
     }).setOrigin(0.5); // set origin makes it so we can center the text easily
     this.num_stars_text.setScrollFactor(0);
-    console.log('end create');
-    console.log(this.scene);
     this.updateCurrency();
 
     // currency conversion modules -- so they can actually use and learn fractions

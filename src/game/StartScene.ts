@@ -75,13 +75,16 @@ export class StartScene extends Phaser.Scene {
     this.titleText = this.add.text(centerX, titleTextY, this.titleTextString, {
       fontSize: textConfig.mainTitleFontSize,
       color: textConfig.secondaryFillColor,
+      fontFamily: textConfig.fontFams,
+      align: 'center',
     }).setOrigin(0.5); // set origin makes it so we can center the text easily
     this.titleText.setScrollFactor(0);
     // text to push the user to choose their grade level
-    const difficultyTextY: number = titleTextY + padding;
+    const difficultyTextY: number = titleTextY + padding * 1.75;
     this.difficultyText = this.add.text(centerX, difficultyTextY, this.difficultyTextString, {
       fontSize: textConfig.secondaryTitleFontSize,
       color: textConfig.secondaryFillColor,
+      fontFamily: textConfig.fontFams,
     }).setOrigin(0.5); // set origin makes it so we can center the text easily
     this.difficultyText.setScrollFactor(0);
     // buttons to select difficulty level, start w/ 4th grade active

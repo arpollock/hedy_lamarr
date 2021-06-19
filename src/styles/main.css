@@ -1,3 +1,13 @@
+@font-face {
+  font-family: KenvectorFuture;
+  src: url('./../assets/fonts/kenvector_future.ttf');
+}
+
+@font-face {
+  font-family: KenvectorFutureThin;
+  src: url('./../assets/fonts/kenvector_future_thin.ttf');
+}
+
 body {
   font-family: Helvetica, Arial, sans-serif;
   width: 100%;
@@ -6,4 +16,8 @@ body {
 
 #game-container {
   margin: auto;
+}
+
+#game-container-header {
+  font-family: 'KenvectorFuture', 'Arial';
 }
