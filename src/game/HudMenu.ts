@@ -8,14 +8,18 @@ import {
   assetBaseURL,
   eventNames,
   HudMenuConfig,
-  initScoreStr,
-  initScoreStr_noStars,
+  hudMenuSpriteY,
+  hudMenuSpriteX,
+  hudMenuSpriteXOffset,
+  ScoreUpdate,
+  initScore
 } from './../Constants';
 
 export class HudMenu extends Phaser.Scene {
 
-  private text: Phaser.GameObjects.Text;
-  private scoreString: string;
+  private coinsText: Phaser.GameObjects.Text;
+  private gemsText: Phaser.GameObjects.Text;
+  private starsText: Phaser.GameObjects.Text;
 
   private tablet_button: Phaser.GameObjects.Sprite;
   private tablet_menu_open: boolean;
@@ -23,21 +27,17 @@ export class HudMenu extends Phaser.Scene {
   private pause_button: Phaser.GameObjects.Sprite;
 
   private containsStars: boolean;
-  // private tablet_menu: TabletMenu;
 
   constructor() {
     super({
       key: sceneNames.hudMenu
     });
-    // this.scoreString = initScoreStr;
     this.tablet_menu_open = false;
-    // this.tablet_menu = null;
   }
 
   public init(data: HudMenuConfig): void {
     eventsCenter.on(eventNames.updateScoreText, this.updateScoreText, this);
     this.containsStars = data.containsStars;
-    this.scoreString = this.containsStars ? initScoreStr : initScoreStr_noStars;
   }
 
   public preload(): void {
@@ -68,10 +68,8 @@ export class HudMenu extends Phaser.Scene {
       const starSprite: Phaser.GameObjects.Sprite = this.add.sprite(hudPanelIconX + hudPelIconXOffset*2, hudPanelIconY, 'starHud');
     }
     hudPanelBG.setOrigin(0,0);
-    // text to show score
-    const textX = hudPanelX + 25;
-    const textY = hudPanelY + 20;
-    this.text = this.add.text(textX, textY, this.scoreString, {
+    // text to show scores
+    this.coinsText = this.add.text(hudMenuSpriteX, hudMenuSpriteY, `: ${initScore.coins}`, {
       fontSize: textConfig.mainFontSize,
       color: textConfig.secondaryFillColor,
       fontFamily: textConfig.fontFams,
@@ -84,7 +82,35 @@ export class HudMenu extends Phaser.Scene {
         bottom: 0,
       },
     });
-    this.text.setScrollFactor(0);
+    this.coinsText.setScrollFactor(0);
+    this.gemsText = this.add.text(hudMenuSpriteX + hudMenuSpriteXOffset, hudMenuSpriteY, `: ${initScore.gems}`, {
+      fontSize: textConfig.mainFontSize,
+      color: textConfig.secondaryFillColor,
+      fontFamily: textConfig.fontFams,
+      padding: {
+        x: 0,
+        y:0,
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+      },
+    });
+    this.gemsText.setScrollFactor(0);
+    this.starsText = this.add.text(hudMenuSpriteX + hudMenuSpriteXOffset * 2, hudMenuSpriteY, `: ${initScore.stars}`, {
+      fontSize: textConfig.mainFontSize,
+      color: textConfig.secondaryFillColor,
+      fontFamily: textConfig.fontFams,
+      padding: {
+        x: 0,
+        y:0,
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+      },
+    });
+    this.starsText.setScrollFactor(0);
 
     this.tablet_button = this.add.sprite(width-70, height-70,'tablet_button');
     this.tablet_button.setInteractive({
@@ -106,27 +132,25 @@ export class HudMenu extends Phaser.Scene {
   public update(time: number): void {
     if (Phaser.Input.Keyboard.JustDown(this.input.keyboard.addKey('P'))) {
       console.log("score text debug");
-      console.log(this.scoreString);
     }
   }
 
-  private updateScoreText(scoreText: string): void {
-    console.log("score update");
-    console.log(this.text);
-    this.scoreString = scoreText;
-    this.text.setText(this.scoreString);
+  private updateScoreText(scoreUpdate: ScoreUpdate): void {
+    this.coinsText.setText(`: ${scoreUpdate.coins}`);
+    this.gemsText.setText(`: ${scoreUpdate.gems}`);
+    this.starsText.setText(`: ${scoreUpdate.stars}`);
   }
 
   private anyClickDetected(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData) {
     if (this.tablet_menu_open) {
       this.closeTabletMenu();
     }
-    console.log(`click at: ${pointer.x}, ${pointer.y}`);
+    // console.log(`click at: ${pointer.x}, ${pointer.y}`);
   }
 
   private toggleTabletMenu(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData) {
     this.tablet_menu_open = !(this.tablet_menu_open);
-    console.log(`toggling tablet menu to: ${this.tablet_menu_open}`);
+    // console.log(`toggling tablet menu to: ${this.tablet_menu_open}`);
     event.stopPropagation(); // stop it from detecting a click elsewhere, which is used to close the menu
     if(this.tablet_menu_open) {
       this.scene.launch(sceneNames.tabletMenu);

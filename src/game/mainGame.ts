@@ -23,8 +23,7 @@ import {
   eventNames,
   mapWidth,
   pauseKeyCode,
-  initScoreStr,
-  initScoreStr_noStars
+  ScoreUpdate,
 } from './../Constants';
 import { ObstacleFixMenu } from './ObstacleFixMenu';
 
@@ -49,8 +48,6 @@ export class HomeScene extends Phaser.Scene {
 
   private gradeLevel: number;
   private containsStars: boolean;
-
-  private scoreString: string;
 
   private player: PlayerSprite; // extends Phaser.Physics.Arcade.Sprite;
   private playerConfig: PlayerConfig;
@@ -89,7 +86,6 @@ export class HomeScene extends Phaser.Scene {
     this.numCoins = 0;
     this.numGems = 0;
     this.numStars = 0;
-    this.scoreString = this.containsStars ? initScoreStr : initScoreStr_noStars;
 
     this.zoomFactor = 0.5;
 
@@ -647,13 +643,12 @@ export class HomeScene extends Phaser.Scene {
   }
 
   private updateScoreText() {
-    // todo: fix this bc right now spacing gets messed up if # of a given currency is > 1 digit
-    // this todo is double listed in Constants.ts
-    this.scoreString = `\t\t\t\t\t:${this.numCoins}  \t\t\t\t\t\t\t\t:${this.numGems}`;
-    if (this.containsStars) {
-      this.scoreString = this.scoreString + `  \t\t\t\t\t\t\t\t\t:${this.numStars}`;
-    }
-    eventsCenter.emit(eventNames.updateScoreText, this.scoreString);
+    const scoreUp: ScoreUpdate = {
+      coins: this.numCoins,
+      gems: this.numGems,
+      stars: this.numStars,
+    };
+    eventsCenter.emit(eventNames.updateScoreText, scoreUp);
   }
 
   // returns -1 if prop is not found

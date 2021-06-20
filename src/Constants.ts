@@ -27,9 +27,25 @@ const assetObsUiURL: string = `${assetBaseURL}obstacle_ui/`;
 const pauseKeyCode: number = Phaser.Input.Keyboard.KeyCodes.ESC.valueOf();
 
 // todo, break these up into individual currencies and coordinates for hud menu
-const initScoreStr: string = `\t\t\t\t\t:0  \t\t\t\t\t\t\t\t:0  \t\t\t\t\t\t\t\t\t:0`;// `Coins: 0 Gems: 0 Stars: 0`;
+// const initScoreStr: string = `\t\t\t\t\t:0  \t\t\t\t\t\t\t\t:0  \t\t\t\t\t\t\t\t\t:0`;// `Coins: 0 Gems: 0 Stars: 0`;
 
-const initScoreStr_noStars: string = `\t\t\t\t\t:0  \t\t\t\t\t\t\t\t:0`;// `Coins: 0 Gems: 0`;
+// const initScoreStr_noStars: string = `\t\t\t\t\t:0  \t\t\t\t\t\t\t\t:0`;// `Coins: 0 Gems: 0`;
+
+const hudMenuSpriteY: number = height - 40;
+const hudMenuSpriteX: number = 75;
+const hudMenuSpriteXOffset: number = 115;
+
+interface ScoreUpdate {
+  coins: number,
+  gems: number,
+  stars: number,
+}
+
+const initScore: ScoreUpdate = {
+  coins: 0,
+  gems: 0,
+  stars: 0,
+};
 
 const numDifficulties: number = 3; // 3, 4, 5 grade
 
@@ -190,8 +206,13 @@ export {
   assetBaseURL,
   assetObsUiURL,
   pauseKeyCode,
-  initScoreStr,
-  initScoreStr_noStars,
+  hudMenuSpriteY,
+  hudMenuSpriteX,
+  hudMenuSpriteXOffset,
+  ScoreUpdate,
+  initScore,
+  // initScoreStr,
+  // initScoreStr_noStars,
   numDifficulties,
   textConfig,
   partNames,
