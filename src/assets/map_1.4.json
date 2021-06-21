@@ -27,6 +27,35 @@
         }, 
         {
          "draworder":"topdown",
+         "id":11,
+         "name":"PlayerStart",
+         "objects":[
+                {
+                 "gid":7,
+                 "height":70,
+                 "id":40,
+                 "name":"start",
+                 "properties":[
+                        {
+                         "name":"player",
+                         "type":"int",
+                         "value":1
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":70,
+                 "x":177,
+                 "y":1023
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
          "id":5,
          "name":"Platforms",
          "objects":[
@@ -693,8 +722,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":10,
- "nextobjectid":37,
+ "nextlayerid":12,
+ "nextobjectid":41,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.4.3",
@@ -703,7 +732,7 @@
         {
          "columns":4,
          "firstgid":1,
-         "image":"..\/..\/..\/maps\/tiles.png",
+         "image":"..\/..\/maps\/tiles.png",
          "imageheight":280,
          "imagewidth":280,
          "margin":0,
@@ -716,7 +745,7 @@
         {
          "columns":1,
          "firstgid":17,
-         "image":"..\/..\/..\/maps\/coin.png",
+         "image":"..\/..\/maps\/coin.png",
          "imageheight":70,
          "imagewidth":70,
          "margin":0,
@@ -729,7 +758,7 @@
         {
          "columns":1,
          "firstgid":18,
-         "image":"..\/..\/..\/maps\/gem.png",
+         "image":"..\/..\/maps\/gem.png",
          "imageheight":70,
          "imagewidth":70,
          "margin":0,
@@ -742,7 +771,7 @@
         {
          "columns":1,
          "firstgid":19,
-         "image":"..\/..\/..\/maps\/star.png",
+         "image":"..\/..\/maps\/star.png",
          "imageheight":70,
          "imagewidth":70,
          "margin":0,

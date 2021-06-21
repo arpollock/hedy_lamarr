@@ -10,7 +10,7 @@ export default class MovingPlatform extends Phaser.Physics.Arcade.Sprite {
 	 */
 
   public isFixed: boolean;
-  public objectNum: number;
+  public obstacleNum: number;
   public movesV: boolean;
   public movesH: boolean;
 
@@ -31,7 +31,7 @@ export default class MovingPlatform extends Phaser.Physics.Arcade.Sprite {
     this.startX = x;
 
     this.isFixed = false;
-    this.objectNum = -1;
+    this.obstacleNum = -1;
     this.movesH = false;
     this.movesV = false;
 

@@ -41,7 +41,6 @@ export class HudMenu extends Phaser.Scene {
   }
 
   public preload(): void {
-    
     this.load.setBaseURL(assetBaseURL);
     this.load.image('tablet_button', 'tablet.png');
     this.load.image('tablet_button_hover', 'tablet_hover.png');
@@ -54,6 +53,7 @@ export class HudMenu extends Phaser.Scene {
   }
 
   public create(): void {
+    this.openTabletMenu(); // start with the tablet menu open to show conversion values
     this.events.on('sleep', this.onSleep, this);
     const hudPanelX: number = 10;
     const offsetY: number = 60;
@@ -63,12 +63,7 @@ export class HudMenu extends Phaser.Scene {
     const hudPanelIconX: number = hudPanelX + offsetY / 2 + 10;
     const hudPelIconXOffset: number = 115;
     const coinSprite: Phaser.GameObjects.Sprite = this.add.sprite(hudPanelIconX, hudPanelIconY, 'coinHud');
-    const gemSprite: Phaser.GameObjects.Sprite = this.add.sprite(hudPanelIconX + hudPelIconXOffset, hudPanelIconY, 'gemHud');
-    if (this.containsStars) {
-      const starSprite: Phaser.GameObjects.Sprite = this.add.sprite(hudPanelIconX + hudPelIconXOffset*2, hudPanelIconY, 'starHud');
-    }
-    hudPanelBG.setOrigin(0,0);
-    // text to show scores
+    // text to show coin score
     this.coinsText = this.add.text(hudMenuSpriteX, hudMenuSpriteY, `: ${initScore.coins}`, {
       fontSize: textConfig.mainFontSize,
       color: textConfig.secondaryFillColor,
@@ -83,6 +78,8 @@ export class HudMenu extends Phaser.Scene {
       },
     });
     this.coinsText.setScrollFactor(0);
+    const gemSprite: Phaser.GameObjects.Sprite = this.add.sprite(hudPanelIconX + hudPelIconXOffset, hudPanelIconY, 'gemHud');
+    // text to show gem score
     this.gemsText = this.add.text(hudMenuSpriteX + hudMenuSpriteXOffset, hudMenuSpriteY, `: ${initScore.gems}`, {
       fontSize: textConfig.mainFontSize,
       color: textConfig.secondaryFillColor,
@@ -97,20 +94,25 @@ export class HudMenu extends Phaser.Scene {
       },
     });
     this.gemsText.setScrollFactor(0);
-    this.starsText = this.add.text(hudMenuSpriteX + hudMenuSpriteXOffset * 2, hudMenuSpriteY, `: ${initScore.stars}`, {
-      fontSize: textConfig.mainFontSize,
-      color: textConfig.secondaryFillColor,
-      fontFamily: textConfig.fontFams,
-      padding: {
-        x: 0,
-        y:0,
-        left: 0,
-        right: 0,
-        top: 0,
-        bottom: 0,
-      },
-    });
-    this.starsText.setScrollFactor(0);
+    if (this.containsStars) {
+      const starSprite: Phaser.GameObjects.Sprite = this.add.sprite(hudPanelIconX + hudPelIconXOffset*2, hudPanelIconY, 'starHud');
+      // text to show star score
+      this.starsText = this.add.text(hudMenuSpriteX + hudMenuSpriteXOffset * 2, hudMenuSpriteY, `: ${initScore.stars}`, {
+        fontSize: textConfig.mainFontSize,
+        color: textConfig.secondaryFillColor,
+        fontFamily: textConfig.fontFams,
+        padding: {
+          x: 0,
+          y:0,
+          left: 0,
+          right: 0,
+          top: 0,
+          bottom: 0,
+        },
+      });
+      this.starsText.setScrollFactor(0);
+    }
+    hudPanelBG.setOrigin(0,0);
 
     this.tablet_button = this.add.sprite(width-70, height-70,'tablet_button');
     this.tablet_button.setInteractive({
@@ -136,9 +138,15 @@ export class HudMenu extends Phaser.Scene {
   }
 
   private updateScoreText(scoreUpdate: ScoreUpdate): void {
-    this.coinsText.setText(`: ${scoreUpdate.coins}`);
-    this.gemsText.setText(`: ${scoreUpdate.gems}`);
-    this.starsText.setText(`: ${scoreUpdate.stars}`);
+    if (this.coinsText) {
+      this.coinsText.setText(`: ${scoreUpdate.coins}`);
+    } 
+    if (this.gemsText) {
+      this.gemsText.setText(`: ${scoreUpdate.gems}`);
+    }
+    if (this.starsText) {
+      this.starsText.setText(`: ${scoreUpdate.stars}`);
+    }
   }
 
   private anyClickDetected(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData) {
@@ -148,13 +156,18 @@ export class HudMenu extends Phaser.Scene {
     // console.log(`click at: ${pointer.x}, ${pointer.y}`);
   }
 
+  private openTabletMenu(): void {
+    this.tablet_menu_open = true;
+    this.scene.wake(sceneNames.tabletMenu);
+    this.scene.bringToTop(sceneNames.tabletMenu);
+  }
+
   private toggleTabletMenu(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData) {
-    this.tablet_menu_open = !(this.tablet_menu_open);
+    // this.tablet_menu_open = !(this.tablet_menu_open);
     // console.log(`toggling tablet menu to: ${this.tablet_menu_open}`);
     event.stopPropagation(); // stop it from detecting a click elsewhere, which is used to close the menu
-    if(this.tablet_menu_open) {
-      this.scene.launch(sceneNames.tabletMenu);
-      this.scene.bringToTop(sceneNames.tabletMenu);
+    if(!this.tablet_menu_open) {
+      this.openTabletMenu();
     } else {
       this.closeTabletMenu();
     }

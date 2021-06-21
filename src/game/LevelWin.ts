@@ -1,10 +1,12 @@
 import 'phaser';
 import {
+  assetBaseURL,
   sceneNames,
   backgroundColor,
   width,
   height,
-  textConfig
+  textConfig,
+  MainGameConfig
 } from './../Constants';
 
 export class LevelWin extends Phaser.Scene {
@@ -12,17 +14,26 @@ export class LevelWin extends Phaser.Scene {
   private text;
   private textString: string;
 
+  private mainMenuButton: Phaser.GameObjects.Sprite;
+  private playNewLevelButton: Phaser.GameObjects.Sprite;
+
+  private previousLevelSeedData: MainGameConfig;
+
   constructor() {
     super({
       key: sceneNames.win
     });
+    this.mainMenuButton = null;
+    this.playNewLevelButton = null;
   }
 
-  public init(params): void {
-    
+  public init(data: MainGameConfig): void {
+    this.previousLevelSeedData = data;
   }
   public preload(): void {
-    
+    this.load.setBaseURL(assetBaseURL);
+    this.load.image('main_menu_button', 'main_menu.png');
+    this.load.image('play_new_level', 'play_new_level.png');
   }
 
   public create(): void {
@@ -30,18 +41,60 @@ export class LevelWin extends Phaser.Scene {
     this.cameras.main.setBackgroundColor(backgroundColor);
     // text to show pause menu text.
     this.textString = 'Woohoo! Level Complete';
-    const textX = width / 2; 
+    const centerX = width / 2; 
     const textY = height / 3;
-    this.text = this.add.text(textX, textY, this.textString, {
+    this.text = this.add.text(centerX, textY, this.textString, {
       fontSize: textConfig.mainFontSize,
       color: textConfig.mainFillColor,
       fontFamily: textConfig.fontFams
     }).setOrigin(0.5); // set origin makes it so we can center the text easily
     this.text.setScrollFactor(0);
+    // main menu button click detection
+    const buttonsY: number = height * 2 / 3;
+    const buttonLeftX: number = width / 3;
+    const buttonRightX: number = width * 2 / 3;
+    this.mainMenuButton = this.add.sprite(buttonLeftX, buttonsY,'main_menu_button').setOrigin(0.5);
+    this.mainMenuButton.setInteractive({
+      useHandCursor: true
+    });
+    this.mainMenuButton.on('pointerover', this.onMainMenuButtonHoverEnter, this);
+    this.mainMenuButton.on('pointerout', this.onMainMenuButtonHoverExit, this);
+    this.mainMenuButton.on('pointerdown', this.goToMainMenu, this);
+
+    // play again (new level) button click detection
+    this.playNewLevelButton = this.add.sprite(buttonRightX, buttonsY,'play_new_level').setOrigin(0.5);
+    this.playNewLevelButton.setInteractive({
+      useHandCursor: true
+    });
+    this.playNewLevelButton.on('pointerover', this.onPlayNewLevelButtonHoverEnter, this);
+    this.playNewLevelButton.on('pointerout', this.onPlayNewLevelButtonHoverExit, this);
+    this.playNewLevelButton.on('pointerdown', this.playNewLevel, this);
   }
 
   public update(time: number): void {
     
   }
+
+  private onMainMenuButtonHoverEnter(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData): void { }
+
+  private onMainMenuButtonHoverExit(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData): void { }
+
+  private goToMainMenu(): void {
+    this.scene.start(sceneNames.start);
+  }
+
+  private onPlayNewLevelButtonHoverEnter(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData): void { }
+
+  private onPlayNewLevelButtonHoverExit(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData): void { }
+
+  // todo, currently startNewLevel and tryLevelAgain are not different
+  private playNewLevel(): void {
+    this.scene.start(sceneNames.mainGame, this.previousLevelSeedData);
+  }
+
+  // cannot as-is try again once won, todo medium priority
+  // private tryLevelAgain(): void {
+  //   this.scene.start(sceneNames.mainGame, this.previousLevelSeedData);
+  // }
 
 };

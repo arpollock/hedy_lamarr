@@ -10,7 +10,7 @@ export default class LaserDoor extends Phaser.Physics.Arcade.Sprite {
 	 */
 
   public isFixed: boolean;
-  public objectNum: number;
+  public obstacleNum: number;
   public part: string;
 
 	constructor(scene, x, y, texture, frameNum=0) {
@@ -18,7 +18,7 @@ export default class LaserDoor extends Phaser.Physics.Arcade.Sprite {
 		scene.add.existing(this);
 
     this.isFixed = false;
-    this.objectNum = -1;
+    this.obstacleNum = -1;
     this.part = '';
 	}
 }

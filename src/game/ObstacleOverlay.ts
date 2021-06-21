@@ -9,7 +9,7 @@ export default class ObstacleOverlay extends Phaser.Physics.Arcade.Sprite {
 	 * @param {string} texture 
 	 */
 
-	public objectNum: number;
+	public obstacleNum: number;
 
 	private coinsNeeded: number;
 	private gemsNeeded: number;
@@ -19,7 +19,7 @@ export default class ObstacleOverlay extends Phaser.Physics.Arcade.Sprite {
 		super(scene, x, y, texture);
 		scene.add.existing(this);
 
-    this.objectNum = -1;
+    this.obstacleNum = -1;
 		const possibleNumCoins: number[] = [];
 		const possibleNumGems: number[] = [];
 		const possibleNumStars: number[] = [];

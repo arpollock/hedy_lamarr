@@ -19,6 +19,8 @@ import {
   backgroundColor,
   assetBaseURL,
   partNames,
+  tiledPropertyNames,
+  tiledLayerNames,
   sceneNames, 
   eventNames,
   mapWidth,
@@ -34,6 +36,8 @@ class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
 }
 
 export class HomeScene extends Phaser.Scene {
+  private levelSeedData: MainGameConfig;
+
   private zoomFactor: number;
   private map: Phaser.Tilemaps.Tilemap;
 
@@ -78,6 +82,8 @@ export class HomeScene extends Phaser.Scene {
   }
   public init(data: MainGameConfig): void {
 
+    this.levelSeedData = data;
+
     console.log(data);
 
     this.gradeLevel = data.grade_level;
@@ -100,6 +106,8 @@ export class HomeScene extends Phaser.Scene {
     this.playerConfig = {
       width: 66,
       height: 92,
+      // x and y will be overridden by Tiled map if available
+      // this serves as a backup (bottom left corner)
       x: 140, // player starting x loc // right next to goal for debugging mapWidth - 200,
       y: (mapHeight-70*5), // player starting y loc // 10
       speed: 200,
@@ -144,7 +152,6 @@ export class HomeScene extends Phaser.Scene {
     };
   }
   public preload(): void {
-    // this.load.setBaseURL('./assets/');
     this.load.setBaseURL(assetBaseURL);
     // map made with Tiled in JSON format
     this.load.tilemapTiledJSON('map', 'map_1.4.json');
@@ -188,27 +195,38 @@ export class HomeScene extends Phaser.Scene {
     // tiles for the ground layer
     var groundTiles = this.map.addTilesetImage('tiles');
     // create the ground layer
-    this.groundLayer = this.map.createLayer('World', groundTiles, 0, 0);
+    this.groundLayer = this.map.createLayer(tiledLayerNames.world, groundTiles, 0, 0);
     // the player will collide with this layer
     this.groundLayer.setCollisionByExclusion([-1]);
     // coin image used as tileset
     const coinTiles = this.map.addTilesetImage('coin');
     // add coins as tiles
-    this.coinLayer = this.map.createLayer('Coins', coinTiles, 0, 0);
+    this.coinLayer = this.map.createLayer(tiledLayerNames.coins, coinTiles, 0, 0);
     // star image used as tileset
     const starTiles = this.containsStars ? this.map.addTilesetImage('star') : null;
     // // add stars as tiles
-    this.starLayer = this.containsStars ? this.map.createLayer('Stars', starTiles, 0, 0) : null;
+    this.starLayer = this.containsStars ? this.map.createLayer(tiledLayerNames.stars, starTiles, 0, 0) : null;
     // // star image used as tileset
     const gemTiles = this.map.addTilesetImage('gem');
     // // add stars as tiles
-    this.gemLayer = this.map.createLayer('Gems', gemTiles, 0, 0);
+    this.gemLayer = this.map.createLayer(tiledLayerNames.gems, gemTiles, 0, 0);
 
     // set the boundaries of our game world
     this.physics.world.bounds.width = this.groundLayer.width;
     this.physics.world.bounds.height = this.groundLayer.height;
 
     // add the player's sprite
+    // first get the correct starting location from Tiled (if available)
+    const startingLocs = this.map.filterObjects(tiledLayerNames.playerStart, p => p.name == 'start');
+    startingLocs.forEach(startingLoc => {
+      // this is stubbed out to support multiplayer w/ different starting locs
+      const forPlayerIdx: number = this.tiledObjectHasProperty(tiledPropertyNames.player, startingLoc);
+      const forPlayer: number = (forPlayerIdx >= 0) ? startingLoc.properties[forPlayerIdx].value : 1;
+      if (forPlayer === 1) {
+        this.playerConfig.x = startingLoc.x;
+        this.playerConfig.y = startingLoc.y;
+      }
+    });
     this.player = (this.physics.add.sprite(this.playerConfig.x, this.playerConfig.y, 'player') as PlayerSprite);
     this.player.setDisplaySize(this.playerConfig.width, this.playerConfig.height);
     this.player.setBounce(0.0);
@@ -216,9 +234,9 @@ export class HomeScene extends Phaser.Scene {
     this.player.setDepth(999);
     this.player.isOnObsOverlap = false;
     // add the goal objects as specified in the object layer of the map
-    const goals = this.map.filterObjects("Goal", p => p.name == "goal");
+    const goals = this.map.filterObjects(tiledLayerNames.goal, p => p.name == 'goal');
     goals.forEach(g => {
-      const partNameIdx: number = this.tiledObjectHasProperty('part', g);
+      const partNameIdx: number = this.tiledObjectHasProperty(tiledPropertyNames.part, g);
       const partName: string = (partNameIdx >= 0) ? g.properties[partNameIdx].value : '';
       let goal: Goal;
       if (partName !== partNames.creature) {
@@ -234,9 +252,9 @@ export class HomeScene extends Phaser.Scene {
         this.physics.add.collider(this.groundLayer, goal); // the creatures are affected by gravity, so they need to collide with the ground
       }
       goal.part = partName;
-      const obstacleNumIdx = this.tiledObjectHasProperty('obstacleNum', g);
+      const obstacleNumIdx = this.tiledObjectHasProperty(tiledPropertyNames.obstacleNum, g);
       if (obstacleNumIdx >= 0) {
-        goal['objectNum'] = g.properties[obstacleNumIdx].value;
+        goal[tiledPropertyNames.obstacleNum] = g.properties[obstacleNumIdx].value;
       }
       this.goalObjs.push(goal);
     });
@@ -258,21 +276,21 @@ export class HomeScene extends Phaser.Scene {
     });
 
     // add the moving platforms as specified in the object layer of the map
-    const plats = this.map.filterObjects("Platforms", p => p.name == "platform");
+    const plats = this.map.filterObjects(tiledLayerNames.movingPlatforms, p => p.name == 'platform');
     plats.forEach(p => {
       const plat = new MovingPlatform(this, p.x, p.y, 'platform');
       plat.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
-      if (this.tiledObjectPropertyIsTrue('moveVertical', p)) {
+      if (this.tiledObjectPropertyIsTrue(tiledPropertyNames.platformMoveVertical, p)) {
         plat.movesV = true;
-      } else if(this.tiledObjectPropertyIsTrue('moveHorizontal', p)) {
+      } else if(this.tiledObjectPropertyIsTrue(tiledPropertyNames.platformMoveHorizontal, p)) {
         plat.movesH = true;
       }
       if (plat.isFixed) {
         this.movePlatform(plat);
       }
-      const obstacleNumIdx = this.tiledObjectHasProperty('obstacleNum', p)
+      const obstacleNumIdx = this.tiledObjectHasProperty(tiledPropertyNames.obstacleNum, p)
       if (obstacleNumIdx >= 0) {
-        plat.objectNum = p.properties[obstacleNumIdx].value;
+        plat.obstacleNum = p.properties[obstacleNumIdx].value;
       }
       this.platformObjs.push(plat);
     });
@@ -281,16 +299,16 @@ export class HomeScene extends Phaser.Scene {
     // add the buttons (to enable the player to interact with obstacles) as specified in the object layer of the map
     // also add the obstacle overlays (to enable the player to see broken obstacles)
     // as specified in the object layer of the map
-    const buttons = this.map.filterObjects("Buttons", p => p.name == "button");
+    const buttons = this.map.filterObjects(tiledLayerNames.buttons, p => p.name == 'button');
     buttons.forEach(b => {
       const butt = new ObstacleButton(this, b.x, b.y, 'buttonOff');
       const overlay = new ObstacleOverlay(this, b.x, b.y, 'obstacleFix', this.containsStars, this.gradeLevel);
       butt.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
       overlay.setOrigin(0, 1);
-      const obstacleNumIdx = this.tiledObjectHasProperty('obstacleNum', b)
+      const obstacleNumIdx = this.tiledObjectHasProperty(tiledPropertyNames.obstacleNum, b)
       if (obstacleNumIdx >= 0) {
-        butt.objectNum = b.properties[obstacleNumIdx].value;
-        overlay.objectNum = b.properties[obstacleNumIdx].value;
+        butt.obstacleNum = b.properties[obstacleNumIdx].value;
+        overlay.obstacleNum = b.properties[obstacleNumIdx].value;
       }
       this.buttonObjs.push(butt);
       this.overlayObjs.push(overlay);
@@ -299,16 +317,16 @@ export class HomeScene extends Phaser.Scene {
     this.physics.world.enable(this.overlayObjs, Phaser.Physics.Arcade.STATIC_BODY);
 
     // add the laser doors as specified in the object layer of the map
-    const doors = this.map.filterObjects("Doors", p => p.name == "door");
+    const doors = this.map.filterObjects(tiledLayerNames.doors, p => p.name == 'door');
     doors.forEach(d => {
-      const partNameIdx: number = this.tiledObjectHasProperty('part', d);
+      const partNameIdx: number = this.tiledObjectHasProperty(tiledPropertyNames.part, d);
       const partName: string = (partNameIdx >= 0) ? d.properties[partNameIdx].value : '';
 
       const ld = new LaserDoor(this, d.x, d.y, 'sheet_lasers', this.laserDoorPartToFrameNum(partName));
       ld.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
-      const obstacleNumIdx: number = this.tiledObjectHasProperty('obstacleNum', d)
+      const obstacleNumIdx: number = this.tiledObjectHasProperty(tiledPropertyNames.obstacleNum, d)
       if (obstacleNumIdx >= 0) {
-        ld.objectNum = d.properties[obstacleNumIdx].value;
+        ld.obstacleNum = d.properties[obstacleNumIdx].value;
       }
       ld.part = partName;
       this.doorObjs.push(ld);
@@ -364,10 +382,10 @@ export class HomeScene extends Phaser.Scene {
     this.overlayObjs.forEach(overlayObj => {
       const obstacleOverlapTriggerFixMenu = () => {
         
-        const objectNum: number = overlayObj.objectNum;
-        if (objectNum >= 0) {
+        const obstacleNum: number = overlayObj.obstacleNum;
+        if (obstacleNum >= 0) {
           this.buttonObjs.forEach(bObj => {
-            if (bObj.objectNum == objectNum) {
+            if (bObj.obstacleNum == obstacleNum) {
               // trigger the obstacle fix scene
               this.player.isOnObsOverlap = true;
               this.isInObstacleMenu = true;
@@ -495,7 +513,7 @@ export class HomeScene extends Phaser.Scene {
 
   }
 
-  public pauseGame() {
+  public pauseGame(): void {
     if( !(this.scene.isPaused()) ) {
       this.scene.switch(sceneNames.pause);
       this.scene.bringToTop(sceneNames.pause);
@@ -555,14 +573,14 @@ export class HomeScene extends Phaser.Scene {
 
     // print debugging for the player
     if (Phaser.Input.Keyboard.JustDown(this.printDebugKey)) {
-      console.log("Player Info:");
+      console.log('Player Info:');
       console.log(`x: ${this.player.x}`);
       console.log(`y: ${this.player.y}`);
     }
   }
 
   private collectCoin(sprite: any, tile: any): boolean {
-    console.log("Coin collected!")
+    // console.log('Coin collected!')
     this.coinLayer.removeTileAt(tile.x, tile.y);
     this.numCoins++;
     this.updateScoreText();
@@ -572,7 +590,9 @@ export class HomeScene extends Phaser.Scene {
   private triggerWinScreen(): void {
     console.log('win screen triggered!');
     this.scene.stop(sceneNames.hudMenu);
-    this.scene.start(sceneNames.win);
+    this.scene.stop(sceneNames.tabletMenu);
+    this.scene.stop(sceneNames.pause);
+    this.scene.start(sceneNames.win, this.levelSeedData);
   }
 
   private triggerEnableObFixMenu(): void {
@@ -599,8 +619,8 @@ export class HomeScene extends Phaser.Scene {
       this.numStars -= params.num_stars_consumed;
       this.updateScoreText();
       this.overlayObjs.forEach(overlayObj => {
-        const objectNum: number = overlayObj.objectNum;
-        if (params.buttonObj.objectNum == objectNum) {
+        const obstacleNum: number = overlayObj.obstacleNum;
+        if (params.buttonObj.obstacleNum == obstacleNum) {
           overlayObj.destroy();
         }
       });
@@ -627,7 +647,7 @@ export class HomeScene extends Phaser.Scene {
   }
 
   private collectGem(sprite: any, tile: any): boolean {
-    // console.log("Gem collected!")
+    // console.log('Gem collected!')
     this.gemLayer.removeTileAt(tile.x, tile.y);
     this.numGems++;
     this.updateScoreText();
@@ -635,7 +655,7 @@ export class HomeScene extends Phaser.Scene {
   }
 
   private collectStar(sprite: any, tile: any): boolean {
-    // console.log("Star collected!")
+    // console.log('Star collected!')
     this.starLayer.removeTileAt(tile.x, tile.y);
     this.numStars++;
     this.updateScoreText();
@@ -684,9 +704,9 @@ export class HomeScene extends Phaser.Scene {
   }
 
   private fixObstacle(ob: ObstacleButton): void {
-    // console.log(`fixing obstacle num: ${ob.objectNum}`)
+    // console.log(`fixing obstacle num: ${ob.obstacleNum}`)
     this.platformObjs.forEach( p => {
-      if (p.objectNum == ob.objectNum) {
+      if (p.obstacleNum == ob.obstacleNum) {
         // console.log('obstacle found (platform)!')
         ob.setTexture('buttonOn');
         ob.body.setSize(ob.body.width, 0); // change the height of the collison box to match a pressed button
@@ -697,7 +717,7 @@ export class HomeScene extends Phaser.Scene {
     });
     var foundDoor: boolean = false;
     this.doorObjs.forEach( d => {
-      if (d.objectNum == ob.objectNum) {
+      if (d.obstacleNum == ob.obstacleNum) {
         foundDoor = true;
         if (d.part === partNames.laser) {
           d.destroy(); // todo

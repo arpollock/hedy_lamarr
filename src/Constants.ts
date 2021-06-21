@@ -80,6 +80,42 @@ const partNames: {
   creature: 'creature'
 };
 
+const tiledPropertyNames: {
+  obstacleNum: string,
+  platformMoveVertical: string,
+  platformMoveHorizontal: string,
+  part: string,
+  player: string,
+} = {
+  obstacleNum: 'obstacleNum',
+  platformMoveVertical: 'moveVertical',
+  platformMoveHorizontal: 'moveHorizontal',
+  part: 'part',
+  player: 'player',
+};
+
+const tiledLayerNames : {
+  world: string,
+  playerStart: string,
+  coins: string,
+  gems: string,
+  stars: string,
+  movingPlatforms: string,
+  buttons: string,
+  doors: string,
+  goal: string,
+} = {
+  world: 'World',
+  playerStart: 'PlayerStart',
+  coins: 'Coins',
+  gems: 'Gems',
+  stars: 'Stars',
+  movingPlatforms: 'Platforms',
+  buttons: 'Buttons',
+  doors: 'Doors',
+  goal: 'Goal',
+};
+
 const sceneNames: {
   mainGame: string,
   hudMenu: string,
@@ -216,6 +252,8 @@ export {
   numDifficulties,
   textConfig,
   partNames,
+  tiledPropertyNames,
+  tiledLayerNames,
   sceneNames,
   eventNames,
   MainGameConfig,
