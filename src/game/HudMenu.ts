@@ -17,6 +17,10 @@ import {
 
 export class HudMenu extends Phaser.Scene {
 
+  private initCoins: number;
+  private initGems: number;
+  private initStars: number;
+
   private coinsText: Phaser.GameObjects.Text;
   private gemsText: Phaser.GameObjects.Text;
   private starsText: Phaser.GameObjects.Text;
@@ -33,11 +37,19 @@ export class HudMenu extends Phaser.Scene {
       key: sceneNames.hudMenu
     });
     this.tablet_menu_open = false;
+    this.initCoins = initScore.coins;
+    this.initGems = initScore.gems;
+    this.initStars = initScore.stars;
+    this.coinsText = null;
+    this.gemsText = null;
+    this.starsText = null;
   }
 
   public init(data: HudMenuConfig): void {
-    eventsCenter.on(eventNames.updateScoreText, this.updateScoreText, this);
     this.containsStars = data.containsStars;
+    this.initCoins = data.coins;
+    this.initGems = data.gems;
+    this.initStars = data.stars;
   }
 
   public preload(): void {
@@ -53,8 +65,10 @@ export class HudMenu extends Phaser.Scene {
   }
 
   public create(): void {
+    eventsCenter.on(eventNames.updateScoreText, this.updateScoreText, this);
     this.openTabletMenu(); // start with the tablet menu open to show conversion values
     this.events.on('sleep', this.onSleep, this);
+    this.events.on('destroy', this.onDestroy, this);
     const hudPanelX: number = 10;
     const offsetY: number = 60;
     const hudPanelY: number = height - offsetY;
@@ -64,7 +78,7 @@ export class HudMenu extends Phaser.Scene {
     const hudPelIconXOffset: number = 115;
     const coinSprite: Phaser.GameObjects.Sprite = this.add.sprite(hudPanelIconX, hudPanelIconY, 'coinHud');
     // text to show coin score
-    this.coinsText = this.add.text(hudMenuSpriteX, hudMenuSpriteY, `: ${initScore.coins}`, {
+    this.coinsText = this.add.text(hudMenuSpriteX, hudMenuSpriteY, `: ${this.initCoins}`, {
       fontSize: textConfig.mainFontSize,
       color: textConfig.secondaryFillColor,
       fontFamily: textConfig.fontFams,
@@ -80,7 +94,7 @@ export class HudMenu extends Phaser.Scene {
     this.coinsText.setScrollFactor(0);
     const gemSprite: Phaser.GameObjects.Sprite = this.add.sprite(hudPanelIconX + hudPelIconXOffset, hudPanelIconY, 'gemHud');
     // text to show gem score
-    this.gemsText = this.add.text(hudMenuSpriteX + hudMenuSpriteXOffset, hudMenuSpriteY, `: ${initScore.gems}`, {
+    this.gemsText = this.add.text(hudMenuSpriteX + hudMenuSpriteXOffset, hudMenuSpriteY, `: ${this.initGems}`, {
       fontSize: textConfig.mainFontSize,
       color: textConfig.secondaryFillColor,
       fontFamily: textConfig.fontFams,
@@ -97,7 +111,7 @@ export class HudMenu extends Phaser.Scene {
     if (this.containsStars) {
       const starSprite: Phaser.GameObjects.Sprite = this.add.sprite(hudPanelIconX + hudPelIconXOffset*2, hudPanelIconY, 'starHud');
       // text to show star score
-      this.starsText = this.add.text(hudMenuSpriteX + hudMenuSpriteXOffset * 2, hudMenuSpriteY, `: ${initScore.stars}`, {
+      this.starsText = this.add.text(hudMenuSpriteX + hudMenuSpriteXOffset * 2, hudMenuSpriteY, `: ${this.initStars}`, {
         fontSize: textConfig.mainFontSize,
         color: textConfig.secondaryFillColor,
         fontFamily: textConfig.fontFams,
@@ -196,5 +210,12 @@ export class HudMenu extends Phaser.Scene {
 
   private onSleep(): void {
     this.closeTabletMenu();
+  }
+
+  private onDestroy(): void {
+    console.log('in HUD Meny onDestroy!');
+    eventsCenter.off(eventNames.updateScoreText);
+    console.log('eventsCenter.off success?? ->');
+    console.log(eventsCenter);
   }
 }

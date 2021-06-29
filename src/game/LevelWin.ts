@@ -8,6 +8,9 @@ import {
   textConfig,
   MainGameConfig
 } from './../Constants';
+import { HudMenu } from './HudMenu';
+import { TabletMenu } from './TabletMenu';
+import { HomeScene } from './mainGame';
 
 export class LevelWin extends Phaser.Scene {
 
@@ -37,6 +40,9 @@ export class LevelWin extends Phaser.Scene {
   }
 
   public create(): void {
+    this.scene.remove(sceneNames.mainGame);
+    this.scene.remove(sceneNames.hudMenu);
+    this.scene.remove(sceneNames.tabletMenu);
     console.log('from win screen')
     this.cameras.main.setBackgroundColor(backgroundColor);
     // text to show pause menu text.
@@ -89,6 +95,9 @@ export class LevelWin extends Phaser.Scene {
 
   // todo, currently startNewLevel and tryLevelAgain are not different
   private playNewLevel(): void {
+    this.scene.add(sceneNames.hudMenu, HudMenu, false);
+    this.scene.add(sceneNames.tabletMenu, TabletMenu, false);
+    this.scene.add(sceneNames.mainGame, HomeScene, false);
     this.scene.start(sceneNames.mainGame, this.previousLevelSeedData);
   }
 

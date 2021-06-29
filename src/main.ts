@@ -1,9 +1,9 @@
 import 'phaser';
 import { StartScene } from './game/StartScene';
-import { HomeScene } from './game/mainGame';
+// import { HomeScene } from './game/mainGame';
 import { PauseScene } from './game/PauseScene';
-import { HudMenu } from './game/HudMenu';
-import { TabletMenu } from './game/TabletMenu';
+// import { HudMenu } from './game/HudMenu';
+// import { TabletMenu } from './game/TabletMenu';
 import { LevelWin } from './game/LevelWin';
 import { gravity, width, height } from './Constants'
 
@@ -12,7 +12,7 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
   width: width,
   height: height,
   parent: 'game-container',
-  scene: [StartScene, HomeScene, HudMenu, TabletMenu, PauseScene, LevelWin],
+  scene: [StartScene, PauseScene, LevelWin],
   physics: {
       default: 'arcade',
       arcade: {

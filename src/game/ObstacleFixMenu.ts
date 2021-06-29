@@ -78,11 +78,11 @@ class DraggableCurrencyTarget extends Phaser.GameObjects.Sprite {
   }
 
   public setConverterFilled(converter: DraggableCurrencyConverter): void {
-    this.removeDragDropTarget();
+    // this.removeDragDropTarget();
     this.setTexture(converter.texture.key);
     this.filled = true;
     this.converter = converter;
-    this.makeDragDropTarget();
+    // this.makeDragDropTarget();
     // console.log(converter);
   }
 
@@ -92,6 +92,7 @@ class DraggableCurrencyTarget extends Phaser.GameObjects.Sprite {
     const newTextureStr: string = oldTextureStr.substring(0, zeroIdx) + '1' + oldTextureStr.substring(zeroIdx + 1);
     console.log(`${oldTextureStr} --> ${newTextureStr}`);
     this.setTexture(newTextureStr);
+    // this.input.hitArea.setSize(this.displayWidth, this.displayHeight); // update the size of the drag drop hit area target
     // this.filled = true;
   }
 
@@ -102,6 +103,7 @@ class DraggableCurrencyTarget extends Phaser.GameObjects.Sprite {
       this.filled = false;
       this.converter = null;
       this.makeDragDropTarget();
+      // this.input.hitArea.setSize(this.displayWidth, this.displayHeight); // update the size of the drag drop hit area target
     }
   }
 
@@ -112,8 +114,8 @@ class DraggableCurrencyTarget extends Phaser.GameObjects.Sprite {
       customHitArea: true,
       hitArea: this.getBounds(),
     }, this.dropped_on, true);
-    console.log('Set drop target w:');
-    console.log(this.getBounds());
+    // console.log('Set drop target w:');
+    // console.log(this.getBounds());
   }
 
   private removeDragDropTarget(): void {
@@ -186,6 +188,7 @@ class DraggableCurrency extends Phaser.GameObjects.Sprite {
           if (target.texture.key.indexOf('0') > -1) {
             // there is an empty slot in the converter
             target.fillConverter();
+            target.input.hitArea.setSize(target.displayWidth, target.displayHeight); // update the size of the drag drop hit area target
             this.decrement_count();
           }
         }

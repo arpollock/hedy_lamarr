@@ -10,6 +10,9 @@ import {
   numDifficulties,
   MainGameConfig
 } from './../Constants';
+import { HomeScene } from './mainGame';
+import { HudMenu } from './HudMenu';
+import { TabletMenu } from './TabletMenu';
 
 class DifficultyLevelButton extends Phaser.GameObjects.Sprite {
   private difficulty: number;
@@ -65,6 +68,7 @@ export class StartScene extends Phaser.Scene {
   }
 
   public create(): void {
+    this.scene.add(sceneNames.mainGame, HomeScene, false);
     this.cameras.main.setBackgroundColor(altBackgroundColor);
     // text to show the game title
     this.titleTextString = gameName;
@@ -113,12 +117,25 @@ export class StartScene extends Phaser.Scene {
       }, this);
       tempButtonSpr.on('pointerdown', () => {
         this.activeGradeLevel = currGrade;
-        this.difficultyLevelButtons.forEach( (btn) => {
-          if (this.activeGradeLevel == btn.get_difficulty()) {
-            btn.setTexture(`difficulty${currGrade}_active`);
+        this.difficultyLevelButtons.forEach( (btn: DifficultyLevelButton) => {
+          if (btn) {
+            console.log('btn is not null:');
+            console.log('btn:');
+            console.log(btn);
+            
+            if (this.activeGradeLevel == btn.get_difficulty()) {
+              console.log(`is active grade level: ${this.activeGradeLevel}`);
+              btn.setTexture(`difficulty${this.activeGradeLevel}_active`);
+              console.log('Set active texture ok!');
+            } else {
+              console.log(`is not active grade level (${this.activeGradeLevel}): ${btn.get_difficulty()}`);
+              btn.setTexture(`difficulty${btn.get_difficulty()}`);
+              console.log('Set non-active texture ok!');
+            }
           } else {
-            btn.setTexture(`difficulty${btn.get_difficulty()}`);
+            console.log('btn is null!!');
           }
+          console.log('======================================');
         });
       }, this);
       this.difficultyLevelButtons.push(tempButtonSpr);
@@ -144,9 +161,28 @@ export class StartScene extends Phaser.Scene {
   private onStartGameButtonHoverExit(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData): void { }
 
   private startGame(): void {
+    this.startGameButton.removeListener('pointerover', this.onStartGameButtonHoverEnter, this);
+    this.startGameButton.removeListener('pointerout', this.onStartGameButtonHoverExit, this);
+    this.startGameButton.removeListener('pointerdown', this.startGame, this);
+    this.difficultyLevelButtons.forEach( (btn: DifficultyLevelButton) => {
+      btn.removeListener('pointerover');
+      btn.removeListener('pointerout');
+      btn.removeListener('pointerdown');
+      // need to remove the old buttons
+      // so a relaunch of the start game scene won't trigger
+      // multiple overlapping event listeners??
+      // IDK it was broken and this fixed it
+      btn.destroy(); 
+    });
+
+    this.difficultyLevelButtons = [];
     const mainGameData: MainGameConfig = {
       grade_level: this.activeGradeLevel,
     };
+    this.startGameButton.destroy();
+    this.startGameButton = null;
+    this.scene.add(sceneNames.hudMenu, HudMenu, false);
+    this.scene.add(sceneNames.tabletMenu, TabletMenu, false);
     this.scene.start(sceneNames.mainGame, mainGameData);
   }
 };

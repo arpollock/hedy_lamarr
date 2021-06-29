@@ -159,7 +159,10 @@ interface ConversionConfig {
 };
 
 interface HudMenuConfig {
-  containsStars: boolean
+  containsStars: boolean,
+  coins: number,
+  gems: number,
+  stars: number
 }
 
 interface PlayerConfig {

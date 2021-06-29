@@ -86,6 +86,11 @@ export class HomeScene extends Phaser.Scene {
 
     console.log(data);
 
+    this.coinLayer = null;
+    this.gemLayer = null;
+    this.starLayer = null;
+    this.groundLayer = null;
+
     this.gradeLevel = data.grade_level;
     this.containsStars = this.gradeLevel > 3 ? true : false;
 
@@ -179,10 +184,14 @@ export class HomeScene extends Phaser.Scene {
   }
 
   public create(): void {
+    this.events.on('destroy', this.onDestroy, this);
     eventsCenter.on(eventNames.closeObFixMenu, this.closeObFixMenu, this);
     eventsCenter.on(eventNames.pauseGame, this.pauseGame, this);
     const hudConfig: HudMenuConfig = {
-      containsStars: this.containsStars
+      containsStars: this.containsStars,
+      coins: this.numCoins,
+      gems: this.numGems,
+      stars: this.numStars
     };
     this.scene.launch(sceneNames.hudMenu, hudConfig);
     this.scene.launch(sceneNames.tabletMenu, this.conversionValues);
@@ -588,6 +597,15 @@ export class HomeScene extends Phaser.Scene {
   }
 
   private triggerWinScreen(): void {
+    this.coinLayer.setTileIndexCallback(17, null, this);
+    this.coinLayer = null;
+    this.gemLayer.setTileIndexCallback(18, null, this);
+    this.gemLayer = null;
+    if (this.containsStars) {
+      this.starLayer.setTileIndexCallback(19, null, this);
+      this.starLayer = null;
+    }
+    
     console.log('win screen triggered!');
     this.scene.stop(sceneNames.hudMenu);
     this.scene.stop(sceneNames.tabletMenu);
@@ -608,8 +626,6 @@ export class HomeScene extends Phaser.Scene {
     this.time.addEvent(retriggerWindowTimer);
     this.scene.stop(sceneNames.obFixMenu);
     this.scene.remove(sceneNames.obFixMenu);
-    this.scene.run(sceneNames.hudMenu);
-    this.scene.bringToTop(sceneNames.hudMenu);
     this.player.setVelocity(0);
 
     if (params.success) {
@@ -625,7 +641,14 @@ export class HomeScene extends Phaser.Scene {
         }
       });
     }
-    
+    const hudConfig: HudMenuConfig = {
+      containsStars: this.containsStars,
+      coins: this.numCoins,
+      gems: this.numGems,
+      stars: this.numStars
+    }
+    this.scene.run(sceneNames.hudMenu, hudConfig);
+    this.scene.bringToTop(sceneNames.hudMenu);
   }
 
   private triggerGoalReached(): boolean {
@@ -754,5 +777,8 @@ export class HomeScene extends Phaser.Scene {
       return 85;
     }
     return 1;
+  }
+  private onDestroy(): void {
+    eventsCenter.off(eventNames.closeObFixMenu);
   }
 };
