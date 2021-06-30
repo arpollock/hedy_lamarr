@@ -58,9 +58,6 @@ export class HudMenu extends Phaser.Scene {
     this.load.image('tablet_button_hover', 'tablet_hover.png');
     this.load.image('hud_menu_background', 'menuPanel_tab.png');
     this.load.image('pause_button', 'pause.png');
-    this.load.image('coinHud', 'coin.png');
-    this.load.image('gemHud', 'gem.png');
-    this.load.image('starHud', 'star.png');
     this.cameras.main.setBackgroundColor(); // set background of hud menu to transparent
   }
 

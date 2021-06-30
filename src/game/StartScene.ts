@@ -65,6 +65,14 @@ export class StartScene extends Phaser.Scene {
     this.load.image('difficulty3_active', 'difficulty3_active.png');
     this.load.image('difficulty4_active', 'difficulty4_active.png');
     this.load.image('difficulty5_active', 'difficulty5_active.png');
+    // these are technically for the hud and tablet menu, but they
+    // need to be preloaded here since the other scenes are added dynamically
+    this.load.image('coinHud', 'coin.png');
+    this.load.image('gemHud', 'gem.png');
+    this.load.image('starHud', 'star.png');
+    // these are for the pause AND win screens
+    this.load.image('main_menu_button', 'main_menu.png');
+    this.load.image('play_new_level', 'play_new_level.png');
   }
 
   public create(): void {
@@ -86,7 +94,7 @@ export class StartScene extends Phaser.Scene {
     // text to push the user to choose their grade level
     const difficultyTextY: number = titleTextY + padding * 1.75;
     this.difficultyText = this.add.text(centerX, difficultyTextY, this.difficultyTextString, {
-      fontSize: textConfig.secondaryTitleFontSize,
+      fontSize: textConfig.tertiaryTitleFontSize,
       color: textConfig.secondaryFillColor,
       fontFamily: textConfig.fontFams,
     }).setOrigin(0.5); // set origin makes it so we can center the text easily

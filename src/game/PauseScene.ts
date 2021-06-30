@@ -16,12 +16,14 @@ export class PauseScene extends Phaser.Scene {
   private textString: string;
 
   private resumeGameButton: Phaser.GameObjects.Sprite;
+  private mainMenuButton: Phaser.GameObjects.Sprite;
 
   constructor() {
     super({
       key: sceneNames.pause
     });
     this.resumeGameButton = null;
+    this.mainMenuButton = null;
   }
 
   public init(params): void {
@@ -41,15 +43,25 @@ export class PauseScene extends Phaser.Scene {
     const textY = height / 3;
     console.log(`w: ${width} h: ${height} x: ${textX} y: ${textY}`);
     this.text = this.add.text(textX, textY, this.textString, {
-      fontSize: textConfig.mainFontSize,
+      fontSize: textConfig.secondaryTitleFontSize,
       color: textConfig.mainFillColor,
       fontFamily: textConfig.fontFams
     }).setOrigin(0.5); // set origin makes it so we can center the text easily
     this.text.setScrollFactor(0);
 
+    const buttonY: number = height * 2 / 3;
+    const buttonLeftX: number = width / 3 - 50;
+    const buttonRightX: number = width * 2 / 3 + 50;
+    // button to go back to the main menu
+    this.mainMenuButton = this.add.sprite(buttonLeftX, buttonY,'main_menu_button').setOrigin(0.5);
+    this.mainMenuButton.setInteractive({
+      useHandCursor: true
+    });
+    this.mainMenuButton.on('pointerover', this.onMainMenuButtonHoverEnter, this);
+    this.mainMenuButton.on('pointerout', this.onMainMenuButtonHoverExit, this);
+    this.mainMenuButton.on('pointerdown', this.goToMainMenu, this);
     // button to go back to the game
-    const resumeGameButtonY: number = height * 2 / 3;
-    this.resumeGameButton = this.add.sprite(textX, resumeGameButtonY,'resume_game_button').setOrigin(0.5);
+    this.resumeGameButton = this.add.sprite(buttonRightX, buttonY,'resume_game_button').setOrigin(0.5);
     this.resumeGameButton.setInteractive({
       useHandCursor: true
     });
@@ -71,6 +83,19 @@ export class PauseScene extends Phaser.Scene {
 
   public resumeGame(): void {
     this.scene.switch(sceneNames.mainGame);
+  }
+
+  private onMainMenuButtonHoverEnter(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData): void { }
+
+  private onMainMenuButtonHoverExit(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData): void { } 
+
+  public goToMainMenu(): void {
+    // clean up the old level
+    this.scene.remove(sceneNames.mainGame);
+    this.scene.remove(sceneNames.hudMenu);
+    this.scene.remove(sceneNames.tabletMenu);
+    // go back to the main menu
+    this.scene.switch(sceneNames.start);
   }
 
 };

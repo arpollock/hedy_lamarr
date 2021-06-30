@@ -780,5 +780,6 @@ export class HomeScene extends Phaser.Scene {
   }
   private onDestroy(): void {
     eventsCenter.off(eventNames.closeObFixMenu);
+    eventsCenter.off(eventNames.pauseGame);
   }
 };

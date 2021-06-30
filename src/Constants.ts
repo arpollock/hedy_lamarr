@@ -56,13 +56,15 @@ const textConfig: {
   mainFontSize: string,
   mainTitleFontSize: string,
   secondaryTitleFontSize: string,
+  tertiaryTitleFontSize: string,
   fontFams: string,
 } = {
   mainFillColor: '#ffffff',
   secondaryFillColor: '#2f3640',
   mainFontSize: '32px',
   mainTitleFontSize: '64px',
-  secondaryTitleFontSize: '24px',
+  secondaryTitleFontSize: '48px',
+  tertiaryTitleFontSize: '24px',
   fontFams: '"KenvectorFuture", "Courier New", "Courier", "monospace"',
 };
 

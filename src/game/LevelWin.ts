@@ -35,8 +35,6 @@ export class LevelWin extends Phaser.Scene {
   }
   public preload(): void {
     this.load.setBaseURL(assetBaseURL);
-    this.load.image('main_menu_button', 'main_menu.png');
-    this.load.image('play_new_level', 'play_new_level.png');
   }
 
   public create(): void {
