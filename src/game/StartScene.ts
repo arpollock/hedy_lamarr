@@ -10,7 +10,7 @@ import {
   numDifficulties,
   MainGameConfig
 } from './../Constants';
-import { HomeScene } from './mainGame';
+import { HomeScene } from './MainGame';
 import { HudMenu } from './HudMenu';
 import { TabletMenu } from './TabletMenu';
 

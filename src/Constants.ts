@@ -90,6 +90,7 @@ const tiledPropertyNames: {
   player: string,
   minCoinValue: string,  
   maxCoinValue: string,
+  opposite: string,
 } = {
   obstacleNum: 'obstacleNum',
   platformMoveVertical: 'moveVertical',
@@ -98,6 +99,7 @@ const tiledPropertyNames: {
   player: 'player',
   minCoinValue: 'minCoinValue',  
   maxCoinValue: 'maxCoinValue',
+  opposite: 'opposite',
 };
 
 const tiledLayerNames : {

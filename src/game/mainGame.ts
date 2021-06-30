@@ -26,7 +26,7 @@ import {
   mapWidth,
   pauseKeyCode,
   ScoreUpdate,
-} from './../Constants';
+} from '../Constants';
 import { ObstacleFixMenu } from './ObstacleFixMenu';
 
 class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
@@ -159,7 +159,9 @@ export class HomeScene extends Phaser.Scene {
   public preload(): void {
     this.load.setBaseURL(assetBaseURL);
     // map made with Tiled in JSON format
-    this.load.tilemapTiledJSON('map', 'map_1.4.json');
+    // TODO: make this a randomized/seeded selection
+    this.load.tilemapTiledJSON('map', 'map_1.json');
+    // this.load.tilemapTiledJSON('map', 'test_map.json');
     // tiles in spritesheet 
     this.load.spritesheet('tiles', 'tiles.png', {frameWidth: 70, frameHeight: 70});
     // tiles in spritesheet 
@@ -295,12 +297,18 @@ export class HomeScene extends Phaser.Scene {
       } else if(this.tiledObjectPropertyIsTrue(tiledPropertyNames.platformMoveHorizontal, p)) {
         plat.movesH = true;
       }
-      if (plat.isFixed) {
-        this.movePlatform(plat);
+      if (this.tiledObjectPropertyIsTrue(tiledPropertyNames.opposite, p)) {
+        plat.moveOpposite();
       }
       const obstacleNumIdx = this.tiledObjectHasProperty(tiledPropertyNames.obstacleNum, p)
       if (obstacleNumIdx >= 0) {
         plat.obstacleNum = p.properties[obstacleNumIdx].value;
+        if (plat.obstacleNum == -1) { // code to have the platform moving @ start (versus having to be fixed)
+          plat.isFixed = true;
+        }
+      }
+      if (plat.isFixed) {
+        this.movePlatform(plat);
       }
       this.platformObjs.push(plat);
     });

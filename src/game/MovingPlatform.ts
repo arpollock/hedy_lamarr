@@ -43,6 +43,10 @@ export default class MovingPlatform extends Phaser.Physics.Arcade.Sprite {
     this.dist = 300;
 	}
 
+  public moveOpposite(): void {
+    this.dist = this.dist * -1;
+  }
+
   public moveVertically(): void {
 	  this.scene.tweens.addCounter({
       from: 0,

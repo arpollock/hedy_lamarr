@@ -10,7 +10,7 @@ import {
 } from './../Constants';
 import { HudMenu } from './HudMenu';
 import { TabletMenu } from './TabletMenu';
-import { HomeScene } from './mainGame';
+import { HomeScene } from './MainGame';
 
 export class LevelWin extends Phaser.Scene {
 
