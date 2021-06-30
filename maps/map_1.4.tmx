@@ -55,16 +55,22 @@
  <objectgroup id="6" name="Buttons">
   <object id="4" name="button" gid="21" x="840" y="910" width="70" height="70">
    <properties>
+    <property name="maxCoinValue" type="int" value="3"/>
+    <property name="minCoinValue" type="int" value="1"/>
     <property name="obstacleNum" type="int" value="0"/>
    </properties>
   </object>
   <object id="5" name="button" gid="21" x="1260" y="700" width="70" height="70">
    <properties>
+    <property name="maxCoinValue" type="int" value="4"/>
+    <property name="minCoinValue" type="int" value="1"/>
     <property name="obstacleNum" type="int" value="1"/>
    </properties>
   </object>
   <object id="13" name="button" gid="21" x="1680" y="630" width="70" height="70">
    <properties>
+    <property name="maxCoinValue" type="int" value="5"/>
+    <property name="minCoinValue" type="int" value="2"/>
     <property name="obstacleNum" type="int" value="2"/>
    </properties>
   </object>

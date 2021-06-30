@@ -133,6 +133,16 @@
                  "name":"button",
                  "properties":[
                         {
+                         "name":"maxCoinValue",
+                         "type":"int",
+                         "value":3
+                        }, 
+                        {
+                         "name":"minCoinValue",
+                         "type":"int",
+                         "value":1
+                        }, 
+                        {
                          "name":"obstacleNum",
                          "type":"int",
                          "value":0
@@ -151,6 +161,16 @@
                  "name":"button",
                  "properties":[
                         {
+                         "name":"maxCoinValue",
+                         "type":"int",
+                         "value":4
+                        }, 
+                        {
+                         "name":"minCoinValue",
+                         "type":"int",
+                         "value":1
+                        }, 
+                        {
                          "name":"obstacleNum",
                          "type":"int",
                          "value":1
@@ -168,6 +188,16 @@
                  "id":13,
                  "name":"button",
                  "properties":[
+                        {
+                         "name":"maxCoinValue",
+                         "type":"int",
+                         "value":5
+                        }, 
+                        {
+                         "name":"minCoinValue",
+                         "type":"int",
+                         "value":2
+                        }, 
                         {
                          "name":"obstacleNum",
                          "type":"int",

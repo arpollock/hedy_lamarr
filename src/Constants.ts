@@ -88,12 +88,16 @@ const tiledPropertyNames: {
   platformMoveHorizontal: string,
   part: string,
   player: string,
+  minCoinValue: string,  
+  maxCoinValue: string,
 } = {
   obstacleNum: 'obstacleNum',
   platformMoveVertical: 'moveVertical',
   platformMoveHorizontal: 'moveHorizontal',
   part: 'part',
   player: 'player',
+  minCoinValue: 'minCoinValue',  
+  maxCoinValue: 'maxCoinValue',
 };
 
 const tiledLayerNames : {

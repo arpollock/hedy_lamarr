@@ -242,6 +242,7 @@ export class HomeScene extends Phaser.Scene {
     this.player.setCollideWorldBounds(true);
     this.player.setDepth(999);
     this.player.isOnObsOverlap = false;
+
     // add the goal objects as specified in the object layer of the map
     const goals = this.map.filterObjects(tiledLayerNames.goal, p => p.name == 'goal');
     goals.forEach(g => {
@@ -311,10 +312,20 @@ export class HomeScene extends Phaser.Scene {
     const buttons = this.map.filterObjects(tiledLayerNames.buttons, p => p.name == 'button');
     buttons.forEach(b => {
       const butt = new ObstacleButton(this, b.x, b.y, 'buttonOff');
-      const overlay = new ObstacleOverlay(this, b.x, b.y, 'obstacleFix', this.containsStars, this.gradeLevel);
+
+      const minCoinValueIdx = this.tiledObjectHasProperty(tiledPropertyNames.minCoinValue, b);
+      const maxCoinValueIdx = this.tiledObjectHasProperty(tiledPropertyNames.maxCoinValue, b);
+      let minCoinValue = 1.0;
+      let maxCoinValue = 2.0;
+      if (minCoinValueIdx >= 0 && maxCoinValueIdx >= 0) {
+        minCoinValue = b.properties[minCoinValueIdx].value;
+        maxCoinValue = b.properties[maxCoinValueIdx].value;
+      } // else map did not specify the difficulty level of the obstacle uses defaults 1 and 2
+      const overlay = new ObstacleOverlay(this, b.x, b.y, 'obstacleFix', this.containsStars, this.gradeLevel, minCoinValue, maxCoinValue, this.conversionValues);
+      
       butt.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
       overlay.setOrigin(0, 1);
-      const obstacleNumIdx = this.tiledObjectHasProperty(tiledPropertyNames.obstacleNum, b)
+      const obstacleNumIdx = this.tiledObjectHasProperty(tiledPropertyNames.obstacleNum, b);
       if (obstacleNumIdx >= 0) {
         butt.obstacleNum = b.properties[obstacleNumIdx].value;
         overlay.obstacleNum = b.properties[obstacleNumIdx].value;
@@ -340,6 +351,7 @@ export class HomeScene extends Phaser.Scene {
       ld.part = partName;
       this.doorObjs.push(ld);
     });
+
     // specify how collisons with door objects works
     this.physics.world.enable(this.doorObjs, Phaser.Physics.Arcade.STATIC_BODY);
     this.doorObjs.forEach(dObj => {
