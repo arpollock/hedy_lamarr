@@ -188,7 +188,7 @@ export class HomeScene extends Phaser.Scene {
   }
 
   public create(): void {
-    this.events.on('destroy', this.onDestroy, this);
+    this.events.on('destroy', this.onDestroy, this); // docs on event names valid with this pattern: https://newdocs.phaser.io/docs/3.55.2/Phaser.Scenes.Events
     eventsCenter.on(eventNames.closeObFixMenu, this.closeObFixMenu, this);
     eventsCenter.on(eventNames.pauseGame, this.pauseGame, this);
     const hudConfig: HudMenuConfig = {
