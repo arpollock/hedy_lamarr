@@ -8,7 +8,8 @@ import {
   height,
   textConfig,
   numDifficulties,
-  MainGameConfig
+  MainGameConfig,
+  musicKeyNames
 } from './../Constants';
 import { HomeScene } from './MainGame';
 import { HudMenu } from './HudMenu';
@@ -55,6 +56,9 @@ export class StartScene extends Phaser.Scene {
   }
   public preload(): void {
     this.load.setBaseURL(assetBaseURL);
+    // load image assets
+    this.load.image('music_turn_off', 'music_turnOff.png');
+    this.load.image('music_turn_on', 'music_turnOn.png');
     this.load.image('start_game', 'start_game.png');
     this.load.image('difficulty3', 'difficulty3.png');
     this.load.image('difficulty4', 'difficulty4.png');
@@ -65,7 +69,7 @@ export class StartScene extends Phaser.Scene {
     this.load.image('difficulty3_active', 'difficulty3_active.png');
     this.load.image('difficulty4_active', 'difficulty4_active.png');
     this.load.image('difficulty5_active', 'difficulty5_active.png');
-    // these are technically for the hud and tablet menu, but they
+    // these are technically shared across the hud and tablet menu, but they
     // need to be preloaded here since the other scenes are added dynamically
     this.load.image('coinHud', 'coin.png');
     this.load.image('gemHud', 'gem.png');
@@ -76,7 +80,14 @@ export class StartScene extends Phaser.Scene {
   }
 
   public create(): void {
+    // add music control
+    if ( !(this.scene.isActive(sceneNames.musicControl)) ) {
+      this.scene.launch(sceneNames.musicControl);
+    }
+    this.scene.bringToTop(sceneNames.musicControl);
+    // add the main game into the scene manager
     this.scene.add(sceneNames.mainGame, HomeScene, false);
+
     this.cameras.main.setBackgroundColor(altBackgroundColor);
     // text to show the game title
     this.titleTextString = gameName;
@@ -191,6 +202,10 @@ export class StartScene extends Phaser.Scene {
     this.startGameButton = null;
     this.scene.add(sceneNames.hudMenu, HudMenu, false);
     this.scene.add(sceneNames.tabletMenu, TabletMenu, false);
-    this.scene.start(sceneNames.mainGame, mainGameData);
+    // the next lines achieve the == of 'this.scene.start(sceneNames.mainGame, mainGameData);'
+    // BUT keeps master music control running properly in the bg
+    this.scene.sendToBack(sceneNames.musicControl);
+    this.scene.launch(sceneNames.mainGame, mainGameData);
+    this.scene.stop(sceneNames.start);
   }
 };

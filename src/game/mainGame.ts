@@ -29,6 +29,8 @@ import {
 } from '../Constants';
 import { ObstacleFixMenu } from './ObstacleFixMenu';
 
+// low-priority-level todo: checkout https://phaser.io/examples/v3/view/audio/web-audio/audiosprite for buttons, etc.
+
 class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
   public isOnPlatform: boolean;
   public currentPlatform: any;
@@ -197,7 +199,7 @@ export class HomeScene extends Phaser.Scene {
     };
     this.scene.launch(sceneNames.hudMenu, hudConfig);
     this.scene.launch(sceneNames.tabletMenu, this.conversionValues);
-    this.scene.sleep(sceneNames.tabletMenu);
+    // this.scene.sleep(sceneNames.tabletMenu);
     this.scene.bringToTop(sceneNames.hudMenu);
 
     // load the map 
@@ -544,8 +546,8 @@ export class HomeScene extends Phaser.Scene {
 
   public pauseGame(): void {
     if( !(this.scene.isPaused()) ) {
-      this.scene.switch(sceneNames.pause);
       this.scene.bringToTop(sceneNames.pause);
+      this.scene.switch(sceneNames.pause);
     }
   }
 
@@ -798,6 +800,7 @@ export class HomeScene extends Phaser.Scene {
     }
     return 1;
   }
+
   private onDestroy(): void {
     eventsCenter.off(eventNames.closeObFixMenu);
     eventsCenter.off(eventNames.pauseGame);

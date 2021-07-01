@@ -68,6 +68,12 @@ const textConfig: {
   fontFams: '"KenvectorFuture", "Courier New", "Courier", "monospace"',
 };
 
+const musicKeyNames: {
+  intro: string,
+} = {
+  intro: 'intro',
+};
+
 const partNames: {
   laser: string,
   base_ground: string,
@@ -131,7 +137,8 @@ const sceneNames: {
   pause: string,
   win: string,
   obFixMenu: string,
-  start: string
+  start: string,
+  musicControl: string,
 } = {
   mainGame: 'HomeScene',
   hudMenu: 'HudMenu',
@@ -139,7 +146,8 @@ const sceneNames: {
   pause: 'PauseScene',
   win: 'LevelWin',
   obFixMenu: 'ObstacleFixMenu',
-  start: 'Start'
+  start: 'Start',
+  musicControl: 'MasterMusicControl',
 };
 
 const eventNames: {
@@ -262,6 +270,7 @@ export {
   // initScoreStr_noStars,
   numDifficulties,
   textConfig,
+  musicKeyNames,
   partNames,
   tiledPropertyNames,
   tiledLayerNames,

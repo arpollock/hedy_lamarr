@@ -68,6 +68,9 @@ export class PauseScene extends Phaser.Scene {
     this.resumeGameButton.on('pointerover', this.onResumeGameButtonHoverEnter, this);
     this.resumeGameButton.on('pointerout', this.onResumeGameButtonHoverExit, this);
     this.resumeGameButton.on('pointerdown', this.resumeGame, this);
+    // handle showing master music control after being put to sleep
+    this.bringUpMasterMusicControl();
+    this.events.on('wake', this.bringUpMasterMusicControl, this);
   }
 
   public update(time: number): void {
@@ -82,6 +85,7 @@ export class PauseScene extends Phaser.Scene {
   private onResumeGameButtonHoverExit(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData): void { } 
 
   public resumeGame(): void {
+    this.scene.sendToBack(sceneNames.musicControl); // hide master music control
     this.scene.switch(sceneNames.mainGame);
   }
 
@@ -96,6 +100,10 @@ export class PauseScene extends Phaser.Scene {
     this.scene.remove(sceneNames.tabletMenu);
     // go back to the main menu
     this.scene.switch(sceneNames.start);
+  }
+
+  private bringUpMasterMusicControl(): void {
+    this.scene.bringToTop(sceneNames.musicControl);
   }
 
 };
