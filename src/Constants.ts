@@ -231,8 +231,8 @@ function currency_type_to_str(ct: currency_type): string {
 // obstacle fix constants
 const screenEdgePadding: number = 10;
 const dc_original_x: number = 70;
-const dcm_original_x: number = dc_original_x + 50;
-const dc_target_x: number = width / 2 + 20;//- 70;
+const dcm_original_x: number = dc_original_x + 120;
+const dc_target_x: number = width * 2 / 3; // width / 2 + 20;//- 70;
 const offset_y = 70 * 3;
 const gem_original_y: number = height / 2 + 6;
 const coin_original_y: number = gem_original_y - offset_y;

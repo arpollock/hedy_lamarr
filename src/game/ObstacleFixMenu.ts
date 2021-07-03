@@ -313,6 +313,14 @@ export class ObstacleFixMenu extends Phaser.Scene {
 
   private containsStars: boolean;
 
+  private multStarConversions: boolean;
+  private currStarConversionIdx: number;
+  private startStarModulesIdx: number;
+  private numStarModules: number;
+
+  private starArrowLeftButton: Phaser.GameObjects.Sprite;
+  private starArrowRightButton: Phaser.GameObjects.Sprite;
+
   private ob: ObstacleButton;
 
   constructor() {
@@ -355,6 +363,14 @@ export class ObstacleFixMenu extends Phaser.Scene {
     this.conversion_values = data.conversions;
 
     this.containsStars = data.containsStars;
+
+    this.multStarConversions = false;
+    this.currStarConversionIdx = 0;
+    this.startStarModulesIdx = -1;
+    this.numStarModules = 0;
+
+    this.starArrowLeftButton = null;
+    this.starArrowRightButton = null;
   }
 
   public preload(): void {
@@ -399,6 +415,13 @@ export class ObstacleFixMenu extends Phaser.Scene {
     this.load.image('star_4coin_1100', 'star_4coin_1100.png');
     this.load.image('star_4coin_1110', 'star_4coin_1110.png');
     this.load.image('star_4coin_1111', 'star_4coin_1111.png');
+    // 1 star = 2 gem // a special case, not always available
+    this.load.image('star_2gem_00', 'star_2gem_00.png');
+    this.load.image('star_2gem_10', 'star_2gem_10.png');
+    this.load.image('star_2gem_11', 'star_2gem_11.png');
+    // arrows to toggle between conversion modules for the same output currency (aka only star)
+    this.load.image('arrow_left', 'arrow_left.png');
+    this.load.image('arrow_right', 'arrow_right.png');
   }
 
   public create(): void {
@@ -406,10 +429,11 @@ export class ObstacleFixMenu extends Phaser.Scene {
     this.pauseKey = this.input.keyboard.addKey(closeMenuKeyCode);
     this.cameras.main.setBackgroundColor('rgba(0,0,0,0.5)'); // set background to be dark but transparent
     // left panel - showing the user how much currency they have
-    this.backgroundPanel_left = this.add.sprite(0, (height/2) + 35, 'bgPanelLeft'); // new Phaser.GameObjects.Sprite(this, width-70, height-80, 'tablet_menu_background');
+    const offset: number = 150;
+    this.backgroundPanel_left = this.add.sprite(offset, (height/2) + 35, 'bgPanelLeft'); // new Phaser.GameObjects.Sprite(this, width-70, height-80, 'tablet_menu_background');
     // right panel - showing the user how much currency they have to pay
-    this.backgroundPanel_right = this.add.sprite(width, (height/2), 'bgPanelRight');
-    this.backgroundPanel_right.setX(width - (this.backgroundPanel_right.width / 3));
+    this.backgroundPanel_right = this.add.sprite(width - (offset / 2), (height/2), 'bgPanelRight');
+    // this.backgroundPanel_right.setX(width - (this.backgroundPanel_right.width / 3));
     // back button click detection
     this.back_button = this.add.sprite(screenEdgePadding, screenEdgePadding / 2,'back_button').setOrigin(0,0);
     this.back_button.setInteractive({
@@ -521,6 +545,18 @@ export class ObstacleFixMenu extends Phaser.Scene {
     if (this.containsStars) {
       const temp_star_to_coin = new DraggableCurrencyConverter(this, dcm_original_x, starToCoinConverter_original_y, currency_type.star, currency_type.coin, this.conversion_values.valStars);
       this.draggable_currency_converters.push(temp_star_to_coin);
+      // special case: gems can directly map to stars, gems are ALWAYS worth <= stars
+      if (this.conversion_values.valStars % this.conversion_values.valGems == 0) { 
+        this.startStarModulesIdx = this.draggable_currency_converters.length - 1;
+        this.currStarConversionIdx = this.startStarModulesIdx;
+        this.multStarConversions = true;
+        const conversion_ratio = this.conversion_values.valStars / this.conversion_values.valGems;
+        const temp_star_to_gem = new DraggableCurrencyConverter(this, dcm_original_x, starToCoinConverter_original_y, currency_type.star, currency_type.gem, conversion_ratio);
+        this.draggable_currency_converters.push(temp_star_to_gem);
+        this.numStarModules = 2;
+        temp_star_to_gem.setVisible(false);
+        temp_star_to_gem.disableInteractive();
+      }
     }
     // set the draggability of the user's currencies
     // https://photonstorm.github.io/phaser3-docs/Phaser.Input.Events.html#
@@ -532,6 +568,25 @@ export class ObstacleFixMenu extends Phaser.Scene {
         dcc.on('drop', dcc.dragDrop, dcc);
     }, this);
     this.submit_button.setDepth(100); // bring to front
+    // arrows for toggling between currency convertors that share an output (different input)
+    if ( this.multStarConversions ) {
+      const arrowY: number = starToCoinConverter_original_y - 30;
+      const xOffset: number = 120;
+      this.starArrowLeftButton = this.add.sprite(dcm_original_x - xOffset, arrowY,'arrow_left');
+      this.starArrowLeftButton.setInteractive({
+        useHandCursor: true
+      });
+      this.starArrowLeftButton.on('pointerover', this.onStarArrowLeftButtonHoverEnter, this);
+      this.starArrowLeftButton.on('pointerout', this.onStarArrowLeftButtonHoverExit, this);
+      this.starArrowLeftButton.on('pointerdown', this.clickStarArrowLeft, this);
+      this.starArrowRightButton = this.add.sprite(dcm_original_x + xOffset, arrowY,'arrow_right');
+      this.starArrowRightButton.setInteractive({
+        useHandCursor: true
+      });
+      this.starArrowRightButton.on('pointerover', this.onStarArrowLeftButtonHoverEnter, this);
+      this.starArrowRightButton.on('pointerout', this.onStarArrowLeftButtonHoverExit, this);
+      this.starArrowRightButton.on('pointerdown', this.clickStarArrowRight, this);
+    }
   }
   
 
@@ -783,6 +838,42 @@ export class ObstacleFixMenu extends Phaser.Scene {
       this.num_coins_text.setText(this.num_coins_str);
       this.num_gems_text.setText(this.num_gems_str);
       this.num_stars_text.setText(this.num_stars_str);
+    }
+  }
+
+  private onStarArrowLeftButtonHoverEnter(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData): void { }
+
+  private onStarArrowLeftButtonHoverExit(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData): void { }
+
+  private onStarArrowRightButtonHoverEnter(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData): void { }
+
+  private onStarArrowRightButtonHoverExit(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData): void { }
+
+  private clickStarArrowLeft(): void {
+      this.currStarConversionIdx -= 1;
+      if (this.currStarConversionIdx == (this.startStarModulesIdx - 1)) { // wrap
+        this.currStarConversionIdx = this.startStarModulesIdx + this.numStarModules - 1;
+      }
+      this.updateStarConverterModuleSprites();
+  }
+
+  private clickStarArrowRight(): void {
+    this.currStarConversionIdx += 1;
+    if (this.currStarConversionIdx > (this.startStarModulesIdx + this.numStarModules - 1)) { // wrap
+      this.currStarConversionIdx = this.startStarModulesIdx;
+    }
+    this.updateStarConverterModuleSprites();
+  }
+
+  private updateStarConverterModuleSprites(): void {
+    for(let i = this.startStarModulesIdx; i < (this.startStarModulesIdx + this.numStarModules); i++) {
+      if (i != this.currStarConversionIdx) {
+        this.draggable_currency_converters[i].disableInteractive();
+        this.draggable_currency_converters[i].setVisible(false);
+      } else {
+        this.draggable_currency_converters[i].setInteractive();
+        this.draggable_currency_converters[i].setVisible(true);
+      }
     }
   }
 }
