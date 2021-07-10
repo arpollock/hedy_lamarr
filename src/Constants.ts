@@ -70,8 +70,12 @@ const textConfig: {
 
 const musicKeyNames: {
   intro: string,
+  collectSFX: string,
+  obstacleUnlockSFX: string,
 } = {
   intro: 'intro',
+  collectSFX: 'collect',
+  obstacleUnlockSFX: 'unlock',
 };
 
 const partNames: {

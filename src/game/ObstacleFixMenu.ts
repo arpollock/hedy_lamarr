@@ -220,7 +220,6 @@ class DraggableCurrency extends Phaser.GameObjects.Sprite {
 class DraggableCurrencyConverter extends Phaser.GameObjects.Sprite {
   private in_ct: currency_type;
   private out_ct: currency_type;
-  private needed: number;
 
   constructor(scene: Phaser.Scene, x: number, y: number, ict: currency_type, oct: currency_type, num_oct: number) {
     // const coversionVal: number = (currency_type_to_str(ict) === 'gem') ? ;
@@ -232,7 +231,6 @@ class DraggableCurrencyConverter extends Phaser.GameObjects.Sprite {
 		super(scene, x, y, texture);
     this.in_ct = ict;
     this.out_ct = oct;
-    // this.needed = 
     this.setInteractive({
       useHandCursor: true
     });
@@ -680,10 +678,10 @@ export class ObstacleFixMenu extends Phaser.Scene {
               coins_cleared += numOnes;
               break;
             case currency_type.gem:
-              coins_cleared += numOnes;
+              gems_cleared += numOnes;
               break; 
             case currency_type.star:
-              coins_cleared += numOnes;
+              stars_cleared += numOnes;
               break;
           }
         }

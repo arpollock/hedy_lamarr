@@ -26,6 +26,7 @@ import {
   mapWidth,
   pauseKeyCode,
   ScoreUpdate,
+  musicKeyNames,
 } from '../Constants';
 import { ObstacleFixMenu } from './ObstacleFixMenu';
 
@@ -76,6 +77,9 @@ export class HomeScene extends Phaser.Scene {
   private isInObstacleMenu: boolean;
 
   private conversionValues: ConversionConfig;
+
+  private currencyCollectSFX: Phaser.Sound.BaseSound;
+  private obstacleUnlockSFX: Phaser.Sound.BaseSound;
 
   constructor() {
     super({
@@ -157,7 +161,11 @@ export class HomeScene extends Phaser.Scene {
       valGems: possibleGemValues[Math.floor(Math.random() * possibleGemValues.length)], // can also be: 3
       valStars: possibleStarValues[Math.floor(Math.random() * possibleStarValues.length)], // can also be: 4
     };
+
+    this.currencyCollectSFX = null;
+    this.obstacleUnlockSFX = null;
   }
+
   public preload(): void {
     this.load.setBaseURL(assetBaseURL);
     // map made with Tiled in JSON format
@@ -185,6 +193,17 @@ export class HomeScene extends Phaser.Scene {
     this.load.atlas('player', 'player.png', 'player.json');
     // creatures to save + animations
     this.load.atlasXML('creature', 'spritesheet_creatures.png', 'spritesheet_creatures.xml');
+    // load audio assets
+    const audioCollectTemp: Phaser.Types.Loader.FileTypes.AudioFileConfig = {
+      key: musicKeyNames.collectSFX,
+      url: [ 'audio/shine_collect.ogg' ],
+    };
+    this.load.audio(audioCollectTemp);
+    const obsUnlockTemp: Phaser.Types.Loader.FileTypes.AudioFileConfig = {
+      key: musicKeyNames.obstacleUnlockSFX,
+      url: [ 'audio/button_push.ogg' ],
+    };
+    this.load.audio(obsUnlockTemp);
   }
 
   public create(): void {
@@ -204,6 +223,16 @@ export class HomeScene extends Phaser.Scene {
 
     // load the map 
     this.map = this.make.tilemap({key: 'map'});
+
+    // set up support for audio on certain actions
+    this.currencyCollectSFX = this.sound.add(musicKeyNames.collectSFX, {
+      mute: false,
+      loop: false,
+    });
+    this.obstacleUnlockSFX = this.sound.add(musicKeyNames.obstacleUnlockSFX, {
+      mute: false,
+      loop: false,
+    });
     
     // tiles for the ground layer
     var groundTiles = this.map.addTilesetImage('tiles');
@@ -610,11 +639,16 @@ export class HomeScene extends Phaser.Scene {
     }
   }
 
+  private collectCurrencySound(): void {
+    this.currencyCollectSFX.play();
+  }
+
   private collectCoin(sprite: any, tile: any): boolean {
     // console.log('Coin collected!')
     this.coinLayer.removeTileAt(tile.x, tile.y);
     this.numCoins++;
     this.updateScoreText();
+    this.collectCurrencySound();
     return false;
   }
 
@@ -696,6 +730,7 @@ export class HomeScene extends Phaser.Scene {
     this.gemLayer.removeTileAt(tile.x, tile.y);
     this.numGems++;
     this.updateScoreText();
+    this.collectCurrencySound();
     return false;
   }
 
@@ -704,6 +739,7 @@ export class HomeScene extends Phaser.Scene {
     this.starLayer.removeTileAt(tile.x, tile.y);
     this.numStars++;
     this.updateScoreText();
+    this.collectCurrencySound();
     return false;
   }
 
@@ -748,6 +784,10 @@ export class HomeScene extends Phaser.Scene {
     return false;
   }
 
+  private obstacleUnlockAudio(): void {
+    this.obstacleUnlockSFX.play();
+  }
+
   private fixObstacle(ob: ObstacleButton): void {
     // console.log(`fixing obstacle num: ${ob.obstacleNum}`)
     this.platformObjs.forEach( p => {
@@ -757,6 +797,7 @@ export class HomeScene extends Phaser.Scene {
         ob.body.setSize(ob.body.width, 0); // change the height of the collison box to match a pressed button
         p.isFixed = true;
         this.movePlatform(p);
+        this.obstacleUnlockAudio();
         return
       }
     });
@@ -772,6 +813,7 @@ export class HomeScene extends Phaser.Scene {
     if (foundDoor) {
       ob.setTexture('buttonOn');
       ob.body.setSize(ob.body.width, 0);
+      this.obstacleUnlockAudio();
     }
   }
 

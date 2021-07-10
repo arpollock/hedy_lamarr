@@ -30,11 +30,11 @@ export class MusicControlScene extends Phaser.Scene {
     this.load.image('music_turn_off', 'music_turnOff.png');
     this.load.image('music_turn_on', 'music_turnOn.png');
     // load audio assets
-    const test: Phaser.Types.Loader.FileTypes.AudioFileConfig = {
+    const introTemp: Phaser.Types.Loader.FileTypes.AudioFileConfig = {
       key: musicKeyNames.intro,
       url: [ 'audio/foggy-forest.ogg', 'audio/foggy-forest.wav' ],
     };
-    this.load.audio(test);
+    this.load.audio(introTemp);
     // this.load.audio( musicKeyNames.intro, [ 'audio/foggy-forest.ogg', 'audio/foggy-forest.wav' ] );
   }
 
@@ -73,5 +73,9 @@ export class MusicControlScene extends Phaser.Scene {
       this.toggleMusicButton.setTexture('music_turn_off');
     }
     this.music_on = !(this.music_on);
+  }
+
+  public isMusicOn(): boolean {
+    return this.music_on;
   }
 };
