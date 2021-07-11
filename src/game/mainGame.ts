@@ -14,6 +14,7 @@ import {
   PlayerConfig,
   ObFixConfig,
   ConversionConfig,
+  WinGameConfig,
   width,
   height,
   mapHeight,
@@ -128,47 +129,7 @@ export class HomeScene extends Phaser.Scene {
       flipX: false,
       walkFrameRate: 15,
     };
-
     this.isInObstacleMenu = false;
-
-    // // todo, set these randomly according to difficulty config
-    // // todo, create double converters, converters that accept converters, and/or n star : m gem converters
-    // const possibleGemValues: number[] = [];
-    // const possibleStarValues: number[] = [];
-    // switch(this.gradeLevel) {
-    //   // 4th and 5th grade worry about coins, gems, and stars
-    //   // 5th does everything 4th and 3rd can do, 4th can do anything 3rd, etc. 
-    //   // might change ^ if teachers feel is appropriate,
-    //   // probs would have to change w/ ML update to how game updates as you play
-
-    //   // currently have the graphics to support min conversions for:
-    //   // Gems : Coins ==> 2, 3
-    //   // Gems : Stars ==> 3, 4
-    //   case 5:
-    //     possibleStarValues.push(3);
-    //   case 4: 
-    //     possibleStarValues.push(4);
-    //   case 3: // 3rd grade only worries about coins and gems
-    //     possibleGemValues.push(2);
-    //     possibleGemValues.push(3);
-    //     break;
-    //   default:
-    //       break;
-    // }
-    // if (possibleStarValues.length === 0) {
-    //   possibleStarValues.push(0); // == 0 used to hide star sprites, etc. throughout misc. scenes
-    // }
-
-    // let valGems = possibleGemValues[Math.floor(Math.random() * possibleGemValues.length)];
-    // let valStars = possibleStarValues[Math.floor(Math.random() * possibleStarValues.length)];
-    // while ( valGems >= valStars ) { // don't let stars be equal or less than gems
-    //   valGems = possibleGemValues[Math.floor(Math.random() * possibleGemValues.length)];
-    //   valStars = possibleStarValues[Math.floor(Math.random() * possibleStarValues.length)];
-    // }
-    // this.conversionValues = {
-    //   valGems: valGems,
-    //   valStars: valStars,
-    // };
 
     this.currencyCollectSFX = null;
     this.obstacleUnlockSFX = null;
@@ -179,7 +140,8 @@ export class HomeScene extends Phaser.Scene {
     this.load.setBaseURL(assetBaseURL);
     // map made with Tiled in JSON format
     // TODO: make this a randomized/seeded selection
-    const mapFileName: string = `map_${this.levelSeedData.map_number.toString()}.json`;
+    const mapFileNum: number = (this.levelSeedData != null && this.levelSeedData.map_number > 0) ? this.levelSeedData.map_number: 1;
+    const mapFileName: string = `map_${mapFileNum.toString()}.json`;
     this.load.tilemapTiledJSON('map', mapFileName);
     // this.load.tilemapTiledJSON('map', 'test_map.json');
     // tiles in spritesheet 
@@ -379,7 +341,12 @@ export class HomeScene extends Phaser.Scene {
         minCoinValue = b.properties[minCoinValueIdx].value;
         maxCoinValue = b.properties[maxCoinValueIdx].value;
       } // else map did not specify the difficulty level of the obstacle uses defaults 1 and 2
-      const overlay = new ObstacleOverlay(this, b.x, b.y, 'obstacleFix', this.containsStars, this.gradeLevel, minCoinValue, maxCoinValue, this.conversionValues);
+      const canHaveCoinsIdx = this.tiledObjectHasProperty(tiledPropertyNames.coins, b);
+      let canHaveCoins = true;
+      if (canHaveCoinsIdx >= 0) {
+        canHaveCoins = b.properties[canHaveCoinsIdx].value;
+      }
+      const overlay = new ObstacleOverlay(this, b.x, b.y, 'obstacleFix', this.containsStars, this.gradeLevel, minCoinValue, maxCoinValue, this.conversionValues, canHaveCoins);
       
       butt.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
       overlay.setOrigin(0, 1);
@@ -694,7 +661,16 @@ export class HomeScene extends Phaser.Scene {
     this.scene.stop(sceneNames.hudMenu);
     this.scene.stop(sceneNames.tabletMenu);
     this.scene.stop(sceneNames.pause);
-    this.scene.start(sceneNames.win, this.levelSeedData);
+    const levelWinData: WinGameConfig = {
+      previous_level_data: this.levelSeedData,
+      num_converters_used: 0,
+      num_coins_kept: 0,
+      num_gems_kept: 0,
+      num_stars_kept: 0,
+      num_obstacles_unlocked: 0,
+      tot_num_obstacles: 0,
+    };
+    this.scene.start(sceneNames.win, levelWinData);
   }
 
   private triggerEnableObFixMenu(): void {

@@ -21,7 +21,7 @@ export default class ObstacleOverlay extends Phaser.Physics.Arcade.Sprite {
 	private gemsNeeded: number;
 	private starsNeeded: number;
 
-	constructor(scene, x, y, texture, containsStars: boolean, gradeLevel: number, minCoinValue:number, maxCoinValue:number, conversionValues: ConversionConfig) {
+	constructor(scene, x, y, texture, containsStars: boolean, gradeLevel: number, minCoinValue:number, maxCoinValue:number, conversionValues: ConversionConfig, canAcceptCoins: boolean) {
 		super(scene, x, y, texture);
 		scene.add.existing(this);
 
@@ -113,11 +113,15 @@ export default class ObstacleOverlay extends Phaser.Physics.Arcade.Sprite {
 			default:
 				break;
 		}
+		if (!canAcceptCoins) {
+			this.coinsNeeded = 0;
+		}
 		let adjustedSum: number = (this.coinsNeeded + (this.gemsNeeded * conversionValues.valGems) + (this.starsNeeded * conversionValues.valStars));
 		let counter: number = 0;
 		do {
-			
-			this.coinsNeeded = possibleNumCoins[Math.floor(Math.random() * possibleNumCoins.length)];
+			if (canAcceptCoins) {
+				this.coinsNeeded = possibleNumCoins[Math.floor(Math.random() * possibleNumCoins.length)];
+			}
 			this.gemsNeeded = possibleNumGems[Math.floor(Math.random() * possibleNumGems.length)];
 			this.starsNeeded = possibleNumStars[Math.floor(Math.random() * possibleNumStars.length)];
 			adjustedSum = (this.coinsNeeded + (this.gemsNeeded * conversionValues.valGems) + (this.starsNeeded * conversionValues.valStars));

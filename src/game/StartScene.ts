@@ -226,7 +226,7 @@ export class StartScene extends Phaser.Scene {
 
     let valGems = possibleGemValues[Math.floor(Math.random() * possibleGemValues.length)];
     let valStars = possibleStarValues[Math.floor(Math.random() * possibleStarValues.length)];
-    while ( valGems >= valStars ) { // don't let stars be equal or less than gems
+    while ( valGems >= valStars && valStars != 0) { // don't let stars be equal or less than gems, but also remember that star value is 0 for 3rd grade
       valGems = possibleGemValues[Math.floor(Math.random() * possibleGemValues.length)];
       valStars = possibleStarValues[Math.floor(Math.random() * possibleStarValues.length)];
     }
