@@ -203,6 +203,15 @@ interface HudMenuConfig {
   stars: number
 }
 
+interface CloseObstacleMenuConfig {
+  success: boolean,
+  num_coins_consumed?: number,
+  num_gems_consumed?: number,
+  num_stars_consumed?: number,
+  num_converters?: number,
+  buttonObj?: ObstacleButton
+}
+
 interface PlayerConfig {
   x: number,
   y: number,
@@ -230,7 +239,8 @@ interface ObFixConfig {
 interface numCurrencies {
   coins: number,
   gems: number,
-  stars: number
+  stars: number,
+  converters?: number
 };
 
 enum currency_type {
@@ -303,6 +313,7 @@ export {
   WinGameConfig,
   ConversionConfig,
   HudMenuConfig,
+  CloseObstacleMenuConfig,
   PlayerConfig,
   ObFixConfig,
   numCurrencies,

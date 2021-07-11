@@ -11,6 +11,7 @@ import {
   groundDrag,
   MainGameConfig,
   HudMenuConfig,
+  CloseObstacleMenuConfig,
   PlayerConfig,
   ObFixConfig,
   ConversionConfig,
@@ -82,6 +83,10 @@ export class HomeScene extends Phaser.Scene {
   private obstacleUnlockSFX: Phaser.Sound.BaseSound;
   private winGameSFX: Phaser.Sound.BaseSound;
 
+  private totNumObstacles: number;
+  private solvedNumObstacles: number;
+  private numConvertersUsed: number;
+
   constructor() {
     super({
       key: sceneNames.mainGame
@@ -134,6 +139,10 @@ export class HomeScene extends Phaser.Scene {
     this.currencyCollectSFX = null;
     this.obstacleUnlockSFX = null;
     this.winGameSFX = null;
+
+    this.totNumObstacles = 0;
+    this.solvedNumObstacles = 0;
+    this.numConvertersUsed = 0;
   }
 
   public preload(): void {
@@ -360,6 +369,7 @@ export class HomeScene extends Phaser.Scene {
     });
     this.physics.world.enable(this.buttonObjs, Phaser.Physics.Arcade.STATIC_BODY);
     this.physics.world.enable(this.overlayObjs, Phaser.Physics.Arcade.STATIC_BODY);
+    this.totNumObstacles = this.overlayObjs.length;
 
     // add the laser doors as specified in the object layer of the map
     const doors = this.map.filterObjects(tiledLayerNames.doors, p => p.name == 'door');
@@ -663,12 +673,12 @@ export class HomeScene extends Phaser.Scene {
     this.scene.stop(sceneNames.pause);
     const levelWinData: WinGameConfig = {
       previous_level_data: this.levelSeedData,
-      num_converters_used: 0,
-      num_coins_kept: 0,
-      num_gems_kept: 0,
-      num_stars_kept: 0,
-      num_obstacles_unlocked: 0,
-      tot_num_obstacles: 0,
+      num_converters_used: this.numConvertersUsed,
+      num_coins_kept: this.numCoins,
+      num_gems_kept: this.numGems,
+      num_stars_kept: this.numStars,
+      num_obstacles_unlocked: this.solvedNumObstacles,
+      tot_num_obstacles: this.totNumObstacles,
     };
     this.scene.start(sceneNames.win, levelWinData);
   }
@@ -677,7 +687,7 @@ export class HomeScene extends Phaser.Scene {
     this.player.isOnObsOverlap = false;
   }
 
-  private closeObFixMenu(params: { success: boolean, num_coins_consumed: number, num_gems_consumed: number, num_stars_consumed: number, buttonObj: ObstacleButton }): void {
+  private closeObFixMenu(params: CloseObstacleMenuConfig): void {
     this.isInObstacleMenu = false;
     // create a window before the user can trigger the obstacle fix screen again
     // not ideal but works (would prefer to detect first frame of overlap, low priority TODO fix)
@@ -693,6 +703,8 @@ export class HomeScene extends Phaser.Scene {
       this.numCoins -= params.num_coins_consumed;
       this.numGems -= params.num_gems_consumed;
       this.numStars -= params.num_stars_consumed;
+      this.solvedNumObstacles += 1;
+      this.numConvertersUsed += params.num_converters;
       this.updateScoreText();
       this.overlayObjs.forEach(overlayObj => {
         const obstacleNum: number = overlayObj.obstacleNum;

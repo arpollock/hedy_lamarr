@@ -630,6 +630,7 @@ export class ObstacleFixMenu extends Phaser.Scene {
       num_coins_consumed: ncs.coins,
       num_gems_consumed: ncs.gems,
       num_stars_consumed: ncs.stars,
+      num_converters: ncs.converters,
       buttonObj: this.ob,
     }); // enable the user to move the player again
   }
@@ -646,11 +647,13 @@ export class ObstacleFixMenu extends Phaser.Scene {
     let retVal: numCurrencies = {
       coins: 0,
       gems: 0,
-      stars: 0
+      stars: 0,
+      converters: 0,
     };
     let coins_cleared = 0;
     let gems_cleared = 0;
     let stars_cleared = 0;
+    let converters_used = 0;
     this.draggable_currency_targets.forEach((dct) => {
       if ( dct.isFilled() ) {
         if ( !(dct.hasConverter()) ) {
@@ -666,6 +669,7 @@ export class ObstacleFixMenu extends Phaser.Scene {
               break;
           }
         } else { // used a converter
+          converters_used++;
           const currCt: currency_type = dct.getConverter().getOutCt();
           let numOnes: number = 0;
           for(let c of dct.texture.key) {
@@ -692,6 +696,7 @@ export class ObstacleFixMenu extends Phaser.Scene {
     retVal.coins = coins_cleared;
     retVal.gems = gems_cleared;
     retVal.stars = stars_cleared;
+    retVal.converters = converters_used;
     return retVal;
   }
 

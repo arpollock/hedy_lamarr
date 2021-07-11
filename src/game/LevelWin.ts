@@ -40,6 +40,8 @@ export class LevelWin extends Phaser.Scene {
     // num_coins_kept
     // num_gems_kept
     // num_stars_kept
+    console.log("Level win!!!! Here's the data: ");
+    console.log(data);
   }
   public preload(): void {
     this.load.setBaseURL(assetBaseURL);
