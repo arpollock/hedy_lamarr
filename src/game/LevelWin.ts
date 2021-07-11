@@ -22,13 +22,24 @@ export class LevelWin extends Phaser.Scene {
   private playNewLevelButton: Phaser.GameObjects.Sprite;
 
   private previousLevelSeedData: MainGameConfig;
+  private score: number;
+  private maxScore: number;
 
+  private scoreStar1: Phaser.GameObjects.Sprite;
+  private scoreStar2: Phaser.GameObjects.Sprite;
+  private scoreStar3: Phaser.GameObjects.Sprite;
+  
   constructor() {
     super({
       key: sceneNames.win
     });
     this.mainMenuButton = null;
     this.playNewLevelButton = null;
+    this.score = 0;
+    this.maxScore = 0;
+    this.scoreStar1 = null;
+    this.scoreStar2 = null;
+    this.scoreStar3 = null;
   }
 
   public init(data: WinGameConfig): void {
@@ -42,9 +53,18 @@ export class LevelWin extends Phaser.Scene {
     // num_stars_kept
     console.log("Level win!!!! Here's the data: ");
     console.log(data);
+    const multiplier: number = 10;
+    this.maxScore = data.tot_num_obstacles * multiplier + multiplier; // meaning they need to use some converters, etc. to get 3 stars
+    this.score = data.num_obstacles_unlocked * multiplier;
+    this.score += data.num_coins_kept;
+    this.score += (data.num_gems_kept * data.previous_level_data.conversion_values.valGems);
+    this.score += (data.num_stars_kept * data.previous_level_data.conversion_values.valStars);
+    this.score += data.num_converters_used * (multiplier / 2);
   }
   public preload(): void {
     this.load.setBaseURL(assetBaseURL);
+    this.load.image('star_success', 'star_success.png');
+    this.load.image('star_fail', 'star_fail.png');
   }
 
   public create(): void {
@@ -56,13 +76,36 @@ export class LevelWin extends Phaser.Scene {
     // text to show pause menu text.
     this.textString = 'Woohoo! Level Complete';
     const centerX = width / 2; 
-    const textY = height / 3;
+    const textY = height / 6;
     this.text = this.add.text(centerX, textY, this.textString, {
       fontSize: textConfig.mainFontSize,
       color: textConfig.mainFillColor,
       fontFamily: textConfig.fontFams
     }).setOrigin(0.5); // set origin makes it so we can center the text easily
     this.text.setScrollFactor(0);
+
+    // calculate the user score and show them the # of stars they got
+    const percentage: number = this.score / this.maxScore;
+    const horizontalOffset: number = 210;
+    const scoreStarY: number = height / 3;
+    const scoreStarCenterX: number = width / 2;
+    let scoreStar1Str: string = 'star_fail';
+    let scoreStar2Str: string = 'star_fail';
+    let scoreStar3Str: string = 'star_fail';
+    if (percentage >= 1.00) {
+      scoreStar1Str = 'star_success';
+      scoreStar2Str = 'star_success';
+      scoreStar3Str = 'star_success';
+    } else if (percentage >= 0.75) {
+      scoreStar1Str = 'star_success';
+      scoreStar2Str = 'star_success';
+    } else if (percentage >= 0.50) {
+      scoreStar1Str = 'star_success';
+    }
+    this.scoreStar1 = this.add.sprite(scoreStarCenterX - horizontalOffset, scoreStarY, scoreStar1Str);
+    this.scoreStar2 = this.add.sprite(scoreStarCenterX, scoreStarY, scoreStar2Str);
+    this.scoreStar3 = this.add.sprite(scoreStarCenterX + horizontalOffset, scoreStarY, scoreStar3Str);
+
     // main menu button click detection
     const buttonsY: number = height * 2 / 3;
     const buttonLeftX: number = width / 3;

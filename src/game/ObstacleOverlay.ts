@@ -105,6 +105,11 @@ export default class ObstacleOverlay extends Phaser.Physics.Arcade.Sprite {
 				possibleNumCoins.push(0);
 				possibleNumCoins.push(0);
 
+				possibleNumGems.push(3);
+				possibleNumGems.push(2);
+				possibleNumGems.push(2);
+				possibleNumGems.push(1);
+				possibleNumGems.push(1);
 				possibleNumGems.push(1);
 				possibleNumGems.push(1);
 				possibleNumGems.push(1); 
