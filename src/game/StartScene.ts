@@ -9,7 +9,7 @@ import {
   textConfig,
   numDifficulties,
   MainGameConfig,
-  musicKeyNames
+  possibleMapNumbers,
 } from './../Constants';
 import { HomeScene } from './MainGame';
 import { HudMenu } from './HudMenu';
@@ -195,8 +195,48 @@ export class StartScene extends Phaser.Scene {
     });
 
     this.difficultyLevelButtons = [];
+    // generate the seed data for the level 
+    // todo, set these randomly according to difficulty config
+    // todo, create double converters, converters that accept converters, and/or n star : m gem converters
+    const possibleGemValues: number[] = [];
+    const possibleStarValues: number[] = [];
+    switch(this.activeGradeLevel) {
+      // 4th and 5th grade worry about coins, gems, and stars
+      // 5th does everything 4th and 3rd can do, 4th can do anything 3rd, etc. 
+      // might change ^ if teachers feel is appropriate,
+      // probs would have to change w/ ML update to how game updates as you play
+
+      // currently have the graphics to support min conversions for:
+      // Gems : Coins ==> 2, 3
+      // Gems : Stars ==> 3, 4
+      case 5:
+        possibleStarValues.push(3);
+      case 4: 
+        possibleStarValues.push(4);
+      case 3: // 3rd grade only worries about coins and gems
+        possibleGemValues.push(2);
+        possibleGemValues.push(3);
+        break;
+      default:
+          break;
+    }
+    if (possibleStarValues.length === 0) {
+      possibleStarValues.push(0); // == 0 used to hide star sprites, etc. throughout misc. scenes
+    }
+
+    let valGems = possibleGemValues[Math.floor(Math.random() * possibleGemValues.length)];
+    let valStars = possibleStarValues[Math.floor(Math.random() * possibleStarValues.length)];
+    while ( valGems >= valStars ) { // don't let stars be equal or less than gems
+      valGems = possibleGemValues[Math.floor(Math.random() * possibleGemValues.length)];
+      valStars = possibleStarValues[Math.floor(Math.random() * possibleStarValues.length)];
+    }
     const mainGameData: MainGameConfig = {
       grade_level: this.activeGradeLevel,
+      map_number: possibleMapNumbers[Math.floor(Math.random() * possibleMapNumbers.length)],
+      conversion_values: {
+        valGems: valGems,
+        valStars: valStars,
+      },
     };
     this.startGameButton.destroy();
     this.startGameButton = null;

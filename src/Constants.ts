@@ -72,10 +72,12 @@ const musicKeyNames: {
   intro: string,
   collectSFX: string,
   obstacleUnlockSFX: string,
+  winGameSFX: string,
 } = {
   intro: 'intro',
   collectSFX: 'collect',
   obstacleUnlockSFX: 'unlock',
+  winGameSFX: 'win',
 };
 
 const partNames: {
@@ -168,15 +170,29 @@ const eventNames: {
   pauseGame: 'pause'
 };
 
-// describes the currency conversion values, in terms of how many coins they're worth
-interface MainGameConfig {
-  grade_level: number
-}
+const possibleMapNumbers: number[] = [ 1, 2 ];
 
+// describes the currency conversion values, in terms of how many coins they're worth
 interface ConversionConfig { 
   valGems: number,
   valStars: number,  
 };
+
+interface MainGameConfig {
+  grade_level: number,
+  map_number: number,
+  conversion_values: ConversionConfig;
+}
+
+interface WinGameConfig {
+  previous_level_data: MainGameConfig,
+  num_converters_used: number,
+  num_coins_kept: number,
+  num_gems_kept: number,
+  num_stars_kept: number,
+  num_obstacles_unlocked: number,
+  tot_num_obstacles: number,
+}
 
 interface HudMenuConfig {
   containsStars: boolean,
@@ -280,7 +296,9 @@ export {
   tiledLayerNames,
   sceneNames,
   eventNames,
+  possibleMapNumbers,
   MainGameConfig,
+  WinGameConfig,
   ConversionConfig,
   HudMenuConfig,
   PlayerConfig,

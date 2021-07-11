@@ -6,7 +6,8 @@ import {
   width,
   height,
   textConfig,
-  MainGameConfig
+  MainGameConfig,
+  WinGameConfig
 } from './../Constants';
 import { HudMenu } from './HudMenu';
 import { TabletMenu } from './TabletMenu';
@@ -30,8 +31,15 @@ export class LevelWin extends Phaser.Scene {
     this.playNewLevelButton = null;
   }
 
-  public init(data: MainGameConfig): void {
-    this.previousLevelSeedData = data;
+  public init(data: WinGameConfig): void {
+    this.previousLevelSeedData = data.previous_level_data;
+    // todo calc score (0, 1, 2, or 3 stars) based on:
+    // base score is: num_obstacles_unlocked / tot_num_obstacles
+    // then the following values add on bonus points:
+    // num_converters_used
+    // num_coins_kept
+    // num_gems_kept
+    // num_stars_kept
   }
   public preload(): void {
     this.load.setBaseURL(assetBaseURL);

@@ -5,6 +5,7 @@ import ObstacleOverlay from './ObstacleOverlay';
 import LaserDoor from './LaserDoor';
 import Goal from './Goal';
 import eventsCenter from './EventsCenter';
+import { MusicControlScene } from './MasterMusicControl';
 import {
   gravity,
   groundDrag,
@@ -68,8 +69,6 @@ export class HomeScene extends Phaser.Scene {
   private goalObjs: Array<Goal>;
   private goalReached: boolean;
 
-  // private creatures: Phaser.Physics.Arcade.Sprite; // to do make goal creatures own group for efficiency
-
   private cursors;
   private pauseKey: Phaser.Input.Keyboard.Key;
   private printDebugKey: Phaser.Input.Keyboard.Key;
@@ -80,6 +79,7 @@ export class HomeScene extends Phaser.Scene {
 
   private currencyCollectSFX: Phaser.Sound.BaseSound;
   private obstacleUnlockSFX: Phaser.Sound.BaseSound;
+  private winGameSFX: Phaser.Sound.BaseSound;
 
   constructor() {
     super({
@@ -99,6 +99,7 @@ export class HomeScene extends Phaser.Scene {
 
     this.gradeLevel = data.grade_level;
     this.containsStars = this.gradeLevel > 3 ? true : false;
+    this.conversionValues = data.conversion_values;
 
     this.numCoins = 0;
     this.numGems = 0;
@@ -130,47 +131,56 @@ export class HomeScene extends Phaser.Scene {
 
     this.isInObstacleMenu = false;
 
-    // todo, set these randomly according to difficulty config
-    // todo, create double converters, converters that accept converters, and/or n star : m gem converters
-    const possibleGemValues: number[] = [];
-    const possibleStarValues: number[] = [];
-    switch(this.gradeLevel) {
-      // 4th and 5th grade worry about coins, gems, and stars
-      // 5th does everything 4th and 3rd can do, 4th can do anything 3rd, etc. 
-      // might change ^ if teachers feel is appropriate,
-      // probs would have to change w/ ML update to how game updates as you play
+    // // todo, set these randomly according to difficulty config
+    // // todo, create double converters, converters that accept converters, and/or n star : m gem converters
+    // const possibleGemValues: number[] = [];
+    // const possibleStarValues: number[] = [];
+    // switch(this.gradeLevel) {
+    //   // 4th and 5th grade worry about coins, gems, and stars
+    //   // 5th does everything 4th and 3rd can do, 4th can do anything 3rd, etc. 
+    //   // might change ^ if teachers feel is appropriate,
+    //   // probs would have to change w/ ML update to how game updates as you play
 
-      // currently have the graphics to support min conversions for:
-      // Gems : Coins ==> 2, 3
-      // Gems : Stars ==> 3, 4
-      case 5:
-        possibleStarValues.push(3);
-      case 4: 
-        possibleStarValues.push(4);
-      case 3: // 3rd grade only worries about coins and gems
-        possibleGemValues.push(2);
-        possibleGemValues.push(3);
-        break;
-      default:
-          break;
-    }
-    if (possibleStarValues.length === 0) {
-      possibleStarValues.push(0); // == 0 used to hide star sprites, etc. throughout misc. scenes
-    }
-    this.conversionValues = {
-      valGems: possibleGemValues[Math.floor(Math.random() * possibleGemValues.length)], // can also be: 3
-      valStars: possibleStarValues[Math.floor(Math.random() * possibleStarValues.length)], // can also be: 4
-    };
+    //   // currently have the graphics to support min conversions for:
+    //   // Gems : Coins ==> 2, 3
+    //   // Gems : Stars ==> 3, 4
+    //   case 5:
+    //     possibleStarValues.push(3);
+    //   case 4: 
+    //     possibleStarValues.push(4);
+    //   case 3: // 3rd grade only worries about coins and gems
+    //     possibleGemValues.push(2);
+    //     possibleGemValues.push(3);
+    //     break;
+    //   default:
+    //       break;
+    // }
+    // if (possibleStarValues.length === 0) {
+    //   possibleStarValues.push(0); // == 0 used to hide star sprites, etc. throughout misc. scenes
+    // }
+
+    // let valGems = possibleGemValues[Math.floor(Math.random() * possibleGemValues.length)];
+    // let valStars = possibleStarValues[Math.floor(Math.random() * possibleStarValues.length)];
+    // while ( valGems >= valStars ) { // don't let stars be equal or less than gems
+    //   valGems = possibleGemValues[Math.floor(Math.random() * possibleGemValues.length)];
+    //   valStars = possibleStarValues[Math.floor(Math.random() * possibleStarValues.length)];
+    // }
+    // this.conversionValues = {
+    //   valGems: valGems,
+    //   valStars: valStars,
+    // };
 
     this.currencyCollectSFX = null;
     this.obstacleUnlockSFX = null;
+    this.winGameSFX = null;
   }
 
   public preload(): void {
     this.load.setBaseURL(assetBaseURL);
     // map made with Tiled in JSON format
     // TODO: make this a randomized/seeded selection
-    this.load.tilemapTiledJSON('map', 'map_1.json');
+    const mapFileName: string = `map_${this.levelSeedData.map_number.toString()}.json`;
+    this.load.tilemapTiledJSON('map', mapFileName);
     // this.load.tilemapTiledJSON('map', 'test_map.json');
     // tiles in spritesheet 
     this.load.spritesheet('tiles', 'tiles.png', {frameWidth: 70, frameHeight: 70});
@@ -204,6 +214,11 @@ export class HomeScene extends Phaser.Scene {
       url: [ 'audio/button_push.ogg' ],
     };
     this.load.audio(obsUnlockTemp);
+    const winGameTemp: Phaser.Types.Loader.FileTypes.AudioFileConfig = {
+      key: musicKeyNames.winGameSFX,
+      url: [ 'audio/success.ogg' ],
+    };
+    this.load.audio(winGameTemp);
   }
 
   public create(): void {
@@ -230,6 +245,10 @@ export class HomeScene extends Phaser.Scene {
       loop: false,
     });
     this.obstacleUnlockSFX = this.sound.add(musicKeyNames.obstacleUnlockSFX, {
+      mute: false,
+      loop: false,
+    });
+    this.winGameSFX = this.sound.add(musicKeyNames.winGameSFX, {
       mute: false,
       loop: false,
     });
@@ -573,6 +592,13 @@ export class HomeScene extends Phaser.Scene {
 
   }
 
+  private isMusicAllowed(): boolean {
+    if ( (this.scene.get(sceneNames.musicControl) as MusicControlScene).isMusicOn() ) {
+      return true;
+    }
+    return false;
+  }
+
   public pauseGame(): void {
     if( !(this.scene.isPaused()) ) {
       this.scene.bringToTop(sceneNames.pause);
@@ -640,7 +666,9 @@ export class HomeScene extends Phaser.Scene {
   }
 
   private collectCurrencySound(): void {
-    this.currencyCollectSFX.play();
+    if ( this.isMusicAllowed() ) {
+      this.currencyCollectSFX.play();
+    }
   }
 
   private collectCoin(sprite: any, tile: any): boolean {
@@ -722,6 +750,9 @@ export class HomeScene extends Phaser.Scene {
     });
     const pauseForWinScreen = new Phaser.Time.TimerEvent( {delay: 900, callback: this.triggerWinScreen, callbackScope: this} );
     this.time.addEvent(pauseForWinScreen);
+    if ( this.isMusicAllowed() ) {
+      this.winGameSFX.play();
+    }
     return false;
   }
 
@@ -785,7 +816,9 @@ export class HomeScene extends Phaser.Scene {
   }
 
   private obstacleUnlockAudio(): void {
-    this.obstacleUnlockSFX.play();
+    if ( this.isMusicAllowed() ) {
+      this.obstacleUnlockSFX.play();
+    }
   }
 
   private fixObstacle(ob: ObstacleButton): void {
