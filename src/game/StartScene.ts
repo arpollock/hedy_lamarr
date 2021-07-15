@@ -209,6 +209,9 @@ export class StartScene extends Phaser.Scene {
       // currently have the graphics to support min conversions for:
       // Gems : Coins ==> 2, 3
       // Gems : Stars ==> 3, 4
+      // => Valid combos: (gemValue, starValue):
+      //  - 3rd Grade: (2, 0), (3, 0)
+      //  - 4th/5th Grade: (2, 3), (2, 4), (3, 4)  
       case 5:
         possibleStarValues.push(3);
       case 4: 

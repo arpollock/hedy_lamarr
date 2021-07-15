@@ -342,28 +342,30 @@ export class HomeScene extends Phaser.Scene {
     buttons.forEach(b => {
       const butt = new ObstacleButton(this, b.x, b.y, 'buttonOff');
 
-      const minCoinValueIdx = this.tiledObjectHasProperty(tiledPropertyNames.minCoinValue, b);
-      const maxCoinValueIdx = this.tiledObjectHasProperty(tiledPropertyNames.maxCoinValue, b);
-      let minCoinValue = 1.0;
-      let maxCoinValue = 2.0;
-      if (minCoinValueIdx >= 0 && maxCoinValueIdx >= 0) {
-        minCoinValue = b.properties[minCoinValueIdx].value;
-        maxCoinValue = b.properties[maxCoinValueIdx].value;
-      } // else map did not specify the difficulty level of the obstacle uses defaults 1 and 2
-      const canHaveCoinsIdx = this.tiledObjectHasProperty(tiledPropertyNames.coins, b);
-      let canHaveCoins = true;
-      if (canHaveCoinsIdx >= 0) {
-        canHaveCoins = b.properties[canHaveCoinsIdx].value;
+      const possibleInputsStr: string = `${tiledPropertyNames.possibleInputs}${this.conversionValues.valGems.toString()}${this.conversionValues.valStars.toString()}`;
+      const possibleInputsIdx: number = this.tiledObjectHasProperty(possibleInputsStr, b);
+      let coins: number = 0;
+      let gems: number = 0;
+      let stars: number = 0;
+      if (possibleInputsIdx >= 0) {
+        const lengthOfAnInputSet: number = 4; // 4 characters to describe input format: ###;
+        const possibleInputValues: string = b.properties[possibleInputsIdx].value;
+        const numInputOptions: number = Math.floor(possibleInputValues.length / lengthOfAnInputSet); 
+        const inputSetNum: number = Math.floor(Math.random() * numInputOptions);
+        coins = parseInt(possibleInputValues.charAt(inputSetNum * lengthOfAnInputSet));
+        gems = parseInt(possibleInputValues.charAt(inputSetNum * lengthOfAnInputSet + 1));
+        stars = parseInt(possibleInputValues.charAt(inputSetNum * lengthOfAnInputSet + 2));
+      } else {
+        console.log(`ERROR with obstacleNum ${tiledPropertyNames.obstacleNum}; cannot find possible inputs.`);
+        console.log(b);
       }
-      const overlay = new ObstacleOverlay(this, b.x, b.y, 'obstacleFix', this.containsStars, this.gradeLevel, minCoinValue, maxCoinValue, this.conversionValues, canHaveCoins);
-      
-      butt.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
-      overlay.setOrigin(0, 1);
       const obstacleNumIdx = this.tiledObjectHasProperty(tiledPropertyNames.obstacleNum, b);
       if (obstacleNumIdx >= 0) {
         butt.obstacleNum = b.properties[obstacleNumIdx].value;
-        overlay.obstacleNum = b.properties[obstacleNumIdx].value;
       }
+      const overlay = new ObstacleOverlay(this, b.x, b.y, 'obstacleFix', butt.obstacleNum, coins, gems, stars);
+      butt.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
+      overlay.setOrigin(0, 1);
       this.buttonObjs.push(butt);
       this.overlayObjs.push(overlay);
     });

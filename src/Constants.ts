@@ -26,11 +26,6 @@ const assetObsUiURL: string = `${assetBaseURL}obstacle_ui/`;
 
 const pauseKeyCode: number = Phaser.Input.Keyboard.KeyCodes.ESC.valueOf();
 
-// todo, break these up into individual currencies and coordinates for hud menu
-// const initScoreStr: string = `\t\t\t\t\t:0  \t\t\t\t\t\t\t\t:0  \t\t\t\t\t\t\t\t\t:0`;// `Coins: 0 Gems: 0 Stars: 0`;
-
-// const initScoreStr_noStars: string = `\t\t\t\t\t:0  \t\t\t\t\t\t\t\t:0`;// `Coins: 0 Gems: 0`;
-
 const hudMenuSpriteY: number = height - 40;
 const hudMenuSpriteX: number = 75;
 const hudMenuSpriteXOffset: number = 115;
@@ -100,20 +95,16 @@ const tiledPropertyNames: {
   platformMoveHorizontal: string,
   part: string,
   player: string,
-  minCoinValue: string,  
-  maxCoinValue: string,
   opposite: string,
-  coins: string,
+  possibleInputs: string,
 } = {
   obstacleNum: 'obstacleNum',
   platformMoveVertical: 'moveVertical',
   platformMoveHorizontal: 'moveHorizontal',
   part: 'part',
   player: 'player',
-  minCoinValue: 'minCoinValue',  
-  maxCoinValue: 'maxCoinValue',
   opposite: 'opposite',
-  coins: 'coins',
+  possibleInputs: 'possibleInputs_',
 };
 
 const tiledLayerNames : {
@@ -278,8 +269,6 @@ const starDraggable_original_y: number = coinDraggable_original_y + (offsetDragg
 const gemToCoinConverter_original_y: number = height - (screenEdgePadding * 1.5) - (offsetDraggable_y * 3.33);// coinDraggable_original_y + (offsetDraggable_y * 4);
 const starToCoinConverter_original_y: number = height - (screenEdgePadding * 1.5);// coinDraggable_original_y + (offsetDraggable_y * 6);
 
-
-
 export {
   gameName,
   gravity,
@@ -298,8 +287,6 @@ export {
   hudMenuSpriteXOffset,
   ScoreUpdate,
   initScore,
-  // initScoreStr,
-  // initScoreStr_noStars,
   numDifficulties,
   textConfig,
   musicKeyNames,
