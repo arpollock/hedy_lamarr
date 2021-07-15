@@ -5,7 +5,6 @@ import ObstacleOverlay from './ObstacleOverlay';
 import LaserDoor from './LaserDoor';
 import Goal from './Goal';
 import eventsCenter from './EventsCenter';
-import { MusicControlScene } from './MasterMusicControl';
 import {
   gravity,
   groundDrag,
@@ -31,6 +30,7 @@ import {
   ScoreUpdate,
   musicKeyNames,
 } from '../Constants';
+import { isMusicAllowed } from './../Utilities';
 import { ObstacleFixMenu } from './ObstacleFixMenu';
 
 // low-priority-level todo: checkout https://phaser.io/examples/v3/view/audio/web-audio/audiosprite for buttons, etc.
@@ -190,6 +190,15 @@ export class HomeScene extends Phaser.Scene {
       url: [ 'audio/success.ogg' ],
     };
     this.load.audio(winGameTemp);
+    // the next 2 audios are technically for ObstacleFixMenu.ts, but that's loaded later
+    this.load.audio({
+      key: musicKeyNames.dropAccept,
+      url: [ 'audio/accept.ogg' ],
+    });
+    this.load.audio({
+      key: musicKeyNames.dropReject,
+      url: [ 'audio/reject.ogg' ],
+    });
   }
 
   public create(): void {
@@ -571,13 +580,6 @@ export class HomeScene extends Phaser.Scene {
 
   }
 
-  private isMusicAllowed(): boolean {
-    if ( (this.scene.get(sceneNames.musicControl) as MusicControlScene).isMusicOn() ) {
-      return true;
-    }
-    return false;
-  }
-
   public pauseGame(): void {
     if( !(this.scene.isPaused()) ) {
       this.scene.bringToTop(sceneNames.pause);
@@ -645,7 +647,8 @@ export class HomeScene extends Phaser.Scene {
   }
 
   private collectCurrencySound(): void {
-    if ( this.isMusicAllowed() ) {
+    if ( isMusicAllowed(this.scene) ) {
+    // if ( this.isMusicAllowed() ) {
       this.currencyCollectSFX.play();
     }
   }
@@ -740,7 +743,8 @@ export class HomeScene extends Phaser.Scene {
     });
     const pauseForWinScreen = new Phaser.Time.TimerEvent( {delay: 900, callback: this.triggerWinScreen, callbackScope: this} );
     this.time.addEvent(pauseForWinScreen);
-    if ( this.isMusicAllowed() ) {
+    if ( isMusicAllowed(this.scene) ) {
+    // if ( this.isMusicAllowed() ) {
       this.winGameSFX.play();
     }
     return false;
@@ -806,7 +810,8 @@ export class HomeScene extends Phaser.Scene {
   }
 
   private obstacleUnlockAudio(): void {
-    if ( this.isMusicAllowed() ) {
+    if ( isMusicAllowed(this.scene) ) {
+    // if ( this.isMusicAllowed() ) {
       this.obstacleUnlockSFX.play();
     }
   }

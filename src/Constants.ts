@@ -68,11 +68,15 @@ const musicKeyNames: {
   collectSFX: string,
   obstacleUnlockSFX: string,
   winGameSFX: string,
+  dropAccept: string,
+  dropReject: string,
 } = {
   intro: 'intro',
   collectSFX: 'collect',
   obstacleUnlockSFX: 'unlock',
   winGameSFX: 'win',
+  dropAccept: 'accept',
+  dropReject: 'reject',
 };
 
 const partNames: {

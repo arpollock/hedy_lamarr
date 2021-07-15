@@ -24,8 +24,10 @@ import {
   starDraggable_original_y,
   gemToCoinConverter_original_y,
   starToCoinConverter_original_y,
-  screenEdgePadding
+  screenEdgePadding,
+  musicKeyNames
 } from '../Constants';
+import { isMusicAllowed } from './../Utilities';
 
 class DraggableCurrencyTarget extends Phaser.GameObjects.Sprite {
   private ct: currency_type;
@@ -127,6 +129,7 @@ class DraggableCurrency extends Phaser.GameObjects.Sprite {
   public updated_flag: boolean;
   private ct: currency_type;
   private count: number;
+  private sp: Phaser.Scenes.ScenePlugin;
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string, ct: currency_type, c: number) {
 		super(scene, x, y, texture);
@@ -140,7 +143,7 @@ class DraggableCurrency extends Phaser.GameObjects.Sprite {
     if (!(this.count > 0)) {
       this.setVisible(false);
     }
-    
+    this.sp = scene.scene;
 	}
 
   public get_currency_type(): currency_type {
@@ -181,6 +184,7 @@ class DraggableCurrency extends Phaser.GameObjects.Sprite {
         // dropped on a correct, empty slot
         target.setFilled();
         this.decrement_count();
+        (this.sp.get(sceneNames.obFixMenu) as ObstacleFixMenu).playDragDropAcceptSFX();
       } else if ( target.isFilled() && target.hasConverter() ) {
         // target has a converter
         if (target.getConverter().getOutCt() === this.ct) {
@@ -190,8 +194,15 @@ class DraggableCurrency extends Phaser.GameObjects.Sprite {
             target.fillConverter();
             target.input.hitArea.setSize(target.displayWidth, target.displayHeight); // update the size of the drag drop hit area target
             this.decrement_count();
+            (this.sp.get(sceneNames.obFixMenu) as ObstacleFixMenu).playDragDropAcceptSFX();
+          } else {
+            (this.sp.get(sceneNames.obFixMenu) as ObstacleFixMenu).playDragDropRejectSFX();
           }
+        } else {
+          (this.sp.get(sceneNames.obFixMenu) as ObstacleFixMenu).playDragDropRejectSFX();
         }
+      } else {
+        (this.sp.get(sceneNames.obFixMenu) as ObstacleFixMenu).playDragDropRejectSFX();
       } // dropped on a wrong currency type/converter -> ignore
     }
   }
@@ -220,6 +231,7 @@ class DraggableCurrency extends Phaser.GameObjects.Sprite {
 class DraggableCurrencyConverter extends Phaser.GameObjects.Sprite {
   private in_ct: currency_type;
   private out_ct: currency_type;
+  private sp: Phaser.Scenes.ScenePlugin;
 
   constructor(scene: Phaser.Scene, x: number, y: number, ict: currency_type, oct: currency_type, num_oct: number) {
     // const coversionVal: number = (currency_type_to_str(ict) === 'gem') ? ;
@@ -236,6 +248,7 @@ class DraggableCurrencyConverter extends Phaser.GameObjects.Sprite {
     });
     this.setOrigin(0.5, 1); // bottom middle origin
     scene.add.existing(this);
+    this.sp = scene.scene;
 	}
 
   public getOutCt(): currency_type {
@@ -270,6 +283,9 @@ class DraggableCurrencyConverter extends Phaser.GameObjects.Sprite {
       if (target.get_currency_type() === this.in_ct && !(target.isFilled())) { // dropped the converter on the right target
         // target.setFilled();
         target.setConverterFilled(this);
+        (this.sp.get(sceneNames.obFixMenu) as ObstacleFixMenu).playDragDropAcceptSFX();
+      } else {
+        (this.sp.get(sceneNames.obFixMenu) as ObstacleFixMenu).playDragDropRejectSFX();
       }
     }
   }
@@ -321,6 +337,9 @@ export class ObstacleFixMenu extends Phaser.Scene {
 
   private ob: ObstacleButton;
 
+  private dragDropAcceptSFX: Phaser.Sound.BaseSound;
+  private dragDropRejectSFX: Phaser.Sound.BaseSound;
+
   constructor() {
     super({
       key: sceneNames.obFixMenu
@@ -369,6 +388,9 @@ export class ObstacleFixMenu extends Phaser.Scene {
 
     this.starArrowLeftButton = null;
     this.starArrowRightButton = null;
+
+    this.dragDropAcceptSFX = null;
+    this.dragDropRejectSFX = null;
   }
 
   public preload(): void {
@@ -420,6 +442,15 @@ export class ObstacleFixMenu extends Phaser.Scene {
     // arrows to toggle between conversion modules for the same output currency (aka only star)
     this.load.image('arrow_left', 'arrow_left.png');
     this.load.image('arrow_right', 'arrow_right.png');
+    // audio sounds for when they drop something on a target
+    this.dragDropAcceptSFX = this.sound.add(musicKeyNames.dropAccept, {
+      mute: false,
+      loop: false,
+    });
+    this.dragDropRejectSFX = this.sound.add(musicKeyNames.dropReject, {
+      mute: false,
+      loop: false,
+    });
   }
 
   public create(): void {
@@ -877,6 +908,18 @@ export class ObstacleFixMenu extends Phaser.Scene {
         this.draggable_currency_converters[i].setInteractive();
         this.draggable_currency_converters[i].setVisible(true);
       }
+    }
+  }
+
+  public playDragDropAcceptSFX(): void {
+    if (isMusicAllowed(this.scene)) {
+      this.dragDropAcceptSFX.play();
+    }
+  }
+
+  public playDragDropRejectSFX(): void {
+    if (isMusicAllowed(this.scene)) {
+      this.dragDropRejectSFX.play();
     }
   }
 }
