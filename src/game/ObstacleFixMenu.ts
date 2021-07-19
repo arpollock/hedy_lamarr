@@ -12,13 +12,11 @@ import {
   eventNames,
   numCurrencies,
   currency_type,
-  currency_type_to_str,
   dc_original_x,
   dc_target_x,
   dcm_original_x,
-  coin_original_y,
-  gem_original_y,
-  star_original_y,
+  offset_y,
+  input_start_y,
   coinDraggable_original_y,
   gemDraggable_original_y,
   starDraggable_original_y,
@@ -26,8 +24,12 @@ import {
   starToCoinConverter_original_y,
   screenEdgePadding,
   musicKeyNames
-} from '../Constants';
-import { isMusicAllowed } from './../Utilities';
+} from './../Constants';
+
+import {
+  isMusicAllowed,
+  currency_type_to_str
+} from './../Utilities';
 
 class DraggableCurrencyTarget extends Phaser.GameObjects.Sprite {
   private ct: currency_type;
@@ -294,8 +296,6 @@ class DraggableCurrencyConverter extends Phaser.GameObjects.Sprite {
 export class ObstacleFixMenu extends Phaser.Scene {
 
   private pauseKey: Phaser.Input.Keyboard.Key;
-  // private filler_text: Phaser.GameObjects.Text;
-  // private filler_text_string: string;
 
   private back_button: Phaser.GameObjects.Sprite;
   private submit_button: Phaser.GameObjects.Sprite;
@@ -458,10 +458,10 @@ export class ObstacleFixMenu extends Phaser.Scene {
     this.pauseKey = this.input.keyboard.addKey(closeMenuKeyCode);
     this.cameras.main.setBackgroundColor('rgba(0,0,0,0.5)'); // set background to be dark but transparent
     // left panel - showing the user how much currency they have
-    const offset: number = 150;
-    this.backgroundPanel_left = this.add.sprite(offset, (height/2) + 35, 'bgPanelLeft'); // new Phaser.GameObjects.Sprite(this, width-70, height-80, 'tablet_menu_background');
+    const offset: number = 130;
+    this.backgroundPanel_left = this.add.sprite(offset, (height/2) + 40, 'bgPanelLeft'); // new Phaser.GameObjects.Sprite(this, width-70, height-80, 'tablet_menu_background');
     // right panel - showing the user how much currency they have to pay
-    this.backgroundPanel_right = this.add.sprite(width - (offset / 2), (height/2), 'bgPanelRight');
+    this.backgroundPanel_right = this.add.sprite(width - offset + (screenEdgePadding * 4), (height/2), 'bgPanelRight');
     // this.backgroundPanel_right.setX(width - (this.backgroundPanel_right.width / 3));
     // back button click detection
     this.back_button = this.add.sprite(screenEdgePadding, screenEdgePadding / 2,'back_button').setOrigin(0,0);
@@ -486,7 +486,8 @@ export class ObstacleFixMenu extends Phaser.Scene {
     // hide the submit button until the criteria is met
     this.disableSubmit();
     // clear button click detection
-    this.clear_button = this.add.sprite(width - screenEdgePadding, screenEdgePadding,'clear_button').setOrigin(1,0);
+    this.clear_button = this.add.sprite(0, screenEdgePadding,'clear_button').setOrigin(0);
+    this.clear_button.setX(screenEdgePadding * 2 + this.back_button.displayWidth);
     this.clear_button.setInteractive({
       useHandCursor: true
     });
@@ -495,27 +496,65 @@ export class ObstacleFixMenu extends Phaser.Scene {
     this.clear_button.on('pointerdown', this.clearButton, this);
     // draggable currency targets in order to accept payment
     // calc offset horiz for each type dept on tot #
+    // for(let i = 0; i < this.num_coins_needed; i++) {
+    //   const temp_coinUiTarget_sprite = new DraggableCurrencyTarget(this, dc_target_x, coin_original_y, 'coinUi_empty', currency_type.coin);
+    //   const offset_step = temp_coinUiTarget_sprite.width + 10;
+    //   temp_coinUiTarget_sprite.setX(dc_target_x + offset_step * i);
+    //   this.draggable_currency_targets.push(temp_coinUiTarget_sprite);
+    // }
+    // for(let i = 0; i < this.num_gems_needed; i++) {
+    //   const temp_gemUiTarget_sprite = new DraggableCurrencyTarget(this, dc_target_x, gem_original_y, 'gemUi_empty', currency_type.gem);
+    //   const offset_step = temp_gemUiTarget_sprite.width + 10;
+    //   temp_gemUiTarget_sprite.setX(dc_target_x + offset_step * i);
+    //   this.draggable_currency_targets.push(temp_gemUiTarget_sprite);
+    // }
+    // if (this.containsStars) {
+    //   for(let i = 0; i < this.num_stars_needed; i++) {
+    //     const temp_starUiTarget_sprite = new DraggableCurrencyTarget(this, dc_target_x, star_original_y, 'starUi_empty', currency_type.star);
+    //     const offset_step = temp_starUiTarget_sprite.width + 10;
+    //     temp_starUiTarget_sprite.setX(dc_target_x + offset_step * i);
+    //     this.draggable_currency_targets.push(temp_starUiTarget_sprite);
+    //   }
+    // }
+    const tot_input_items: number = this.num_coins_needed + this.num_gems_needed + this.num_stars_needed;
+    if (tot_input_items > 3) {
+      console.log('Warning! Too many inputs required, GUI might be messed up.');
+    }
+
+    let curr_item: number = 0;
     for(let i = 0; i < this.num_coins_needed; i++) {
-      const temp_coinUiTarget_sprite = new DraggableCurrencyTarget(this, dc_target_x, coin_original_y, 'coinUi_empty', currency_type.coin);
-      const offset_step = temp_coinUiTarget_sprite.width + 10;
-      temp_coinUiTarget_sprite.setX(dc_target_x + offset_step * i);
+      const curr_y: number = input_start_y + offset_y * curr_item;
+      const temp_coinUiTarget_sprite = new DraggableCurrencyTarget(this, dc_target_x,  curr_y, 'coinUi_empty', currency_type.coin);
+      if (tot_input_items === 1) {
+        temp_coinUiTarget_sprite.setY(height / 2);
+      }
       this.draggable_currency_targets.push(temp_coinUiTarget_sprite);
-    }
+      curr_item++;
+    } 
     for(let i = 0; i < this.num_gems_needed; i++) {
-      const temp_gemUiTarget_sprite = new DraggableCurrencyTarget(this, dc_target_x, gem_original_y, 'gemUi_empty', currency_type.gem);
-      const offset_step = temp_gemUiTarget_sprite.width + 10;
-      temp_gemUiTarget_sprite.setX(dc_target_x + offset_step * i);
+      const curr_y: number = input_start_y + offset_y * curr_item;
+      const temp_gemUiTarget_sprite = new DraggableCurrencyTarget(this, dc_target_x, curr_y, 'gemUi_empty', currency_type.gem);
+      if (tot_input_items === 1) {
+        temp_gemUiTarget_sprite.setY(height / 2);
+      }
       this.draggable_currency_targets.push(temp_gemUiTarget_sprite);
+      curr_item++;
     }
-    if (this.containsStars) {
+    if (this.containsStars) { // this is an overkill check
       for(let i = 0; i < this.num_stars_needed; i++) {
-        const temp_starUiTarget_sprite = new DraggableCurrencyTarget(this, dc_target_x, star_original_y, 'starUi_empty', currency_type.star);
-        const offset_step = temp_starUiTarget_sprite.width + 10;
-        temp_starUiTarget_sprite.setX(dc_target_x + offset_step * i);
+        const curr_y: number = input_start_y + offset_y * curr_item;
+        const temp_starUiTarget_sprite = new DraggableCurrencyTarget(this, dc_target_x, curr_y, 'starUi_empty', currency_type.star);
+        if (tot_input_items === 1) {
+          temp_starUiTarget_sprite.setY(height / 2);
+        }
         this.draggable_currency_targets.push(temp_starUiTarget_sprite);
+        curr_item++;
       }
     }
-    // draggable currencies in order to pay
+    if (curr_item !== tot_input_items) {
+      console.log('Did not place all of the input items.');
+    }
+
     const coinUi_zero_sprite = this.add.sprite(dc_original_x, coinDraggable_original_y, 'coinUi_zero');
     const temp_coinUi_sprite = new DraggableCurrency(this, dc_original_x, coinDraggable_original_y, 'coinUi', currency_type.coin, this.num_coins);
     this.draggable_currencies.push(temp_coinUi_sprite);

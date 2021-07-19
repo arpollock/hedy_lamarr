@@ -244,26 +244,13 @@ enum currency_type {
   star,
 }
 
-function currency_type_to_str(ct: currency_type): string {
-  switch(ct) {
-    case currency_type.coin:
-      return 'coin';
-    case currency_type.gem:
-      return 'gem';
-    case currency_type.star:
-      return 'star';
-  }
-}
-
 // obstacle fix constants
 const screenEdgePadding: number = 10;
 const dc_original_x: number = 70;
 const dcm_original_x: number = dc_original_x + 120;
-const dc_target_x: number = width * 2 / 3; // width / 2 + 20;//- 70;
-const offset_y = 70 * 3;
-const gem_original_y: number = height / 2 + 6;
-const coin_original_y: number = gem_original_y - offset_y;
-const star_original_y: number = gem_original_y + offset_y;
+const dc_target_x: number = width * 2 / 3 + 70; // width / 2 + 20;//- 70;
+const offset_y: number = 165;
+const input_start_y: number = height / 4 + 20;
 
 const offsetDraggable_y = 50;
 const coinDraggable_original_y: number = 120;
@@ -309,14 +296,12 @@ export {
   ObFixConfig,
   numCurrencies,
   currency_type,
-  currency_type_to_str,
   screenEdgePadding,
   dc_original_x,
   dc_target_x,
   dcm_original_x,
-  coin_original_y,
-  gem_original_y,
-  star_original_y,
+  offset_y,
+  input_start_y,
   coinDraggable_original_y,
   gemDraggable_original_y,
   starDraggable_original_y,
