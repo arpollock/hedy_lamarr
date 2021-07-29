@@ -55,7 +55,7 @@ export class TabletMenu extends Phaser.Scene {
     if (this.conversionValues.valStars <= 0) {
       this.containsStars = false;
     }
-    this.backgroundPanel = this.add.sprite(width-70, height-80, 'tablet_menu_background'); // new Phaser.GameObjects.Sprite(this, width-70, height-80, 'tablet_menu_background');
+    this.backgroundPanel = this.add.sprite(width-50, height-70, 'tablet_menu_background'); // new Phaser.GameObjects.Sprite(this, width-70, height-80, 'tablet_menu_background');
     this.backgroundPanel.setOrigin(1,1);
     this.backgroundPanel.setDepth(0);
     // text to show score
@@ -95,9 +95,9 @@ export class TabletMenu extends Phaser.Scene {
     }
     // set the text to correspond to the pretty images above, about the conversion values
     this.setConversionText();
-    const viewWorldMapButtonX: number = this.backgroundPanel.x - screenEdgePadding * 2.5;
+    const viewWorldMapButtonX: number = this.backgroundPanel.x - this.backgroundPanel.displayWidth / 2;
     const viewWorldMapButtonY: number = this.backgroundPanel.y - screenEdgePadding * 6.75;// + (this.backgroundPanel.displayHeight / 2);
-    this.toggleCameraButton = this.add.sprite(viewWorldMapButtonX, viewWorldMapButtonY,'world_map_mode').setOrigin(1);
+    this.toggleCameraButton = this.add.sprite(viewWorldMapButtonX, viewWorldMapButtonY,'world_map_mode').setOrigin(0.5,1);
     this.toggleCameraButton.setInteractive({
       useHandCursor: true
     });

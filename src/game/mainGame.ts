@@ -174,6 +174,8 @@ export class HomeScene extends Phaser.Scene {
     this.load.atlas('player', 'player.png', 'player.json');
     // creatures to save + animations
     this.load.atlasXML('creature', 'spritesheet_creatures.png', 'spritesheet_creatures.xml');
+    // background image
+    this.load.image('background', 'clouds.png');
     // load audio assets
     const audioCollectTemp: Phaser.Types.Loader.FileTypes.AudioFileConfig = {
       key: musicKeyNames.collectSFX,
@@ -233,7 +235,9 @@ export class HomeScene extends Phaser.Scene {
       mute: false,
       loop: false,
     });
-    
+    // tiles for background image
+    var bg = this.add.image( (width / 2), (height / 2),'background').setOrigin(0.5).setScrollFactor(0);
+
     // tiles for the ground layer
     var groundTiles = this.map.addTilesetImage('tiles');
     // create the ground layer

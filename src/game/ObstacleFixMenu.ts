@@ -456,7 +456,7 @@ export class ObstacleFixMenu extends Phaser.Scene {
   public create(): void {
     const closeMenuKeyCode: number = Phaser.Input.Keyboard.KeyCodes.E;
     this.pauseKey = this.input.keyboard.addKey(closeMenuKeyCode);
-    this.cameras.main.setBackgroundColor('rgba(0,0,0,0.5)'); // set background to be dark but transparent
+    this.cameras.main.setBackgroundColor('rgba(0,0,0,0.67)'); // set background to be dark but transparent
     // left panel - showing the user how much currency they have
     const offset: number = 130;
     this.backgroundPanel_left = this.add.sprite(offset, (height/2) + 40, 'bgPanelLeft'); // new Phaser.GameObjects.Sprite(this, width-70, height-80, 'tablet_menu_background');
