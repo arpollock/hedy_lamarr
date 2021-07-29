@@ -29,6 +29,7 @@ import {
   pauseKeyCode,
   ScoreUpdate,
   musicKeyNames,
+  zoomFactors,
 } from '../Constants';
 import { isMusicAllowed } from './../Utilities';
 import { ObstacleFixMenu } from './ObstacleFixMenu';
@@ -44,7 +45,6 @@ class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
 export class HomeScene extends Phaser.Scene {
   private levelSeedData: MainGameConfig;
 
-  private zoomFactor: number;
   private map: Phaser.Tilemaps.Tilemap;
 
   private groundLayer;
@@ -76,6 +76,7 @@ export class HomeScene extends Phaser.Scene {
   private printDebugKey: Phaser.Input.Keyboard.Key;
 
   private isInObstacleMenu: boolean;
+  private viewingWorld: boolean;
 
   private conversionValues: ConversionConfig;
 
@@ -111,8 +112,6 @@ export class HomeScene extends Phaser.Scene {
     this.numGems = 0;
     this.numStars = 0;
 
-    this.zoomFactor = 0.5;
-
     this.buttonObjs = [];
     this.platformObjs = [];
     this.doorObjs = [];
@@ -135,6 +134,7 @@ export class HomeScene extends Phaser.Scene {
       walkFrameRate: 15,
     };
     this.isInObstacleMenu = false;
+    this.viewingWorld = false;
 
     this.currencyCollectSFX = null;
     this.obstacleUnlockSFX = null;
@@ -205,6 +205,7 @@ export class HomeScene extends Phaser.Scene {
     this.events.on('destroy', this.onDestroy, this); // docs on event names valid with this pattern: https://newdocs.phaser.io/docs/3.55.2/Phaser.Scenes.Events
     eventsCenter.on(eventNames.closeObFixMenu, this.closeObFixMenu, this);
     eventsCenter.on(eventNames.pauseGame, this.pauseGame, this);
+    eventsCenter.on(eventNames.cameraFollowPlayer, this.cameraFollowPlayer, this);
     const hudConfig: HudMenuConfig = {
       containsStars: this.containsStars,
       coins: this.numCoins,
@@ -448,11 +449,9 @@ export class HomeScene extends Phaser.Scene {
     // handle collisions with the broken obstacle button overlays
     this.overlayObjs.forEach(overlayObj => {
       const obstacleOverlapTriggerFixMenu = () => {
-        
         const obstacleNum: number = overlayObj.obstacleNum;
         if (obstacleNum >= 0) {
-          this.buttonObjs.forEach(bObj => {
-            if (bObj.obstacleNum == obstacleNum) {
+          for(let i: number = 0; i < this.buttonObjs.length; i += 1 ) {            if (this.buttonObjs[i].obstacleNum == obstacleNum) {
               // trigger the obstacle fix scene
               this.player.isOnObsOverlap = true;
               this.isInObstacleMenu = true;
@@ -466,20 +465,51 @@ export class HomeScene extends Phaser.Scene {
                 numCoins: this.numCoins,
                 numGems: this.numGems,
                 numStars: this.numStars,
-                // todo get this from the map and load it into the button
-                // or probs generate it randomly once and keep it true for the whole scene? - so can channge difficulty indept of level
-                // todo also need to figure out how to lay out mult currnecies when they are convertable
                 goalCoins: overlayObj.getCoinsNeeded(), // 3
                 goalGems: overlayObj.getGemsNeeded(), // 1,
                 goalStars: overlayObj.getStarsNeeded(), // 2,
-                buttonObj: bObj,
+                buttonObj: this.buttonObjs[i],
                 conversions: this.conversionValues,
                 containsStars: this.containsStars
               };
+              i = this.buttonObjs.length;
               this.scene.add(sceneNames.obFixMenu, ObstacleFixMenu, true, obFixData);
               this.scene.bringToTop(sceneNames.obFixMenu);
             }
-          });
+          } // end for loop
+
+          // this.buttonObjs.forEach( (bObj) => {
+          //   if (bObj.obstacleNum == obstacleNum) {
+          //     // trigger the obstacle fix scene
+          //     this.player.isOnObsOverlap = true;
+          //     this.isInObstacleMenu = true;
+          //     this.player.setVelocity(0); // pause the player
+          //     if(this.playerOnFloor()) { // stop any animations
+          //       this.player.anims.play('idle', true);
+          //     }
+          //     this.scene.sleep(sceneNames.hudMenu);
+          //     // todo, fixypoo
+          //     const obFixData: ObFixConfig = {
+          //       numCoins: this.numCoins,
+          //       numGems: this.numGems,
+          //       numStars: this.numStars,
+          //       // todo get this from the map and load it into the button
+          //       // or probs generate it randomly once and keep it true for the whole scene? - so can channge difficulty indept of level
+          //       // todo also need to figure out how to lay out mult currnecies when they are convertable
+          //       goalCoins: overlayObj.getCoinsNeeded(), // 3
+          //       goalGems: overlayObj.getGemsNeeded(), // 1,
+          //       goalStars: overlayObj.getStarsNeeded(), // 2,
+          //       buttonObj: bObj,
+          //       conversions: this.conversionValues,
+          //       containsStars: this.containsStars
+          //     };
+          //     this.scene.add(sceneNames.obFixMenu, ObstacleFixMenu, true, obFixData);
+          //     this.scene.bringToTop(sceneNames.obFixMenu);
+          //   }
+          // });
+        } else {
+          console.log('ERROR: tried to create an overlay object --> button w/ obstacleNum -1. Destroying.');
+          overlayObj.destroy();
         }
       };
 
@@ -489,6 +519,7 @@ export class HomeScene extends Phaser.Scene {
         }
         return false;
       };
+      
       this.physics.add.overlap(
         this.player,
         overlayObj,
@@ -532,11 +563,10 @@ export class HomeScene extends Phaser.Scene {
 
     // todo below is line to 'view whole world' will need to move to in-game phone option?
     this.cameras.main.setBackgroundColor(backgroundColor);
-    this.cameras.main.setZoom(this.zoomFactor);
     // set bounds so the camera won't go outside the game world
     this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
     // make the camera follow the player
-    this.cameras.main.startFollow(this.player);
+    this.cameraFollowPlayer();
 
     // collision with the coin tiles
     this.coinLayer.setTileIndexCallback(17, this.collectCoin, this); // the coin id is 17
@@ -588,7 +618,7 @@ export class HomeScene extends Phaser.Scene {
   }
 
   public update(time: number): void {
-    if (!this.isInObstacleMenu) {
+    if ( (!this.isInObstacleMenu) && (!this.viewingWorld) ) {
       this.renderPlayer();
     }
     // detect if the player wants to pause the game
@@ -601,6 +631,11 @@ export class HomeScene extends Phaser.Scene {
     //     g.setFrame('creatureRed_stand.png')
     //   }
     // });
+  }
+
+  public cameraFollowPlayer() {
+    this.cameras.main.startFollow(this.player);
+    this.cameras.main.setZoom(zoomFactors.mainPlay);
   }
 
   private renderPlayer(): void {
@@ -717,6 +752,11 @@ export class HomeScene extends Phaser.Scene {
           overlayObj.destroy();
         }
       });
+      this.buttonObjs.forEach(bObj => {
+        if (params.buttonObj.obstacleNum == bObj.obstacleNum) {
+          bObj.isEnabled = true;
+        }
+      });
     }
     const hudConfig: HudMenuConfig = {
       containsStars: this.containsStars,
@@ -818,15 +858,13 @@ export class HomeScene extends Phaser.Scene {
 
   private fixObstacle(ob: ObstacleButton): void {
     // console.log(`fixing obstacle num: ${ob.obstacleNum}`)
+    var foundPlatform: boolean = false;
     this.platformObjs.forEach( p => {
       if (p.obstacleNum == ob.obstacleNum) {
         // console.log('obstacle found (platform)!')
-        ob.setTexture('buttonOn');
-        ob.body.setSize(ob.body.width, 0); // change the height of the collison box to match a pressed button
         p.isFixed = true;
         this.movePlatform(p);
-        this.obstacleUnlockAudio();
-        return
+        foundPlatform = true;
       }
     });
     var foundDoor: boolean = false;
@@ -838,12 +876,20 @@ export class HomeScene extends Phaser.Scene {
         }
       }
     });
-    if (foundDoor) {
+    if (foundDoor || foundPlatform) {
       ob.setTexture('buttonOn');
+      this.buttonObjs.forEach((bObj) => {
+        if (bObj.obstacleNum == ob.obstacleNum) {
+          bObj.setTexture('buttonOn');
+          bObj.isFixed = true;
+          bObj.body.setSize(bObj.body.width, 0);
+        }
+      });
       ob.body.setSize(ob.body.width, 0);
       this.obstacleUnlockAudio();
     }
   }
+
 
   private movePlatform(plat: MovingPlatform) {
     if(plat.isFixed) {
@@ -874,5 +920,6 @@ export class HomeScene extends Phaser.Scene {
   private onDestroy(): void {
     eventsCenter.off(eventNames.closeObFixMenu);
     eventsCenter.off(eventNames.pauseGame);
+    eventsCenter.off(eventNames.cameraFollowPlayer);
   }
 };

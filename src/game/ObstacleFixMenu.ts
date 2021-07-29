@@ -398,8 +398,8 @@ export class ObstacleFixMenu extends Phaser.Scene {
     this.load.image('back_button', 'back.png');
     this.load.image('submit_button', 'submit.png');
     this.load.image('clear_button', 'clear.png');
-    this.load.image('bgPanelLeft', 'bgPanelLeft.png');
-    this.load.image('bgPanelRight', 'bgPanelRight.png');
+    this.load.image('bgPanelLeft', 'bgPanelLeft_2.png');
+    this.load.image('bgPanelRight', 'bgPanelRight_2.png');
     this.load.image('buttonReject', 'buttonOff.png');
     this.load.image('buttonAccept', 'buttonOn.png');
     this.load.image('coinUi', 'coinUi.png');
@@ -461,7 +461,7 @@ export class ObstacleFixMenu extends Phaser.Scene {
     const offset: number = 130;
     this.backgroundPanel_left = this.add.sprite(offset, (height/2) + 40, 'bgPanelLeft'); // new Phaser.GameObjects.Sprite(this, width-70, height-80, 'tablet_menu_background');
     // right panel - showing the user how much currency they have to pay
-    this.backgroundPanel_right = this.add.sprite(width - offset + (screenEdgePadding * 4), (height/2), 'bgPanelRight');
+    this.backgroundPanel_right = this.add.sprite(width - offset, (height/2), 'bgPanelRight');
     // this.backgroundPanel_right.setX(width - (this.backgroundPanel_right.width / 3));
     // back button click detection
     this.back_button = this.add.sprite(screenEdgePadding, screenEdgePadding / 2,'back_button').setOrigin(0,0);
@@ -473,7 +473,7 @@ export class ObstacleFixMenu extends Phaser.Scene {
     this.back_button.on('pointerdown', this.goBackToLevel, this);
     // button to show the state of if they've paid enough
     this.button_state_sprite = this.add.sprite(width, height, 'buttonReject');
-    this.button_state_sprite.setPosition(width - this.button_state_sprite.width / 2 - screenEdgePadding, height - this.button_state_sprite.height / 6);
+    this.button_state_sprite.setPosition(width - this.button_state_sprite.width / 2 - screenEdgePadding, height - this.button_state_sprite.displayHeight / 6);
     this.button_state_sprite.setDepth(80);
     // submit button click detection
     this.submit_button = this.add.sprite(width - this.button_state_sprite.width - (screenEdgePadding * 2), height - screenEdgePadding,'submit_button').setOrigin(1);
@@ -486,7 +486,7 @@ export class ObstacleFixMenu extends Phaser.Scene {
     // hide the submit button until the criteria is met
     this.disableSubmit();
     // clear button click detection
-    this.clear_button = this.add.sprite(0, screenEdgePadding,'clear_button').setOrigin(0);
+    this.clear_button = this.add.sprite(0, screenEdgePadding * 2,'clear_button').setOrigin(0);
     this.clear_button.setX(screenEdgePadding * 2 + this.back_button.displayWidth);
     this.clear_button.setInteractive({
       useHandCursor: true
@@ -498,20 +498,20 @@ export class ObstacleFixMenu extends Phaser.Scene {
     // calc offset horiz for each type dept on tot #
     // for(let i = 0; i < this.num_coins_needed; i++) {
     //   const temp_coinUiTarget_sprite = new DraggableCurrencyTarget(this, dc_target_x, coin_original_y, 'coinUi_empty', currency_type.coin);
-    //   const offset_step = temp_coinUiTarget_sprite.width + 10;
+    //   const offset_step = temp_coinUiTarget_sprite.displayWidth + 10;
     //   temp_coinUiTarget_sprite.setX(dc_target_x + offset_step * i);
     //   this.draggable_currency_targets.push(temp_coinUiTarget_sprite);
     // }
     // for(let i = 0; i < this.num_gems_needed; i++) {
     //   const temp_gemUiTarget_sprite = new DraggableCurrencyTarget(this, dc_target_x, gem_original_y, 'gemUi_empty', currency_type.gem);
-    //   const offset_step = temp_gemUiTarget_sprite.width + 10;
+    //   const offset_step = temp_gemUiTarget_sprite.displayWidth + 10;
     //   temp_gemUiTarget_sprite.setX(dc_target_x + offset_step * i);
     //   this.draggable_currency_targets.push(temp_gemUiTarget_sprite);
     // }
     // if (this.containsStars) {
     //   for(let i = 0; i < this.num_stars_needed; i++) {
     //     const temp_starUiTarget_sprite = new DraggableCurrencyTarget(this, dc_target_x, star_original_y, 'starUi_empty', currency_type.star);
-    //     const offset_step = temp_starUiTarget_sprite.width + 10;
+    //     const offset_step = temp_starUiTarget_sprite.displayWidth + 10;
     //     temp_starUiTarget_sprite.setX(dc_target_x + offset_step * i);
     //     this.draggable_currency_targets.push(temp_starUiTarget_sprite);
     //   }

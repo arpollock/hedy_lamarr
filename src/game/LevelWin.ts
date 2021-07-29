@@ -74,20 +74,21 @@ export class LevelWin extends Phaser.Scene {
     console.log('from win screen')
     this.cameras.main.setBackgroundColor(backgroundColor);
     // text to show pause menu text.
-    this.textString = 'Woohoo! Level Complete';
+    this.textString = 'Rescue Complete. Mission Success.\nWoohoo!';
     const centerX = width / 2; 
     const textY = height / 6;
     this.text = this.add.text(centerX, textY, this.textString, {
       fontSize: textConfig.mainFontSize,
       color: textConfig.mainFillColor,
-      fontFamily: textConfig.fontFams
+      fontFamily: textConfig.fontFams,
+      align: 'center',
     }).setOrigin(0.5); // set origin makes it so we can center the text easily
     this.text.setScrollFactor(0);
 
     // calculate the user score and show them the # of stars they got
     const percentage: number = this.score / this.maxScore;
     const horizontalOffset: number = 210;
-    const scoreStarY: number = height / 3;
+    const scoreStarY: number = height / 2 - 40;
     const scoreStarCenterX: number = width / 2;
     let scoreStar1Str: string = 'star_fail';
     let scoreStar2Str: string = 'star_fail';
@@ -107,7 +108,7 @@ export class LevelWin extends Phaser.Scene {
     this.scoreStar3 = this.add.sprite(scoreStarCenterX + horizontalOffset, scoreStarY, scoreStar3Str);
 
     // main menu button click detection
-    const buttonsY: number = height * 2 / 3;
+    const buttonsY: number = height * 5 / 6;
     const buttonLeftX: number = width / 3;
     const buttonRightX: number = width * 2 / 3;
     this.mainMenuButton = this.add.sprite(buttonLeftX, buttonsY,'main_menu_button').setOrigin(0.5);

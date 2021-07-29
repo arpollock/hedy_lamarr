@@ -6,15 +6,25 @@ const gameName: string = 'Ratio Rocket\nRescue';
 
 const gravity: number = 500;
 
-const width: number = 800; // game window width
+const width: number = 880; // 900; //800; // game window width
 
-const height: number = 600; // game window height
+const height: number = 660; // 675; // 600; // game window height
 
 const mapWidth: number = 2100; // map width: 30 tiles * 70 px/tile = 2100 px
 
 const mapHeight: number = 1400; // map height: 20 tiles * 70 px/tile = 1400 px
 
 const groundDrag: number = 500;
+
+const zoomFactors: {
+  mainPlay: number,
+  viewWorld: number,
+} = {
+  mainPlay: 0.5,
+  viewWorld: 0.3,
+};
+
+// const maxObstaclesAllowed: number = 4;
 
 const backgroundColor: string = '#40739e';
 
@@ -159,12 +169,14 @@ const eventNames: {
   closeObFixMenu: string,
   updateCurrency: string,
   pauseGame: string
+  cameraFollowPlayer: string,
 } = {
   updateScoreText: 'updateScoreText',
   setConversionValues: 'setConversionValues',
   closeObFixMenu: 'closeObsFixMenu',
   updateCurrency: 'updateCurrency',
-  pauseGame: 'pause'
+  pauseGame: 'pause',
+  cameraFollowPlayer: 'cameraFollowPlayer',
 };
 
 const possibleMapNumbers: number[] = [ 1, 2 ];
@@ -245,20 +257,22 @@ enum currency_type {
 }
 
 // obstacle fix constants
+const sprite_size: number = 70;
 const screenEdgePadding: number = 10;
-const dc_original_x: number = 70;
-const dcm_original_x: number = dc_original_x + 120;
-const dc_target_x: number = width * 2 / 3 + 70; // width / 2 + 20;//- 70;
+const dc_original_x: number = 100;
+const dcm_original_x: number = dc_original_x + sprite_size;
+const dc_target_x: number = width * 2 / 3 + sprite_size; // width / 2 + 20;//- 70;
 const offset_y: number = 165;
 const input_start_y: number = height / 4 + 20;
 
 const offsetDraggable_y = 50;
-const coinDraggable_original_y: number = 120;
+const coinDraggable_original_y: number = 150;
 const gemDraggable_original_y: number = coinDraggable_original_y + offsetDraggable_y;
 const starDraggable_original_y: number = coinDraggable_original_y + (offsetDraggable_y * 2);
 
-const gemToCoinConverter_original_y: number = height - (screenEdgePadding * 1.5) - (offsetDraggable_y * 3.33);// coinDraggable_original_y + (offsetDraggable_y * 4);
-const starToCoinConverter_original_y: number = height - (screenEdgePadding * 1.5);// coinDraggable_original_y + (offsetDraggable_y * 6);
+const module_shift_up: number = screenEdgePadding * 5;
+const gemToCoinConverter_original_y: number = height - module_shift_up - (offsetDraggable_y * 3.33);// coinDraggable_original_y + (offsetDraggable_y * 4);
+const starToCoinConverter_original_y: number = height - module_shift_up;// coinDraggable_original_y + (offsetDraggable_y * 6);
 
 export {
   gameName,
@@ -268,6 +282,7 @@ export {
   mapWidth,
   mapHeight,
   groundDrag,
+  // maxObstaclesAllowed,
   backgroundColor,
   altBackgroundColor,
   assetBaseURL,
@@ -306,5 +321,6 @@ export {
   gemDraggable_original_y,
   starDraggable_original_y,
   gemToCoinConverter_original_y,
-  starToCoinConverter_original_y
+  starToCoinConverter_original_y,
+  zoomFactors
 };

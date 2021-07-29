@@ -12,7 +12,8 @@ import {
   hudMenuSpriteX,
   hudMenuSpriteXOffset,
   ScoreUpdate,
-  initScore
+  initScore,
+  screenEdgePadding
 } from './../Constants';
 
 export class HudMenu extends Phaser.Scene {
@@ -56,7 +57,7 @@ export class HudMenu extends Phaser.Scene {
     this.load.setBaseURL(assetBaseURL);
     this.load.image('tablet_button', 'tablet.png');
     this.load.image('tablet_button_hover', 'tablet_hover.png');
-    this.load.image('hud_menu_background', 'menuPanel_tab.png');
+    this.load.image('hud_menu_background', 'hud_ui/currency_background.png');
     this.load.image('pause_button', 'pause.png');
     this.cameras.main.setBackgroundColor(); // set background of hud menu to transparent
   }
@@ -125,7 +126,7 @@ export class HudMenu extends Phaser.Scene {
     }
     hudPanelBG.setOrigin(0,0);
 
-    this.tablet_button = this.add.sprite(width-70, height-70,'tablet_button');
+    this.tablet_button = this.add.sprite(width - screenEdgePadding, height - screenEdgePadding,'tablet_button').setOrigin(1);
     this.tablet_button.setInteractive({
       useHandCursor: true
     });
