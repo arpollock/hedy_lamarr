@@ -62,6 +62,8 @@ const initScore: ScoreUpdate = {
 
 const numDifficulties: number = 3; // 3, 4, 5 grade
 
+const numObstacleColors: number = 4;
+
 // https://photonstorm.github.io/phaser3-docs/Phaser.Types.GameObjects.Text.html#.TextStyle
 const textConfig: {
   mainFillColor: string,
@@ -102,13 +104,15 @@ const partNames: {
   base_ground: string,
   base_ceiling: string,
   lever: string,
-  creature: string
+  creature: string,
+  platform: string,
 } = {
   laser: 'laser',
   base_ground: 'base',
   base_ceiling: 'base_down',
   lever: 'lever',
-  creature: 'creature'
+  creature: 'creature',
+  platform: 'platform',
 };
 
 const tiledPropertyNames: {
@@ -187,7 +191,7 @@ const eventNames: {
   cameraFollowPlayer: 'cameraFollowPlayer',
 };
 
-const possibleMapNumbers: number[] = [ 1, 2, 3 ];
+const possibleMapNumbers: number[] = [ 1, 2, 3, 4 ];
 
 // describes the currency conversion values, in terms of how many coins they're worth
 interface ConversionConfig { 
@@ -306,6 +310,7 @@ export {
   ScoreUpdate,
   initScore,
   numDifficulties,
+  numObstacleColors,
   textConfig,
   musicKeyNames,
   partNames,

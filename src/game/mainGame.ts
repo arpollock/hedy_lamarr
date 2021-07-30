@@ -30,6 +30,7 @@ import {
   ScoreUpdate,
   musicKeyNames,
   zoomFactors,
+  numObstacleColors
 } from '../Constants';
 import { isMusicAllowed } from './../Utilities';
 import { ObstacleFixMenu } from './ObstacleFixMenu';
@@ -165,9 +166,15 @@ export class HomeScene extends Phaser.Scene {
     this.load.image('star', 'star.png');
     // the elevator/moving platform image
     this.load.image('platform', 'platform.png');
+    for( let i: number = 0; i < numObstacleColors; i++ ) {
+      this.load.image(`platform_${i}`, `platform_${i}.png`);
+      this.load.image(`platform_${i}`, `platform_${i}.png`);
+    }
     // the button (on and off) images
-    this.load.image('buttonOff', 'buttonOff.png');
-    this.load.image('buttonOn', 'buttonOn.png');
+    for( let i: number = 0; i < numObstacleColors; i++ ) {
+      this.load.image(`buttonOff_${i}`, `buttonOff_${i}.png`);
+      this.load.image(`buttonOn_${i}`, `buttonOn_${i}.png`);
+    }
     // the overlay sprite to fix an obstacle
     this.load.image('obstacleFix', 'obstacleFix.png');
     // player animations
@@ -262,7 +269,7 @@ export class HomeScene extends Phaser.Scene {
       const partName: string = (partNameIdx >= 0) ? g.properties[partNameIdx].value : '';
       let goal: Goal;
       if (partName !== partNames.creature) {
-        goal = new Goal(this, g.x, g.y, 'sheet_lasers', this.laserDoorPartToFrameNum(partName)); 
+        goal = new Goal(this, g.x, g.y, 'sheet_lasers', this.laserDoorPartToFrameNum(partName, 2)); 
         goal.setDepth(1);
         goal.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
         this.physics.world.enable(goal, Phaser.Physics.Arcade.STATIC_BODY);
@@ -298,9 +305,20 @@ export class HomeScene extends Phaser.Scene {
     });
 
     // add the moving platforms as specified in the object layer of the map
-    const plats = this.map.filterObjects(tiledLayerNames.movingPlatforms, p => p.name == 'platform');
+    const plats = this.map.filterObjects(tiledLayerNames.movingPlatforms, p => p.name == partNames.platform);
     plats.forEach(p => {
-      const plat = new MovingPlatform(this, p.x, p.y, 'platform');
+
+      const obstacleNumIdx = this.tiledObjectHasProperty(tiledPropertyNames.obstacleNum, p);
+      const isValidObstacleNumIdx: boolean = (obstacleNumIdx >= 0);
+      const obstacleNum: number = isValidObstacleNumIdx ? p.properties[obstacleNumIdx].value : -1;
+      const platformColorStr: string = (obstacleNum >= 0 && obstacleNum < numObstacleColors)? `_${obstacleNum}` : '';
+      const plat = new MovingPlatform(this, p.x, p.y, `platform${platformColorStr}`);
+      if (obstacleNumIdx >= 0) {
+        plat.obstacleNum = p.properties[obstacleNumIdx].value;
+        if (plat.obstacleNum == -1) { // code to have the platform moving @ start (versus having to be fixed)
+          plat.isFixed = true;
+        }
+      }
       plat.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
       if (this.tiledObjectPropertyIsTrue(tiledPropertyNames.platformMoveVertical, p)) {
         plat.movesV = true;
@@ -310,13 +328,7 @@ export class HomeScene extends Phaser.Scene {
       if (this.tiledObjectPropertyIsTrue(tiledPropertyNames.opposite, p)) {
         plat.moveOpposite();
       }
-      const obstacleNumIdx = this.tiledObjectHasProperty(tiledPropertyNames.obstacleNum, p)
-      if (obstacleNumIdx >= 0) {
-        plat.obstacleNum = p.properties[obstacleNumIdx].value;
-        if (plat.obstacleNum == -1) { // code to have the platform moving @ start (versus having to be fixed)
-          plat.isFixed = true;
-        }
-      }
+      
       if (plat.isFixed) {
         this.movePlatform(plat);
       }
@@ -329,7 +341,17 @@ export class HomeScene extends Phaser.Scene {
     // as specified in the object layer of the map
     const buttons = this.map.filterObjects(tiledLayerNames.buttons, p => p.name == 'button');
     buttons.forEach(b => {
-      const butt = new ObstacleButton(this, b.x, b.y, 'buttonOff');
+
+      const obstacleNumIdx = this.tiledObjectHasProperty(tiledPropertyNames.obstacleNum, b);
+      const obstacleNum: number = obstacleNumIdx >= 0 ?  b.properties[obstacleNumIdx].value: -1;
+      
+      const isButtonNumValid: boolean = (obstacleNum >= 0 && obstacleNum < numObstacleColors);
+      if (!isButtonNumValid) {
+        console.log(`ERROR: button with invalid obstacle num: ${obstacleNum}.`);
+      }
+      const buttonTextureStr: string =  isButtonNumValid ? `buttonOff_${obstacleNum}` : 'buttonOff_0';
+      const butt = new ObstacleButton(this, b.x, b.y, buttonTextureStr);
+      butt.obstacleNum = obstacleNum;
 
       const possibleInputsStr: string = `${tiledPropertyNames.possibleInputs}${this.conversionValues.valGems.toString()}${this.conversionValues.valStars.toString()}`;
       const possibleInputsIdx: number = this.tiledObjectHasProperty(possibleInputsStr, b);
@@ -348,10 +370,7 @@ export class HomeScene extends Phaser.Scene {
         console.log(`ERROR with obstacleNum ${tiledPropertyNames.obstacleNum}; cannot find possible inputs.`);
         console.log(b);
       }
-      const obstacleNumIdx = this.tiledObjectHasProperty(tiledPropertyNames.obstacleNum, b);
-      if (obstacleNumIdx >= 0) {
-        butt.obstacleNum = b.properties[obstacleNumIdx].value;
-      }
+      
       const overlay = new ObstacleOverlay(this, b.x, b.y, 'obstacleFix', butt.obstacleNum, coins, gems, stars);
       butt.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
       overlay.setOrigin(0, 1);
@@ -368,9 +387,11 @@ export class HomeScene extends Phaser.Scene {
       const partNameIdx: number = this.tiledObjectHasProperty(tiledPropertyNames.part, d);
       const partName: string = (partNameIdx >= 0) ? d.properties[partNameIdx].value : '';
 
-      const ld = new LaserDoor(this, d.x, d.y, 'sheet_lasers', this.laserDoorPartToFrameNum(partName));
+      const obstacleNumIdx: number = this.tiledObjectHasProperty(tiledPropertyNames.obstacleNum, d);
+      const obstacleNum: number = (obstacleNumIdx >= 0) ? d.properties[obstacleNumIdx].value : 0;
+      const obsNumForDoorColor: number = (obstacleNum >= 0 && obstacleNum < numObstacleColors) ? obstacleNum : 0;
+      const ld = new LaserDoor(this, d.x, d.y, 'sheet_lasers', this.laserDoorPartToFrameNum(partName, obsNumForDoorColor));
       ld.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
-      const obstacleNumIdx: number = this.tiledObjectHasProperty(tiledPropertyNames.obstacleNum, d)
       if (obstacleNumIdx >= 0) {
         ld.obstacleNum = d.properties[obstacleNumIdx].value;
       }
@@ -846,7 +867,7 @@ export class HomeScene extends Phaser.Scene {
         foundPlatform = true;
       }
     });
-    var foundDoor: boolean = false;
+    var foundDoor: boolean = false;  
     this.doorObjs.forEach( d => {
       if (d.obstacleNum == ob.obstacleNum) {
         foundDoor = true;
@@ -856,10 +877,10 @@ export class HomeScene extends Phaser.Scene {
       }
     });
     if (foundDoor || foundPlatform) {
-      ob.setTexture('buttonOn');
+      ob.setTexture(`buttonOn_${ob.obstacleNum}`);
       this.buttonObjs.forEach((bObj) => {
         if (bObj.obstacleNum == ob.obstacleNum) {
-          bObj.setTexture('buttonOn');
+          bObj.setTexture(`buttonOn_${bObj.obstacleNum}`);
           bObj.isFixed = true;
           bObj.body.setSize(bObj.body.width, 0);
         }
@@ -880,7 +901,7 @@ export class HomeScene extends Phaser.Scene {
     }
   }
 
-  private laserDoorPartToFrameNum(partName: string): number {
+  private laserDoorPartToFrameNum(partName: string, obstacleNum?: number): number {
     if (partName === partNames.base_ground) {
       return 89; // 91 is the short one
     }
@@ -888,7 +909,19 @@ export class HomeScene extends Phaser.Scene {
       return 75;
     }
     if (partName === partNames.laser) {
-      return 78;
+      switch(obstacleNum) {
+        case 0:
+          return 78;
+        case 1:
+          return 79;
+        case 2:
+          return 80;
+        case 3:
+          return 81;
+        default:
+          console.log(`WARNING: unexpected obstacle num: ${obstacleNum}`);
+          return 78;
+      }
     }
     if (partName === partNames.lever) {
       return 85;
