@@ -10,6 +10,7 @@ import {
   numDifficulties,
   MainGameConfig,
   possibleMapNumbers,
+  assetGameControlUiUrl
 } from './../Constants';
 import { HomeScene } from './MainGame';
 import { HudMenu } from './HudMenu';
@@ -57,18 +58,16 @@ export class StartScene extends Phaser.Scene {
   public preload(): void {
     this.load.setBaseURL(assetBaseURL);
     // load image assets
-    this.load.image('music_turn_off', 'music_turnOff.png');
-    this.load.image('music_turn_on', 'music_turnOn.png');
-    this.load.image('start_game', 'start_game.png');
-    this.load.image('difficulty3', 'difficulty3.png');
-    this.load.image('difficulty4', 'difficulty4.png');
-    this.load.image('difficulty5', 'difficulty5.png');
-    this.load.image('difficulty3_hover', 'difficulty3_hover.png');
-    this.load.image('difficulty4_hover', 'difficulty4_hover.png');
-    this.load.image('difficulty5_hover', 'difficulty5_hover.png');
-    this.load.image('difficulty3_active', 'difficulty3_active.png');
-    this.load.image('difficulty4_active', 'difficulty4_active.png');
-    this.load.image('difficulty5_active', 'difficulty5_active.png');
+    this.load.image('start_game', `${assetGameControlUiUrl}start_game.png`);
+    this.load.image('difficulty3', `${assetGameControlUiUrl}difficulty3.png`);
+    this.load.image('difficulty4', `${assetGameControlUiUrl}difficulty4.png`);
+    this.load.image('difficulty5', `${assetGameControlUiUrl}difficulty5.png`);
+    this.load.image('difficulty3_hover', `${assetGameControlUiUrl}difficulty3_hover.png`);
+    this.load.image('difficulty4_hover', `${assetGameControlUiUrl}difficulty4_hover.png`);
+    this.load.image('difficulty5_hover', `${assetGameControlUiUrl}difficulty5_hover.png`);
+    this.load.image('difficulty3_active', `${assetGameControlUiUrl}difficulty3_active.png`);
+    this.load.image('difficulty4_active', `${assetGameControlUiUrl}difficulty4_active.png`);
+    this.load.image('difficulty5_active', `${assetGameControlUiUrl}difficulty5_active.png`);
     // these are technically shared across the hud and tablet menu, but they
     // need to be preloaded here since the other scenes are added dynamically
     this.load.image('coinHud', 'coin.png');

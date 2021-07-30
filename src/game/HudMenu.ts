@@ -6,6 +6,7 @@ import {
   height,
   textConfig,
   assetBaseURL,
+  assetHudUiURL,
   eventNames,
   HudMenuConfig,
   hudMenuSpriteY,
@@ -55,10 +56,10 @@ export class HudMenu extends Phaser.Scene {
 
   public preload(): void {
     this.load.setBaseURL(assetBaseURL);
-    this.load.image('tablet_button', 'hud_ui/tablet.png');
-    this.load.image('tablet_button_hover', 'hud_ui/tablet_hover.png');
-    this.load.image('hud_menu_background', 'hud_ui/currency_background.png');
-    this.load.image('pause_button', 'pause.png');
+    this.load.image('tablet_button', `${assetHudUiURL}tablet.png`);
+    this.load.image('tablet_button_hover', `${assetHudUiURL}tablet_hover.png`);
+    this.load.image('hud_menu_background', `${assetHudUiURL}currency_background.png`);
+    this.load.image('pause_button', `${assetHudUiURL}pause.png`);
     this.cameras.main.setBackgroundColor(); // set background of hud menu to transparent
   }
 

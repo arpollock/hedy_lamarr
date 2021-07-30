@@ -1,9 +1,9 @@
 import 'phaser';
-import MovingPlatform from './MovingPlatform';
-import ObstacleButton from './ObstacleButton';
-import ObstacleOverlay from './ObstacleOverlay';
-import LaserDoor from './LaserDoor';
-import Goal from './Goal';
+import MovingPlatform from './platformer_parts/MovingPlatform';
+import ObstacleButton from './platformer_parts/ObstacleButton';
+import ObstacleOverlay from './platformer_parts/ObstacleOverlay';
+import LaserDoor from './platformer_parts/LaserDoor';
+import Goal from './platformer_parts/Goal';
 import eventsCenter from './EventsCenter';
 import {
   gravity,
@@ -149,8 +149,8 @@ export class HomeScene extends Phaser.Scene {
     this.load.setBaseURL(assetBaseURL);
     // map made with Tiled in JSON format
     // TODO: make this a randomized/seeded selection
-    const mapFileNum: number = (this.levelSeedData != null && this.levelSeedData.map_number > 0) ? this.levelSeedData.map_number: 1;
-    const mapFileName: string = `map_${mapFileNum.toString()}.json`;
+    const mapFileNum: number = (this.levelSeedData !== null && this.levelSeedData.map_number > 0) ? this.levelSeedData.map_number: 1;
+    const mapFileName: string = `maps/map_${mapFileNum.toString()}.json`;
     this.load.tilemapTiledJSON('map', mapFileName);
     // this.load.tilemapTiledJSON('map', 'test_map.json');
     // tiles in spritesheet 
@@ -176,31 +176,6 @@ export class HomeScene extends Phaser.Scene {
     this.load.atlasXML('creature', 'spritesheet_creatures.png', 'spritesheet_creatures.xml');
     // background image
     this.load.image('background', 'clouds.png');
-    // load audio assets
-    const audioCollectTemp: Phaser.Types.Loader.FileTypes.AudioFileConfig = {
-      key: musicKeyNames.collectSFX,
-      url: [ 'audio/shine_collect.ogg' ],
-    };
-    this.load.audio(audioCollectTemp);
-    const obsUnlockTemp: Phaser.Types.Loader.FileTypes.AudioFileConfig = {
-      key: musicKeyNames.obstacleUnlockSFX,
-      url: [ 'audio/button_push.ogg' ],
-    };
-    this.load.audio(obsUnlockTemp);
-    const winGameTemp: Phaser.Types.Loader.FileTypes.AudioFileConfig = {
-      key: musicKeyNames.winGameSFX,
-      url: [ 'audio/success.ogg' ],
-    };
-    this.load.audio(winGameTemp);
-    // the next 2 audios are technically for ObstacleFixMenu.ts, but that's loaded later
-    this.load.audio({
-      key: musicKeyNames.dropAccept,
-      url: [ 'audio/accept.ogg' ],
-    });
-    this.load.audio({
-      key: musicKeyNames.dropReject,
-      url: [ 'audio/reject.ogg' ],
-    });
   }
 
   public create(): void {
@@ -292,7 +267,7 @@ export class HomeScene extends Phaser.Scene {
         goal.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
         this.physics.world.enable(goal, Phaser.Physics.Arcade.STATIC_BODY);
       } else { // creature object
-        goal = new Goal(this, g.x, g.y, partNames.creature, 'creatureRed_stand.png');// this.textures.get('creature').frames['creatureBlue_stand.png']);
+        goal = new Goal(this, g.x, g.y, partNames.creature, 'creatureRed_stand.png');
         goal.setDepth(0);
         goal.setOrigin(-0.4, 1); // change the origin to the top left to match the default for Tiled
         this.physics.world.enable(goal, Phaser.Physics.Arcade.DYNAMIC_BODY);

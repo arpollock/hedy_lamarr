@@ -35,6 +35,31 @@ export class MusicControlScene extends Phaser.Scene {
       url: [ 'audio/foggy-forest.ogg', 'audio/foggy-forest.wav' ],
     };
     this.load.audio(introTemp);
+    // load audio assets
+    const audioCollectTemp: Phaser.Types.Loader.FileTypes.AudioFileConfig = {
+      key: musicKeyNames.collectSFX,
+      url: [ 'audio/shine_collect.ogg' ],
+    };
+    this.load.audio(audioCollectTemp);
+    const obsUnlockTemp: Phaser.Types.Loader.FileTypes.AudioFileConfig = {
+      key: musicKeyNames.obstacleUnlockSFX,
+      url: [ 'audio/button_push.ogg' ],
+    };
+    this.load.audio(obsUnlockTemp);
+    const winGameTemp: Phaser.Types.Loader.FileTypes.AudioFileConfig = {
+      key: musicKeyNames.winGameSFX,
+      url: [ 'audio/success.ogg' ],
+    };
+    this.load.audio(winGameTemp);
+    // the next 2 audios are technically for ObstacleFixMenu.ts, but that's loaded later
+    this.load.audio({
+      key: musicKeyNames.dropAccept,
+      url: [ 'audio/accept.ogg' ],
+    });
+    this.load.audio({
+      key: musicKeyNames.dropReject,
+      url: [ 'audio/reject.ogg' ],
+    });
     // this.load.audio( musicKeyNames.intro, [ 'audio/foggy-forest.ogg', 'audio/foggy-forest.wav' ] );
   }
 

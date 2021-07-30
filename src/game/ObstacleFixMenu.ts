@@ -1,6 +1,6 @@
 import 'phaser';
 import eventsCenter from './EventsCenter';
-import ObstacleButton from './ObstacleButton';
+import ObstacleButton from './platformer_parts/ObstacleButton';
 import {
   sceneNames,
   assetObsUiURL,

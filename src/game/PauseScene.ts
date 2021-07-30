@@ -6,7 +6,8 @@ import {
   width,
   height,
   textConfig,
-  assetBaseURL
+  assetBaseURL,
+  assetGameControlUiUrl
 } from './../Constants';
 
 export class PauseScene extends Phaser.Scene {
@@ -31,7 +32,7 @@ export class PauseScene extends Phaser.Scene {
   }
   public preload(): void {
     this.load.setBaseURL(assetBaseURL);
-    this.load.image('resume_game_button', 'resume.png');
+    this.load.image('resume_game_button', `${assetGameControlUiUrl}resume.png`);
   }
 
   public create(): void {

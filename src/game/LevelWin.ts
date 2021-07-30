@@ -1,6 +1,7 @@
 import 'phaser';
 import {
   assetBaseURL,
+  assetWinLevelUiURL,
   sceneNames,
   backgroundColor,
   width,
@@ -63,8 +64,8 @@ export class LevelWin extends Phaser.Scene {
   }
   public preload(): void {
     this.load.setBaseURL(assetBaseURL);
-    this.load.image('star_success', 'star_success.png');
-    this.load.image('star_fail', 'star_fail.png');
+    this.load.image('star_success', `${assetWinLevelUiURL}star_success.png`);
+    this.load.image('star_fail', `${assetWinLevelUiURL}star_fail.png`);
   }
 
   public create(): void {

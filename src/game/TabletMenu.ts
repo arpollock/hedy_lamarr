@@ -2,6 +2,7 @@ import 'phaser';
 
 import {
   assetBaseURL,
+  assetTabletUiURL,
   sceneNames,
   width,
   height,
@@ -45,9 +46,9 @@ export class TabletMenu extends Phaser.Scene {
 
   public preload(): void {
     this.load.setBaseURL(assetBaseURL);
-    this.load.image('tablet_menu_background', 'tablet_ui/menuPanel_tab.png');
-    this.load.image('world_map_mode', 'tablet_ui/world_map_mode.png');
-    this.load.image('follow_player_mode', 'tablet_ui/follow_player_mode.png');
+    this.load.image('tablet_menu_background', `${assetTabletUiURL}menuPanel_tab.png`);
+    this.load.image('world_map_mode', `${assetTabletUiURL}/world_map_mode.png`);
+    this.load.image('follow_player_mode', `${assetTabletUiURL}/follow_player_mode.png`);
   }
 
   public create(): void {

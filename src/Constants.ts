@@ -1,6 +1,6 @@
 import 'phaser';
 
-import ObstacleButton from './game/ObstacleButton';
+import ObstacleButton from './game/platformer_parts/ObstacleButton';
 
 const gameName: string = 'Ratio Rocket\nRescue';
 
@@ -33,6 +33,14 @@ const altBackgroundColor: string = '#fbc531';
 const assetBaseURL: string = './src/assets/';
 
 const assetObsUiURL: string = `${assetBaseURL}obstacle_ui/`;
+
+const assetHudUiURL: string = `hud_ui/`;
+
+const assetTabletUiURL: string = `tablet_ui/`;
+
+const assetGameControlUiUrl: string = `game_control_ui/`;
+
+const assetWinLevelUiURL: string = `win_level_ui/`;
 
 const pauseKeyCode: number = Phaser.Input.Keyboard.KeyCodes.ESC.valueOf();
 
@@ -179,7 +187,7 @@ const eventNames: {
   cameraFollowPlayer: 'cameraFollowPlayer',
 };
 
-const possibleMapNumbers: number[] = [ 1, 2 ];
+const possibleMapNumbers: number[] = [ 1, 2, 3 ];
 
 // describes the currency conversion values, in terms of how many coins they're worth
 interface ConversionConfig { 
@@ -287,6 +295,10 @@ export {
   altBackgroundColor,
   assetBaseURL,
   assetObsUiURL,
+  assetHudUiURL,
+  assetTabletUiURL,
+  assetGameControlUiUrl,
+  assetWinLevelUiURL,
   pauseKeyCode,
   hudMenuSpriteY,
   hudMenuSpriteX,
