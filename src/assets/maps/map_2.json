@@ -5,7 +5,7 @@
      "export":
         {
          "format":"json",
-         "target":"map_2.json"
+         "target":"..\/map_2.json"
         }
     },
  "height":32,
@@ -22,6 +22,17 @@
          "type":"tilelayer",
          "visible":true,
          "width":42,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":12,
+         "name":"Barriers",
+         "objects":[],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
          "x":0,
          "y":0
         }, 
@@ -468,6 +479,11 @@
                          "name":"possibleInputs_34",
                          "type":"string",
                          "value":"300;010;020;001;"
+                        }, 
+                        {
+                         "name":"userTogglable",
+                         "type":"bool",
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"",
@@ -511,6 +527,11 @@
                          "name":"possibleInputs_34",
                          "type":"string",
                          "value":"120;111;210;002;201;"
+                        }, 
+                        {
+                         "name":"userTogglable",
+                         "type":"bool",
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"",
@@ -554,6 +575,11 @@
                          "name":"possibleInputs_34",
                          "type":"string",
                          "value":"300;010;020;001;"
+                        }, 
+                        {
+                         "name":"userTogglable",
+                         "type":"bool",
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"",
@@ -597,6 +623,11 @@
                          "name":"possibleInputs_34",
                          "type":"string",
                          "value":"110;001;101;020;"
+                        }, 
+                        {
+                         "name":"userTogglable",
+                         "type":"bool",
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"",
@@ -640,6 +671,11 @@
                          "name":"possibleInputs_34",
                          "type":"string",
                          "value":"210;001;101;"
+                        }, 
+                        {
+                         "name":"userTogglable",
+                         "type":"bool",
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"",
@@ -1414,7 +1450,7 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":12,
+ "nextlayerid":13,
  "nextobjectid":75,
  "orientation":"orthogonal",
  "renderorder":"right-down",
@@ -1424,7 +1460,7 @@
         {
          "columns":4,
          "firstgid":1,
-         "image":"tiles.png",
+         "image":"..\/tiles.png",
          "imageheight":280,
          "imagewidth":280,
          "margin":0,
@@ -1437,7 +1473,7 @@
         {
          "columns":1,
          "firstgid":17,
-         "image":"coin.png",
+         "image":"..\/coin.png",
          "imageheight":70,
          "imagewidth":70,
          "margin":0,
@@ -1450,7 +1486,7 @@
         {
          "columns":1,
          "firstgid":18,
-         "image":"gem.png",
+         "image":"..\/gem.png",
          "imageheight":70,
          "imagewidth":70,
          "margin":0,
@@ -1463,7 +1499,7 @@
         {
          "columns":1,
          "firstgid":19,
-         "image":"star.png",
+         "image":"..\/star.png",
          "imageheight":70,
          "imagewidth":70,
          "margin":0,
@@ -1476,7 +1512,7 @@
         {
          "columns":1,
          "firstgid":20,
-         "image":"platform.png",
+         "image":"..\/platform.png",
          "imageheight":70,
          "imagewidth":70,
          "margin":0,
@@ -1489,7 +1525,7 @@
         {
          "columns":1,
          "firstgid":21,
-         "image":"buttonOff.png",
+         "image":"..\/buttonOff_0.png",
          "imageheight":70,
          "imagewidth":70,
          "margin":0,
@@ -1502,7 +1538,7 @@
         {
          "columns":14,
          "firstgid":22,
-         "image":"sheet_lasers.png",
+         "image":"..\/sheet_lasers.png",
          "imageheight":490,
          "imagewidth":980,
          "margin":0,

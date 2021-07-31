@@ -27,6 +27,17 @@
         }, 
         {
          "draworder":"topdown",
+         "id":12,
+         "name":"Barriers",
+         "objects":[],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
          "id":11,
          "name":"PlayerStart",
          "objects":[
@@ -122,8 +133,8 @@
                  "type":"",
                  "visible":true,
                  "width":70,
-                 "x":945,
-                 "y":1288
+                 "x":910,
+                 "y":1260
                 }, 
                 {
                  "gid":20,
@@ -699,6 +710,11 @@
                          "name":"possibleInputs_34",
                          "type":"string",
                          "value":"110;001;"
+                        }, 
+                        {
+                         "name":"userTogglable",
+                         "type":"bool",
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"",
@@ -742,6 +758,11 @@
                          "name":"possibleInputs_34",
                          "type":"string",
                          "value":"300;110;001;"
+                        }, 
+                        {
+                         "name":"userTogglable",
+                         "type":"bool",
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"",
@@ -785,6 +806,11 @@
                          "name":"possibleInputs_34",
                          "type":"string",
                          "value":"002;030;003;012;021;"
+                        }, 
+                        {
+                         "name":"userTogglable",
+                         "type":"bool",
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"",
@@ -828,6 +854,11 @@
                          "name":"possibleInputs_34",
                          "type":"string",
                          "value":"002;030;003;012;021;"
+                        }, 
+                        {
+                         "name":"userTogglable",
+                         "type":"bool",
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"",
@@ -871,6 +902,11 @@
                          "name":"possibleInputs_34",
                          "type":"string",
                          "value":"030;002;021;012;120;102;"
+                        }, 
+                        {
+                         "name":"userTogglable",
+                         "type":"bool",
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"",
@@ -914,6 +950,11 @@
                          "name":"possibleInputs_34",
                          "type":"string",
                          "value":"030;002;021;012;120;102;"
+                        }, 
+                        {
+                         "name":"userTogglable",
+                         "type":"bool",
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"",
@@ -957,6 +998,11 @@
                          "name":"possibleInputs_34",
                          "type":"string",
                          "value":"110;001;101;111;"
+                        }, 
+                        {
+                         "name":"userTogglable",
+                         "type":"bool",
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"",
@@ -1000,6 +1046,11 @@
                          "name":"possibleInputs_34",
                          "type":"string",
                          "value":"300;110;001;"
+                        }, 
+                        {
+                         "name":"userTogglable",
+                         "type":"bool",
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"",
@@ -1774,7 +1825,7 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":12,
+ "nextlayerid":13,
  "nextobjectid":140,
  "orientation":"orthogonal",
  "renderorder":"right-down",

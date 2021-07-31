@@ -201,7 +201,7 @@ const eventNames: {
   cameraFollowPlayer: 'cameraFollowPlayer',
 };
 
-const possibleMapNumbers: number[] = [ 1, 2, 3, 4, 5 ];
+const possibleMapNumbers: number[] = [ 1, 2, 3, 4, 5, 6 ];
 
 // describes the currency conversion values, in terms of how many coins they're worth
 interface ConversionConfig { 
@@ -281,11 +281,11 @@ enum currency_type {
 // obstacle fix constants
 const sprite_size: number = 70;
 const screenEdgePadding: number = 10;
-const dc_original_x: number = 100;
+const dc_original_x: number = 110;
 const dcm_original_x: number = dc_original_x + sprite_size;
 const dc_target_x: number = width * 2 / 3 + sprite_size; // width / 2 + 20;//- 70;
 const offset_y: number = 165;
-const input_start_y: number = height / 4 + 20;
+const input_start_y: number = height / 4 + 30;
 
 const offsetDraggable_y = 50;
 const coinDraggable_original_y: number = 150;

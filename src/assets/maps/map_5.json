@@ -791,6 +791,11 @@
                          "name":"possibleInputs_34",
                          "type":"string",
                          "value":"110;001;"
+                        }, 
+                        {
+                         "name":"userTogglable",
+                         "type":"bool",
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"",
@@ -834,6 +839,11 @@
                          "name":"possibleInputs_34",
                          "type":"string",
                          "value":"001;110;101;"
+                        }, 
+                        {
+                         "name":"userTogglable",
+                         "type":"bool",
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"",
@@ -877,6 +887,11 @@
                          "name":"possibleInputs_34",
                          "type":"string",
                          "value":"110;001;"
+                        }, 
+                        {
+                         "name":"userTogglable",
+                         "type":"bool",
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"",
@@ -920,6 +935,11 @@
                          "name":"possibleInputs_34",
                          "type":"string",
                          "value":"002;030;021;"
+                        }, 
+                        {
+                         "name":"userTogglable",
+                         "type":"bool",
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"",
@@ -963,6 +983,11 @@
                          "name":"possibleInputs_34",
                          "type":"string",
                          "value":"002;030;021;"
+                        }, 
+                        {
+                         "name":"userTogglable",
+                         "type":"bool",
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"",

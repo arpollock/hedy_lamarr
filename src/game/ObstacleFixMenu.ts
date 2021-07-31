@@ -583,7 +583,7 @@ export class ObstacleFixMenu extends Phaser.Scene {
     this.num_coins_str = `${this.num_coins}`;
     this.num_gems_str = `${this.num_gems}`;
     this.num_stars_str = this.containsStars ? `${this.num_stars}` : '';
-    const currency_text_x = dc_original_x - 45;
+    const currency_text_x = dc_original_x - 55;
     this.num_coins_text = this.add.text(currency_text_x, coinDraggable_original_y, this.num_coins_str, {
       fontSize: textConfig.mainFontSize,
       color: textConfig.mainFillColor,

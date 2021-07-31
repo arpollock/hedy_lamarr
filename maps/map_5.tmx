@@ -219,6 +219,7 @@
     <property name="possibleInputs_24" value="020;001;"/>
     <property name="possibleInputs_30" value="300;010;010;"/>
     <property name="possibleInputs_34" value="110;001;"/>
+    <property name="userTogglable" type="bool" value="false"/>
    </properties>
   </object>
   <object id="138" name="button" gid="21" x="910" y="1890" width="70" height="70">
@@ -229,6 +230,7 @@
     <property name="possibleInputs_24" value="210;001;020;"/>
     <property name="possibleInputs_30" value="020;210;"/>
     <property name="possibleInputs_34" value="001;110;101;"/>
+    <property name="userTogglable" type="bool" value="false"/>
    </properties>
   </object>
   <object id="172" name="button" gid="21" x="1807" y="1610" width="70" height="70">
@@ -239,6 +241,7 @@
     <property name="possibleInputs_24" value="020;001;"/>
     <property name="possibleInputs_30" value="300;010;010;"/>
     <property name="possibleInputs_34" value="110;001;"/>
+    <property name="userTogglable" type="bool" value="false"/>
    </properties>
   </object>
   <object id="173" name="button" gid="21" x="1623" y="770" width="70" height="70">
@@ -249,6 +252,7 @@
     <property name="possibleInputs_24" value="021;012;030;"/>
     <property name="possibleInputs_30" value="120;030;"/>
     <property name="possibleInputs_34" value="002;030;021;"/>
+    <property name="userTogglable" type="bool" value="false"/>
    </properties>
   </object>
   <object id="174" name="button" gid="21" x="1807" y="770" width="70" height="70">
@@ -259,6 +263,7 @@
     <property name="possibleInputs_24" value="021;012;030;"/>
     <property name="possibleInputs_30" value="120;030;"/>
     <property name="possibleInputs_34" value="002;030;021;"/>
+    <property name="userTogglable" type="bool" value="false"/>
    </properties>
   </object>
   <object id="179" name="button" gid="21" x="490" y="1470" width="70" height="70">

@@ -260,15 +260,17 @@ export class HomeScene extends Phaser.Scene {
     // add the player's sprite
     // first get the correct starting location from Tiled (if available)
     const startingLocs = this.map.filterObjects(tiledLayerNames.playerStart, p => p.name == 'start');
-    startingLocs.forEach(startingLoc => {
-      // this is stubbed out to support multiplayer w/ different starting locs
-      const forPlayerIdx: number = this.tiledObjectHasProperty(tiledPropertyNames.player, startingLoc);
-      const forPlayer: number = (forPlayerIdx >= 0) ? startingLoc.properties[forPlayerIdx].value : 1;
-      if (forPlayer === 1) {
-        this.playerConfig.x = startingLoc.x;
-        this.playerConfig.y = startingLoc.y;
-      }
-    });
+    if (startingLocs !== null && startingLocs !== undefined) {
+      startingLocs.forEach(startingLoc => {
+        // this is stubbed out to support multiplayer w/ different starting locs
+        const forPlayerIdx: number = this.tiledObjectHasProperty(tiledPropertyNames.player, startingLoc);
+        const forPlayer: number = (forPlayerIdx >= 0) ? startingLoc.properties[forPlayerIdx].value : 1;
+        if (forPlayer === 1) {
+          this.playerConfig.x = startingLoc.x;
+          this.playerConfig.y = startingLoc.y;
+        }
+      });
+    }
     this.player = (this.physics.add.sprite(this.playerConfig.x, this.playerConfig.y, 'player') as PlayerSprite);
     this.player.setDisplaySize(this.playerConfig.width, this.playerConfig.height);
     this.player.setBounce(0.0);
@@ -279,29 +281,31 @@ export class HomeScene extends Phaser.Scene {
 
     // add the goal objects as specified in the object layer of the map
     const goals = this.map.filterObjects(tiledLayerNames.goal, p => p.name == 'goal');
-    goals.forEach(g => {
-      const partNameIdx: number = this.tiledObjectHasProperty(tiledPropertyNames.part, g);
-      const partName: string = (partNameIdx >= 0) ? g.properties[partNameIdx].value : '';
-      let goal: Goal;
-      if (partName !== partNames.creature) {
-        goal = new Goal(this, g.x, g.y, 'sheet_lasers', this.laserDoorPartToFrameNum(partName, 2)); 
-        goal.setDepth(1);
-        goal.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
-        this.physics.world.enable(goal, Phaser.Physics.Arcade.STATIC_BODY);
-      } else { // creature object
-        goal = new Goal(this, g.x, g.y, partNames.creature, 'creatureRed_stand.png');
-        goal.setDepth(0);
-        goal.setOrigin(-0.4, 1); // change the origin to the top left to match the default for Tiled
-        this.physics.world.enable(goal, Phaser.Physics.Arcade.DYNAMIC_BODY);
-        this.physics.add.collider(this.groundLayer, goal); // the creatures are affected by gravity, so they need to collide with the ground
-      }
-      goal.part = partName;
-      const obstacleNumIdx = this.tiledObjectHasProperty(tiledPropertyNames.obstacleNum, g);
-      if (obstacleNumIdx >= 0) {
-        goal[tiledPropertyNames.obstacleNum] = g.properties[obstacleNumIdx].value;
-      }
-      this.goalObjs.push(goal);
-    });
+    if (goals !== null && goals !== undefined) {
+      goals.forEach(g => {
+        const partNameIdx: number = this.tiledObjectHasProperty(tiledPropertyNames.part, g);
+        const partName: string = (partNameIdx >= 0) ? g.properties[partNameIdx].value : '';
+        let goal: Goal;
+        if (partName !== partNames.creature) {
+          goal = new Goal(this, g.x, g.y, 'sheet_lasers', this.laserDoorPartToFrameNum(partName, 2)); 
+          goal.setDepth(1);
+          goal.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
+          this.physics.world.enable(goal, Phaser.Physics.Arcade.STATIC_BODY);
+        } else { // creature object
+          goal = new Goal(this, g.x, g.y, partNames.creature, 'creatureRed_stand.png');
+          goal.setDepth(0);
+          goal.setOrigin(-0.4, 1); // change the origin to the top left to match the default for Tiled
+          this.physics.world.enable(goal, Phaser.Physics.Arcade.DYNAMIC_BODY);
+          this.physics.add.collider(this.groundLayer, goal); // the creatures are affected by gravity, so they need to collide with the ground
+        }
+        goal.part = partName;
+        const obstacleNumIdx = this.tiledObjectHasProperty(tiledPropertyNames.obstacleNum, g);
+        if (obstacleNumIdx >= 0) {
+          goal[tiledPropertyNames.obstacleNum] = g.properties[obstacleNumIdx].value;
+        }
+        this.goalObjs.push(goal);
+      });
+    }
 
     this.goalObjs.forEach(gObj => {
       const collisionGoalObject = () => {
@@ -321,142 +325,150 @@ export class HomeScene extends Phaser.Scene {
 
     // add the moving platforms as specified in the object layer of the map
     const plats = this.map.filterObjects(tiledLayerNames.movingPlatforms, p => p.name == partNames.platform);
-    plats.forEach(p => {
+    if (plats !== null && plats !== undefined) {
+      plats.forEach(p => {
 
-      const obstacleNumIdx = this.tiledObjectHasProperty(tiledPropertyNames.obstacleNum, p);
-      const isValidObstacleNumIdx: boolean = (obstacleNumIdx >= 0);
-      const obstacleNum: number = isValidObstacleNumIdx ? p.properties[obstacleNumIdx].value : -1;
-      const platformColorStr: string = (obstacleNum >= 0 && obstacleNum < numObstacleColors)? `_${obstacleNum}` : '';
-      const plat = new MovingPlatform(this, p.x, p.y, `platform${platformColorStr}`);
-      if (obstacleNumIdx >= 0) {
-        plat.obstacleNum = p.properties[obstacleNumIdx].value;
-        if (plat.obstacleNum == -1) { // code to have the platform moving @ start (versus having to be fixed)
-          plat.isFixed = true;
+        const obstacleNumIdx = this.tiledObjectHasProperty(tiledPropertyNames.obstacleNum, p);
+        const isValidObstacleNumIdx: boolean = (obstacleNumIdx >= 0);
+        const obstacleNum: number = isValidObstacleNumIdx ? p.properties[obstacleNumIdx].value : -1;
+        const platformColorStr: string = (obstacleNum >= 0 && obstacleNum < numObstacleColors)? `_${obstacleNum}` : '';
+        const plat = new MovingPlatform(this, p.x, p.y, `platform${platformColorStr}`);
+        if (obstacleNumIdx >= 0) {
+          plat.obstacleNum = p.properties[obstacleNumIdx].value;
+          if (plat.obstacleNum == -1) { // code to have the platform moving @ start (versus having to be fixed)
+            plat.isFixed = true;
+          }
         }
-      }
-      plat.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
-      if (this.tiledObjectPropertyIsTrue(tiledPropertyNames.platformMoveVertical, p)) {
-        plat.movesV = true;
-      } else if(this.tiledObjectPropertyIsTrue(tiledPropertyNames.platformMoveHorizontal, p)) {
-        plat.movesH = true;
-      }
-      if (this.tiledObjectPropertyIsTrue(tiledPropertyNames.opposite, p)) {
-        plat.moveOpposite();
-      }
-      
-      if (plat.isFixed) {
-        this.movePlatform(plat);
-      }
-      this.platformObjs.push(plat);
-    });
-    this.physics.world.enable(this.platformObjs, Phaser.Physics.Arcade.DYNAMIC_BODY);
+        plat.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
+        if (this.tiledObjectPropertyIsTrue(tiledPropertyNames.platformMoveVertical, p)) {
+          plat.movesV = true;
+        } else if(this.tiledObjectPropertyIsTrue(tiledPropertyNames.platformMoveHorizontal, p)) {
+          plat.movesH = true;
+        }
+        if (this.tiledObjectPropertyIsTrue(tiledPropertyNames.opposite, p)) {
+          plat.moveOpposite();
+        }
+        
+        if (plat.isFixed) {
+          this.movePlatform(plat);
+        }
+        this.platformObjs.push(plat);
+      });
+      this.physics.world.enable(this.platformObjs, Phaser.Physics.Arcade.DYNAMIC_BODY);
+    }
 
     // add the buttons (to enable the player to interact with obstacles) as specified in the object layer of the map
     // also add the obstacle overlays (to enable the player to see broken obstacles)
     // as specified in the object layer of the map
     const buttons = this.map.filterObjects(tiledLayerNames.buttons, p => p.name == 'button');
-    buttons.forEach(b => {
+    if (buttons !== null && buttons !== undefined) {
+      buttons.forEach(b => {
 
-      const obstacleNumIdx = this.tiledObjectHasProperty(tiledPropertyNames.obstacleNum, b);
-      const obstacleNum: number = obstacleNumIdx >= 0 ?  b.properties[obstacleNumIdx].value: -1;
-      
-      const isButtonNumValid: boolean = (obstacleNum >= 0 && obstacleNum < numObstacleColors);
-      if (!isButtonNumValid) {
-        console.log(`ERROR: button with invalid obstacle num: ${obstacleNum}.`);
-      }
-      const buttonColorTextureStr: string =  isButtonNumValid ? `${obstacleNum}` : '0';
+        const obstacleNumIdx = this.tiledObjectHasProperty(tiledPropertyNames.obstacleNum, b);
+        const obstacleNum: number = obstacleNumIdx >= 0 ?  b.properties[obstacleNumIdx].value: -1;
+        
+        const isButtonNumValid: boolean = (obstacleNum >= 0 && obstacleNum < numObstacleColors);
+        if (!isButtonNumValid) {
+          console.log(`ERROR: button with invalid obstacle num: ${obstacleNum}.`);
+        }
+        const buttonColorTextureStr: string =  isButtonNumValid ? `${obstacleNum}` : '0';
 
-      const userTogglableIdx = this.tiledObjectHasProperty(tiledPropertyNames.userTogglable, b);
-      const userTogglable: boolean = userTogglableIdx >= 0 ?  b.properties[userTogglableIdx].value: false;
-      const buttonTextureStr: string =  `${(userTogglable ? 'switchOff' : 'buttonOff')}_${buttonColorTextureStr}`;
+        const userTogglableIdx = this.tiledObjectHasProperty(tiledPropertyNames.userTogglable, b);
+        const userTogglable: boolean = userTogglableIdx >= 0 ?  b.properties[userTogglableIdx].value: false;
+        const buttonTextureStr: string =  `${(userTogglable ? 'switchOff' : 'buttonOff')}_${buttonColorTextureStr}`;
 
-      const butt = new ObstacleButton(this, b.x, b.y, buttonTextureStr, userTogglable);
+        const butt = new ObstacleButton(this, b.x, b.y, buttonTextureStr, userTogglable);
 
-      
-      butt.obstacleNum = obstacleNum;
+        
+        butt.obstacleNum = obstacleNum;
 
-      const possibleInputsStr: string = `${tiledPropertyNames.possibleInputs}${this.conversionValues.valGems.toString()}${this.conversionValues.valStars.toString()}`;
-      const possibleInputsIdx: number = this.tiledObjectHasProperty(possibleInputsStr, b);
-      let coins: number = 0;
-      let gems: number = 0;
-      let stars: number = 0;
-      if (possibleInputsIdx >= 0) {
-        const lengthOfAnInputSet: number = 4; // 4 characters to describe input format: ###;
-        const possibleInputValues: string = b.properties[possibleInputsIdx].value;
-        const numInputOptions: number = Math.floor(possibleInputValues.length / lengthOfAnInputSet); 
-        const inputSetNum: number = Math.floor(Math.random() * numInputOptions);
-        coins = parseInt(possibleInputValues.charAt(inputSetNum * lengthOfAnInputSet));
-        gems = parseInt(possibleInputValues.charAt(inputSetNum * lengthOfAnInputSet + 1));
-        stars = parseInt(possibleInputValues.charAt(inputSetNum * lengthOfAnInputSet + 2));
-      } else {
-        console.log(`ERROR with obstacleNum ${tiledPropertyNames.obstacleNum}; cannot find possible inputs.`);
-        console.log(b);
-      }
-      
-      const overlay = new ObstacleOverlay(this, b.x, b.y, 'obstacleFix', butt.obstacleNum, coins, gems, stars);
-      butt.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
-      overlay.setOrigin(0, 1);
-      this.buttonObjs.push(butt);
-      this.overlayObjs.push(overlay);
-    });
-    this.physics.world.enable(this.buttonObjs, Phaser.Physics.Arcade.STATIC_BODY);
-    this.physics.world.enable(this.overlayObjs, Phaser.Physics.Arcade.STATIC_BODY);
-    this.totNumObstacles = this.overlayObjs.length;
+        const possibleInputsStr: string = `${tiledPropertyNames.possibleInputs}${this.conversionValues.valGems.toString()}${this.conversionValues.valStars.toString()}`;
+        const possibleInputsIdx: number = this.tiledObjectHasProperty(possibleInputsStr, b);
+        let coins: number = 0;
+        let gems: number = 0;
+        let stars: number = 0;
+        if (possibleInputsIdx >= 0) {
+          const lengthOfAnInputSet: number = 4; // 4 characters to describe input format: ###;
+          const possibleInputValues: string = b.properties[possibleInputsIdx].value;
+          const numInputOptions: number = Math.floor(possibleInputValues.length / lengthOfAnInputSet); 
+          const inputSetNum: number = Math.floor(Math.random() * numInputOptions);
+          coins = parseInt(possibleInputValues.charAt(inputSetNum * lengthOfAnInputSet));
+          gems = parseInt(possibleInputValues.charAt(inputSetNum * lengthOfAnInputSet + 1));
+          stars = parseInt(possibleInputValues.charAt(inputSetNum * lengthOfAnInputSet + 2));
+        } else {
+          console.log(`ERROR with obstacleNum ${tiledPropertyNames.obstacleNum}; cannot find possible inputs.`);
+          console.log(b);
+        }
+        
+        const overlay = new ObstacleOverlay(this, b.x, b.y, 'obstacleFix', butt.obstacleNum, coins, gems, stars);
+        butt.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
+        overlay.setOrigin(0, 1);
+        this.buttonObjs.push(butt);
+        this.overlayObjs.push(overlay);
+      });
+      this.physics.world.enable(this.buttonObjs, Phaser.Physics.Arcade.STATIC_BODY);
+      this.physics.world.enable(this.overlayObjs, Phaser.Physics.Arcade.STATIC_BODY);
+      this.totNumObstacles = this.overlayObjs.length;
+    }
 
     // add the laser doors as specified in the object layer of the map
     const doors = this.map.filterObjects(tiledLayerNames.doors, p => p.name == partNames.door);
-    doors.forEach(d => {
-      const partNameIdx: number = this.tiledObjectHasProperty(tiledPropertyNames.part, d);
-      const partName: string = (partNameIdx >= 0) ? d.properties[partNameIdx].value : '';
+    if (doors !== undefined && doors !== null) {
+      doors.forEach(d => {
+        const partNameIdx: number = this.tiledObjectHasProperty(tiledPropertyNames.part, d);
+        const partName: string = (partNameIdx >= 0) ? d.properties[partNameIdx].value : '';
 
-      const obstacleNumIdx: number = this.tiledObjectHasProperty(tiledPropertyNames.obstacleNum, d);
-      const obstacleNum: number = (obstacleNumIdx >= 0) ? d.properties[obstacleNumIdx].value : 0;
-      const obsNumForDoorColor: number = (obstacleNum >= 0 && obstacleNum < numObstacleColors) ? obstacleNum : 0;
-      const ld = new LaserDoor(this, d.x, d.y, 'sheet_lasers', this.laserDoorPartToFrameNum(partName, obsNumForDoorColor));
-      ld.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
-      if (obstacleNumIdx >= 0) {
-        ld.obstacleNum = d.properties[obstacleNumIdx].value;
-      }
-      ld.part = partName;
-      this.doorObjs.push(ld);
-    });
+        const obstacleNumIdx: number = this.tiledObjectHasProperty(tiledPropertyNames.obstacleNum, d);
+        const obstacleNum: number = (obstacleNumIdx >= 0) ? d.properties[obstacleNumIdx].value : 0;
+        const obsNumForDoorColor: number = (obstacleNum >= 0 && obstacleNum < numObstacleColors) ? obstacleNum : 0;
+        const ld = new LaserDoor(this, d.x, d.y, 'sheet_lasers', this.laserDoorPartToFrameNum(partName, obsNumForDoorColor));
+        ld.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
+        if (obstacleNumIdx >= 0) {
+          ld.obstacleNum = d.properties[obstacleNumIdx].value;
+        }
+        ld.part = partName;
+        this.doorObjs.push(ld);
+      });
 
-    // specify how collisons with door objects works
-    this.physics.world.enable(this.doorObjs, Phaser.Physics.Arcade.STATIC_BODY);
-    this.doorObjs.forEach(dObj => {
-      if (dObj.part === partNames.laser) {
-        dObj.body.setSize((dObj.body.width*0.30), dObj.body.height);
-      } else {
-        dObj.body.setSize((dObj.body.width - 10), dObj.body.height);
-      }
-      this.physics.add.collider(dObj, this.player);
-    });
+      // specify how collisons with door objects works
+      this.physics.world.enable(this.doorObjs, Phaser.Physics.Arcade.STATIC_BODY);
+      this.doorObjs.forEach(dObj => {
+        if (dObj.part === partNames.laser) {
+          dObj.body.setSize((dObj.body.width*0.30), dObj.body.height);
+        } else {
+          dObj.body.setSize((dObj.body.width - 10), dObj.body.height);
+        }
+        this.physics.add.collider(dObj, this.player);
+      });
+    }
 
     // add the togglable barriers as specified in the object layer of the map
     const barriers = this.map.filterObjects(tiledLayerNames.barriers, p => p.name == partNames.barrier);
-    barriers.forEach(b => {
-      const obstacleNumIdx: number = this.tiledObjectHasProperty(tiledPropertyNames.obstacleNum, b);
-      const obstacleNum: number = (obstacleNumIdx >= 0) ? b.properties[obstacleNumIdx].value : 0;
-      const obsNumForColor: number = (obstacleNum >= 0 && obstacleNum < numObstacleColors) ? obstacleNum : 0;
-      const defaultStateIdx: number = this.tiledObjectHasProperty(tiledPropertyNames.defaultState, b);
-      const defaultState: boolean = (defaultStateIdx >= 0) ? b.properties[defaultStateIdx].value: false;
-      const textureStr: string = 'barrier' + (defaultState ? 'On' : 'Off') + `_${obsNumForColor}`;
-      const barr = new Barrier(this, b.x, b.y, textureStr, defaultState);
-      barr.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
-      if (obstacleNumIdx >= 0) {
-        barr.obstacleNum = b.properties[obstacleNumIdx].value;
-      }
-      this.barrierObjs.push(barr);
-    });
+    if (barriers !== undefined && barriers !== null) {
+      barriers.forEach(b => {
+        const obstacleNumIdx: number = this.tiledObjectHasProperty(tiledPropertyNames.obstacleNum, b);
+        const obstacleNum: number = (obstacleNumIdx >= 0) ? b.properties[obstacleNumIdx].value : 0;
+        const obsNumForColor: number = (obstacleNum >= 0 && obstacleNum < numObstacleColors) ? obstacleNum : 0;
+        const defaultStateIdx: number = this.tiledObjectHasProperty(tiledPropertyNames.defaultState, b);
+        const defaultState: boolean = (defaultStateIdx >= 0) ? b.properties[defaultStateIdx].value: false;
+        const textureStr: string = 'barrier' + (defaultState ? 'On' : 'Off') + `_${obsNumForColor}`;
+        const barr = new Barrier(this, b.x, b.y, textureStr, defaultState);
+        barr.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
+        if (obstacleNumIdx >= 0) {
+          barr.obstacleNum = b.properties[obstacleNumIdx].value;
+        }
+        this.barrierObjs.push(barr);
+      });
 
-    // specify how collisons with barrier objects works
-    this.physics.world.enable(this.barrierObjs, Phaser.Physics.Arcade.STATIC_BODY);
-    this.barrierObjs.forEach(bObj => {
-      this.physics.add.collider(bObj, this.player);
-      if ( !(bObj.getState() )) {
-        this.physics.world.disable(bObj); 
-      }
-    });
+      // specify how collisons with barrier objects works
+      this.physics.world.enable(this.barrierObjs, Phaser.Physics.Arcade.STATIC_BODY);
+      this.barrierObjs.forEach(bObj => {
+        this.physics.add.collider(bObj, this.player);
+        if ( !(bObj.getState() )) {
+          this.physics.world.disable(bObj); 
+        }
+      });
+    }
     
     // keep the player from falling through the ground
     this.physics.add.collider(this.groundLayer, this.player);

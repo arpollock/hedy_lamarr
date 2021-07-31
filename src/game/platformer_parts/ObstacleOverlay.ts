@@ -1,7 +1,7 @@
 import 'phaser';
 import {
 	ConversionConfig
-} from './../Constants';
+} from './../../Constants';
 
 export default class ObstacleOverlay extends Phaser.Physics.Arcade.Sprite {
 	/**

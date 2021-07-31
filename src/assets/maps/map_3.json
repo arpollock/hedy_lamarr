@@ -27,6 +27,17 @@
         }, 
         {
          "draworder":"topdown",
+         "id":12,
+         "name":"Barriers",
+         "objects":[],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
          "id":11,
          "name":"PlayerStart",
          "objects":[
@@ -633,6 +644,11 @@
                          "name":"possibleInputs_34",
                          "type":"string",
                          "value":"102;012;003;"
+                        }, 
+                        {
+                         "name":"userTogglable",
+                         "type":"bool",
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"",
@@ -676,6 +692,11 @@
                          "name":"possibleInputs_34",
                          "type":"string",
                          "value":"102;012;003;"
+                        }, 
+                        {
+                         "name":"userTogglable",
+                         "type":"bool",
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"",
@@ -719,6 +740,11 @@
                          "name":"possibleInputs_34",
                          "type":"string",
                          "value":"101;030;020;021;012;201;111;"
+                        }, 
+                        {
+                         "name":"userTogglable",
+                         "type":"bool",
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"",
@@ -762,6 +788,11 @@
                          "name":"possibleInputs_34",
                          "type":"string",
                          "value":"101;030;020;021;012;201;111;"
+                        }, 
+                        {
+                         "name":"userTogglable",
+                         "type":"bool",
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"",
@@ -805,6 +836,11 @@
                          "name":"possibleInputs_34",
                          "type":"string",
                          "value":"020;210;001;101;201;"
+                        }, 
+                        {
+                         "name":"userTogglable",
+                         "type":"bool",
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"",
@@ -848,6 +884,11 @@
                          "name":"possibleInputs_34",
                          "type":"string",
                          "value":"020;210;001;101;201;"
+                        }, 
+                        {
+                         "name":"userTogglable",
+                         "type":"bool",
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"",
@@ -891,6 +932,11 @@
                          "name":"possibleInputs_34",
                          "type":"string",
                          "value":"100;010;200;"
+                        }, 
+                        {
+                         "name":"userTogglable",
+                         "type":"bool",
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"",
@@ -934,6 +980,11 @@
                          "name":"possibleInputs_34",
                          "type":"string",
                          "value":"100;010;200;"
+                        }, 
+                        {
+                         "name":"userTogglable",
+                         "type":"bool",
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"",
@@ -1708,7 +1759,7 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":12,
+ "nextlayerid":13,
  "nextobjectid":105,
  "orientation":"orthogonal",
  "renderorder":"right-down",
@@ -1783,7 +1834,7 @@
         {
          "columns":1,
          "firstgid":21,
-         "image":"..\/buttonOff.png",
+         "image":"..\/buttonOff_0.png",
          "imageheight":70,
          "imagewidth":70,
          "margin":0,
