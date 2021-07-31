@@ -60,6 +60,7 @@ export class HudMenu extends Phaser.Scene {
     this.load.image('tablet_button_hover', `${assetHudUiURL}tablet_hover.png`);
     this.load.image('hud_menu_background', `${assetHudUiURL}currency_background.png`);
     this.load.image('pause_button', `${assetHudUiURL}pause.png`);
+    this.load.image('pause_button_hover', `${assetHudUiURL}pause_hover.png`);
     this.cameras.main.setBackgroundColor(); // set background of hud menu to transparent
   }
 
@@ -135,7 +136,8 @@ export class HudMenu extends Phaser.Scene {
     this.tablet_button.on('pointerout', this.onTabletButtonHoverExit, this);
     this.tablet_button.on('pointerdown', this.toggleTabletMenu, this);
     this.input.on('pointerdown', this.anyClickDetected, this); // detect a click outside of the buttons
-    this.pause_button = this.add.sprite(10, 10,'pause_button').setOrigin(0);
+    this.pause_button = this.add.sprite(screenEdgePadding, screenEdgePadding,'pause_button').setOrigin(0,1);
+    this.pause_button.setY(screenEdgePadding+this.pause_button.displayHeight);
     this.pause_button.setInteractive({
       useHandCursor: true
     });
@@ -199,9 +201,13 @@ export class HudMenu extends Phaser.Scene {
     this.scene.sleep(sceneNames.tabletMenu);
   }
 
-  private onPauseButtonHoverEnter(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData) { }
+  private onPauseButtonHoverEnter(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData) {
+    this.pause_button.setTexture('pause_button_hover');
+  }
 
-  private onPauseButtonHoverExit(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData) { }
+  private onPauseButtonHoverExit(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData) {
+    this.pause_button.setTexture('pause_button');
+  }
 
   private pauseGame() {
     eventsCenter.emit(eventNames.pauseGame);
@@ -212,9 +218,6 @@ export class HudMenu extends Phaser.Scene {
   }
 
   private onDestroy(): void {
-    console.log('in HUD Meny onDestroy!');
     eventsCenter.off(eventNames.updateScoreText);
-    console.log('eventsCenter.off success?? ->');
-    console.log(eventsCenter);
   }
 }

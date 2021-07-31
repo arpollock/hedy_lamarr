@@ -27,7 +27,7 @@ import {
 } from './../Constants';
 
 import {
-  isMusicAllowed,
+  isSfxAllowed,
   currency_type_to_str
 } from './../Utilities';
 
@@ -951,13 +951,13 @@ export class ObstacleFixMenu extends Phaser.Scene {
   }
 
   public playDragDropAcceptSFX(): void {
-    if (isMusicAllowed(this.scene)) {
+    if (isSfxAllowed(this.scene)) {
       this.dragDropAcceptSFX.play();
     }
   }
 
   public playDragDropRejectSFX(): void {
-    if (isMusicAllowed(this.scene)) {
+    if (isSfxAllowed(this.scene)) {
       this.dragDropRejectSFX.play();
     }
   }

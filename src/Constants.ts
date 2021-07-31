@@ -286,6 +286,30 @@ const module_shift_up: number = screenEdgePadding * 5;
 const gemToCoinConverter_original_y: number = height - module_shift_up - (offsetDraggable_y * 3.33);// coinDraggable_original_y + (offsetDraggable_y * 4);
 const starToCoinConverter_original_y: number = height - module_shift_up;// coinDraggable_original_y + (offsetDraggable_y * 6);
 
+const userMaxScoreFeedback: string[] = ['Impressive!', 'That was out of this world!', '3 stars?! Your skills are off the charts.'];
+
+const userImprovementTipIntros: string[] = ['Good Try!', 'Nice Job! Want to go for 3 stars?', 'Impressive! You\'re getting better at this.'];
+
+const ImprovementCategories: {
+  more_modules: string,
+  more_obstacles: string,
+  more_currency: string,
+} = {
+  more_modules: 'more_modules',
+  more_obstacles: 'more_obstacles',
+  more_currency: 'more_currency',
+};
+
+const userImprovementTips: {
+  more_modules: string[],
+  more_obstacles: string[],
+  more_currency: string[],
+} = {
+  more_modules: ['Use more converters to boost your score!', 'Try exchaning more coins when you need to spend gems!'],
+  more_obstacles: ['Try to bypass more obstacles next time!'],
+  more_currency: ['Have more coins, gems, and stars saved at the end!', 'Collect more currencies to boost your score!'],
+};
+
 export {
   gameName,
   gravity,
@@ -339,5 +363,9 @@ export {
   starDraggable_original_y,
   gemToCoinConverter_original_y,
   starToCoinConverter_original_y,
-  zoomFactors
+  zoomFactors,
+  userMaxScoreFeedback,
+  userImprovementTipIntros,
+  ImprovementCategories,
+  userImprovementTips
 };

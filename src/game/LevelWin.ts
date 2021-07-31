@@ -8,7 +8,12 @@ import {
   height,
   textConfig,
   MainGameConfig,
-  WinGameConfig
+  WinGameConfig,
+  userMaxScoreFeedback,
+  userImprovementTipIntros,
+  userImprovementTips,
+  ImprovementCategories,
+  screenEdgePadding
 } from './../Constants';
 import { HudMenu } from './HudMenu';
 import { TabletMenu } from './TabletMenu';
@@ -16,7 +21,7 @@ import { HomeScene } from './MainGame';
 
 export class LevelWin extends Phaser.Scene {
 
-  private text;
+  private text: Phaser.GameObjects.Text;
   private textString: string;
 
   private mainMenuButton: Phaser.GameObjects.Sprite;
@@ -29,6 +34,10 @@ export class LevelWin extends Phaser.Scene {
   private scoreStar1: Phaser.GameObjects.Sprite;
   private scoreStar2: Phaser.GameObjects.Sprite;
   private scoreStar3: Phaser.GameObjects.Sprite;
+
+  private feedbackText: Phaser.GameObjects.Text;
+  private feedbackTextString: string;
+  private scoreCategory: string;
   
   constructor() {
     super({
@@ -41,6 +50,7 @@ export class LevelWin extends Phaser.Scene {
     this.scoreStar1 = null;
     this.scoreStar2 = null;
     this.scoreStar3 = null;
+    this.scoreCategory = ImprovementCategories.more_modules; // default
   }
 
   public init(data: WinGameConfig): void {
@@ -61,6 +71,11 @@ export class LevelWin extends Phaser.Scene {
     this.score += (data.num_gems_kept * data.previous_level_data.conversion_values.valGems);
     this.score += (data.num_stars_kept * data.previous_level_data.conversion_values.valStars);
     this.score += data.num_converters_used * (multiplier / 2);
+    if (data.num_obstacles_unlocked < (data.tot_num_obstacles / 2)) {
+      this.scoreCategory = ImprovementCategories.more_obstacles;
+    } else if ( ((data.num_coins_kept + data.num_gems_kept + data.num_stars_kept) < 5) && (data.num_converters_used > 2) ) {
+      this.scoreCategory = ImprovementCategories.more_currency;
+    }
   }
   public preload(): void {
     this.load.setBaseURL(assetBaseURL);
@@ -94,10 +109,12 @@ export class LevelWin extends Phaser.Scene {
     let scoreStar1Str: string = 'star_fail';
     let scoreStar2Str: string = 'star_fail';
     let scoreStar3Str: string = 'star_fail';
+    let maxScoreAchieved: boolean = false;
     if (percentage >= 1.00) {
       scoreStar1Str = 'star_success';
       scoreStar2Str = 'star_success';
       scoreStar3Str = 'star_success';
+      maxScoreAchieved = true;
     } else if (percentage >= 0.75) {
       scoreStar1Str = 'star_success';
       scoreStar2Str = 'star_success';
@@ -107,6 +124,23 @@ export class LevelWin extends Phaser.Scene {
     this.scoreStar1 = this.add.sprite(scoreStarCenterX - horizontalOffset, scoreStarY, scoreStar1Str);
     this.scoreStar2 = this.add.sprite(scoreStarCenterX, scoreStarY, scoreStar2Str);
     this.scoreStar3 = this.add.sprite(scoreStarCenterX + horizontalOffset, scoreStarY, scoreStar3Str);
+
+    // feedback text (score dependent)
+    if (maxScoreAchieved) {
+      this.feedbackTextString = userMaxScoreFeedback[Math.floor(Math.random() * userMaxScoreFeedback.length)];
+    } else {
+      // find out why they got the low score
+      this.feedbackTextString = `${userImprovementTipIntros[Math.floor(Math.random() * userImprovementTipIntros.length)]} ${userImprovementTips[this.scoreCategory][Math.floor(Math.random() * userImprovementTips[this.scoreCategory].length)]}`;
+    }
+    const feedbackTextY = height * 2 / 3;
+    this.text = this.add.text(centerX, feedbackTextY, this.feedbackTextString, {
+      fontSize: textConfig.tertiaryTitleFontSize,
+      color: textConfig.mainFillColor,
+      fontFamily: textConfig.fontFams,
+      align: 'center',
+      wordWrap: { width: (width - screenEdgePadding * 6), }
+    }).setOrigin(0.5); // set origin makes it so we can center the text easily
+    this.text.setScrollFactor(0);
 
     // main menu button click detection
     const buttonsY: number = height * 5 / 6;

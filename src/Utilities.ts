@@ -5,8 +5,8 @@ import {
   currency_type
 } from './Constants';
 
-function isMusicAllowed(scene: Phaser.Scenes.ScenePlugin): boolean {
-  if ( (scene.get(sceneNames.musicControl) as MusicControlScene).isMusicOn() ) {
+function isSfxAllowed(scene: Phaser.Scenes.ScenePlugin): boolean {
+  if ( (scene.get(sceneNames.musicControl) as MusicControlScene).isSfxOn() ) {
     return true;
   }
   return false;
@@ -24,6 +24,6 @@ function currency_type_to_str(ct: currency_type): string {
 }
 
 export {
-  isMusicAllowed,
+  isSfxAllowed,
   currency_type_to_str
 };

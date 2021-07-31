@@ -32,7 +32,7 @@ import {
   zoomFactors,
   numObstacleColors
 } from '../Constants';
-import { isMusicAllowed } from './../Utilities';
+import { isSfxAllowed } from './../Utilities';
 import { ObstacleFixMenu } from './ObstacleFixMenu';
 
 // low-priority-level todo: checkout https://phaser.io/examples/v3/view/audio/web-audio/audiosprite for buttons, etc.
@@ -682,8 +682,7 @@ export class HomeScene extends Phaser.Scene {
   }
 
   private collectCurrencySound(): void {
-    if ( isMusicAllowed(this.scene) ) {
-    // if ( this.isMusicAllowed() ) {
+    if ( isSfxAllowed(this.scene) ) {
       this.currencyCollectSFX.play();
     }
   }
@@ -783,8 +782,7 @@ export class HomeScene extends Phaser.Scene {
     });
     const pauseForWinScreen = new Phaser.Time.TimerEvent( {delay: 900, callback: this.triggerWinScreen, callbackScope: this} );
     this.time.addEvent(pauseForWinScreen);
-    if ( isMusicAllowed(this.scene) ) {
-    // if ( this.isMusicAllowed() ) {
+    if ( isSfxAllowed(this.scene) ) {
       this.winGameSFX.play();
     }
     return false;
@@ -850,8 +848,7 @@ export class HomeScene extends Phaser.Scene {
   }
 
   private obstacleUnlockAudio(): void {
-    if ( isMusicAllowed(this.scene) ) {
-    // if ( this.isMusicAllowed() ) {
+    if ( isSfxAllowed(this.scene) ) {
       this.obstacleUnlockSFX.play();
     }
   }

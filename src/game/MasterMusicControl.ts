@@ -9,8 +9,12 @@ import {
 export class MusicControlScene extends Phaser.Scene {
 
   private intro_music: Phaser.Sound.BaseSound;
+  private music_volume: number;
   private toggleMusicButton: Phaser.GameObjects.Sprite;
   private music_on: boolean;
+  private toggleSfxButton: Phaser.GameObjects.Sprite;
+  private sfx_on: boolean;
+  private readonly default_sfx_on: boolean = true;
 
   constructor() {
     super({
@@ -19,6 +23,9 @@ export class MusicControlScene extends Phaser.Scene {
     this.intro_music = null;
     this.toggleMusicButton = null;
     this.music_on = false; // don't play music by default -> forces the click + satisfies web ettiquette
+    this.toggleSfxButton = null;
+    this.sfx_on = this.default_sfx_on;
+    this.music_volume = 0.5; // the music is too loud compared to the sfx
   }
 
   public init(params): void {
@@ -29,6 +36,8 @@ export class MusicControlScene extends Phaser.Scene {
     // load image assets
     this.load.image('music_turn_off', 'music_turnOff.png');
     this.load.image('music_turn_on', 'music_turnOn.png');
+    this.load.image('sfx_turn_off', 'sfx_turnOff.png');
+    this.load.image('sfx_turn_on', 'sfx_turnOn.png');
     // load audio assets
     const introTemp: Phaser.Types.Loader.FileTypes.AudioFileConfig = {
       key: musicKeyNames.intro,
@@ -79,6 +88,16 @@ export class MusicControlScene extends Phaser.Scene {
     this.toggleMusicButton.on('pointerover', this.onToggleMusicButtonHoverEnter, this);
     this.toggleMusicButton.on('pointerout', this.onToggleMusicButtonHoverExit, this);
     this.toggleMusicButton.on('pointerdown', this.toggleMusic, this);
+
+    const start_sfx_btn: string = (this.default_sfx_on) ? 'sfx_turn_off': 'sfx_turn_on';
+    this.toggleSfxButton = this.add.sprite(screenEdgePadding, screenEdgePadding * 2 + this.toggleMusicButton.displayHeight,start_sfx_btn).setOrigin(0);
+    this.toggleSfxButton.setScale(0.5);
+    this.toggleSfxButton.setInteractive({
+      useHandCursor: true
+    });
+    this.toggleSfxButton.on('pointerover', this.onToggleSfxButtonHoverEnter, this);
+    this.toggleSfxButton.on('pointerout', this.onToggleSfxButtonHoverExit, this);
+    this.toggleSfxButton.on('pointerdown', this.toggleSfx, this);
   }
 
   public update(time: number): void {
@@ -94,7 +113,7 @@ export class MusicControlScene extends Phaser.Scene {
       this.intro_music.pause();
       this.toggleMusicButton.setTexture('music_turn_on');
     } else { // the music is off
-      this.intro_music.play(); // musicKeyNames.intro
+      this.intro_music.play( { volume: this.music_volume } ); // musicKeyNames.intro
       this.toggleMusicButton.setTexture('music_turn_off');
     }
     this.music_on = !(this.music_on);
@@ -102,5 +121,22 @@ export class MusicControlScene extends Phaser.Scene {
 
   public isMusicOn(): boolean {
     return this.music_on;
+  }
+
+  private onToggleSfxButtonHoverEnter(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData): void { }
+
+  private onToggleSfxButtonHoverExit(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData): void { }
+
+  private toggleSfx(): void {
+    if (this.sfx_on) {
+      this.toggleSfxButton.setTexture('sfx_turn_on');
+    } else { // the music is off
+      this.toggleSfxButton.setTexture('sfx_turn_off');
+    }
+    this.sfx_on = !(this.sfx_on);
+  }
+
+  public isSfxOn(): boolean {
+    return this.sfx_on;
   }
 };
