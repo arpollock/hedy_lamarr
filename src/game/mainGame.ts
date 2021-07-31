@@ -1,5 +1,6 @@
 import 'phaser';
 import MovingPlatform from './platformer_parts/MovingPlatform';
+import Barrier from './platformer_parts/Barrier';
 import ObstacleButton from './platformer_parts/ObstacleButton';
 import ObstacleOverlay from './platformer_parts/ObstacleOverlay';
 import LaserDoor from './platformer_parts/LaserDoor';
@@ -41,6 +42,7 @@ class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
   public isOnPlatform: boolean;
   public currentPlatform: any;
   public isOnObsOverlap: boolean; // todo, make this clickable instead of the overlap instead(?)
+  public isOnSwitch: boolean;
 }
 
 export class HomeScene extends Phaser.Scene {
@@ -66,6 +68,7 @@ export class HomeScene extends Phaser.Scene {
   private buttonObjs: Array<ObstacleButton>;
   private platformObjs: Array<MovingPlatform>;
   private doorObjs: Array<LaserDoor>;
+  private barrierObjs: Array<Barrier>
 
   private overlayObjs: Array<ObstacleOverlay>;
 
@@ -118,6 +121,7 @@ export class HomeScene extends Phaser.Scene {
     this.doorObjs = [];
     this.goalObjs = [];
     this.overlayObjs = [];
+    this.barrierObjs = [];
 
     this.goalReached = false;
 
@@ -179,6 +183,11 @@ export class HomeScene extends Phaser.Scene {
     for( let i: number = 0; i < numObstacleColors; i++ ) {
       this.load.image(`switchOff_${i}`, `switchOff_${i}.png`);
       this.load.image(`switchOn_${i}`, `switchOn_${i}.png`);
+    }
+    // the barrier (on and off) images
+    for( let i: number = 0; i < numObstacleColors; i++ ) {
+      this.load.image(`barrierOff_${i}`, `barrierOff_${i}.png`);
+      this.load.image(`barrierOn_${i}`, `barrierOn_${i}.png`);
     }
     // the overlay sprite to fix an obstacle
     this.load.image('obstacleFix', 'obstacleFix.png');
@@ -266,6 +275,7 @@ export class HomeScene extends Phaser.Scene {
     this.player.setCollideWorldBounds(true);
     this.player.setDepth(999);
     this.player.isOnObsOverlap = false;
+    this.player.isOnSwitch = false;
 
     // add the goal objects as specified in the object layer of the map
     const goals = this.map.filterObjects(tiledLayerNames.goal, p => p.name == 'goal');
@@ -394,7 +404,7 @@ export class HomeScene extends Phaser.Scene {
     this.totNumObstacles = this.overlayObjs.length;
 
     // add the laser doors as specified in the object layer of the map
-    const doors = this.map.filterObjects(tiledLayerNames.doors, p => p.name == 'door');
+    const doors = this.map.filterObjects(tiledLayerNames.doors, p => p.name == partNames.door);
     doors.forEach(d => {
       const partNameIdx: number = this.tiledObjectHasProperty(tiledPropertyNames.part, d);
       const partName: string = (partNameIdx >= 0) ? d.properties[partNameIdx].value : '';
@@ -421,7 +431,32 @@ export class HomeScene extends Phaser.Scene {
       }
       this.physics.add.collider(dObj, this.player);
     });
-    
+
+    // add the togglable barriers as specified in the object layer of the map
+    const barriers = this.map.filterObjects(tiledLayerNames.barriers, p => p.name == partNames.barrier);
+    barriers.forEach(b => {
+      const obstacleNumIdx: number = this.tiledObjectHasProperty(tiledPropertyNames.obstacleNum, b);
+      const obstacleNum: number = (obstacleNumIdx >= 0) ? b.properties[obstacleNumIdx].value : 0;
+      const obsNumForColor: number = (obstacleNum >= 0 && obstacleNum < numObstacleColors) ? obstacleNum : 0;
+      const defaultStateIdx: number = this.tiledObjectHasProperty(tiledPropertyNames.defaultState, b);
+      const defaultState: boolean = (defaultStateIdx >= 0) ? b.properties[defaultStateIdx].value: false;
+      const textureStr: string = 'barrier' + (defaultState ? 'On' : 'Off') + `_${obsNumForColor}`;
+      const barr = new Barrier(this, b.x, b.y, textureStr, defaultState);
+      barr.setOrigin(0, 1); // change the origin to the top left to match the default for Tiled
+      if (obstacleNumIdx >= 0) {
+        barr.obstacleNum = b.properties[obstacleNumIdx].value;
+      }
+      this.barrierObjs.push(barr);
+    });
+
+    // specify how collisons with barrier objects works
+    this.physics.world.enable(this.barrierObjs, Phaser.Physics.Arcade.STATIC_BODY);
+    this.barrierObjs.forEach(bObj => {
+      this.physics.add.collider(bObj, this.player);
+      if ( !(bObj.getState() )) {
+        this.physics.world.disable(bObj); 
+      }
+    });
     
     // keep the player from falling through the ground
     this.physics.add.collider(this.groundLayer, this.player);
@@ -449,13 +484,42 @@ export class HomeScene extends Phaser.Scene {
         return false;
       };
 
-      this.physics.add.collider(
-        this.player,
-        bObj,
-        collisionObstacleButton,
-        directionCollisionObstacleButton,
-        this.scene
-      );
+      const overlapObstacleSwitch = () => {
+        if ((bObj.body.touching.left && this.player.body.touching.right) || (bObj.body.touching.right && this.player.body.touching.left)) {
+          if (bObj.isEnabled) { // only enable a collision if the button has been enabled (w/ user math screen)
+            this.player.isOnSwitch = true;
+            this.fixObstacle(bObj); 
+            const retriggerSwitchFlick = new Phaser.Time.TimerEvent( {delay: 1500, callback: this.triggerSwitchOverlapEgibility, callbackScope: this} ); 
+            this.time.addEvent(retriggerSwitchFlick);
+          } 
+        }
+      };
+
+      const switchOverlapDetectFirstTime = () => {
+        if (!(this.player.isOnSwitch)) {
+          return true;
+        }
+        return false;
+      };
+
+      if (bObj.userTogglable) {
+        this.physics.add.overlap(
+          this.player,
+          bObj,
+          overlapObstacleSwitch,
+          switchOverlapDetectFirstTime,
+          this.scene
+        );
+      } else {
+        this.physics.add.collider(
+          this.player,
+          bObj,
+          collisionObstacleButton,
+          directionCollisionObstacleButton,
+          this.scene
+        );
+      }
+      
     });
 
     // handle collisions with the broken obstacle button overlays
@@ -734,6 +798,10 @@ export class HomeScene extends Phaser.Scene {
     this.scene.start(sceneNames.win, levelWinData);
   }
 
+  private triggerSwitchOverlapEgibility(): void {
+    this.player.isOnSwitch = false;
+  }
+
   private triggerEnableObFixMenu(): void {
     this.player.isOnObsOverlap = false;
   }
@@ -885,27 +953,39 @@ export class HomeScene extends Phaser.Scene {
         }
       }
     });
-    if (foundDoor || foundPlatform) {
-      if (ob.userTogglable) {
-        ob.setTexture(`switchOn_${ob.obstacleNum}`);
-      } else {
-        ob.setTexture(`buttonOn_${ob.obstacleNum}`);
+    var foundBarrier: boolean  = false;
+    this.barrierObjs.forEach( b => {
+      if (b.obstacleNum == ob.obstacleNum) {
+        foundBarrier = true;
+        const textureName: string = `barrier${b.getState() ? 'Off' : 'On'}_${b.obstacleNum}`;
+        b.setTexture(textureName);
+        if (b.getState()) { // is on -> off
+          b.turnOff();
+          this.physics.world.disable(b);
+        } else { // is off -> on 
+          b.turnOn();
+          this.physics.world.enable(b, Phaser.Physics.Arcade.STATIC_BODY);
+        }
       }
+    });
+
+    if (foundDoor || foundPlatform || foundBarrier) {
       this.buttonObjs.forEach((bObj) => {
         if (bObj.obstacleNum == ob.obstacleNum) {
-          if (bObj.userTogglable) {
-            ob.setTexture(`switchOn_${bObj.obstacleNum}`);
-          } else {
+          if (!bObj.userTogglable) {
             bObj.setTexture(`buttonOn_${bObj.obstacleNum}`);
+            bObj.body.setSize(bObj.body.width, 0);
+          } else {
+            const newTextureStr: string = `switch${bObj.isOn ? 'Off' : 'On'}_${bObj.obstacleNum}`;
+            bObj.setTexture(newTextureStr);
           }
-          bObj.isOn = true;
-          bObj.body.setSize(bObj.body.width, 0);
+          bObj.isOn = !(bObj.isOn);
         }
       });
-      ob.body.setSize(ob.body.width, 0);
       this.obstacleUnlockAudio();
     }
   }
+
 
 
   private movePlatform(plat: MovingPlatform) {

@@ -106,6 +106,8 @@ const partNames: {
   lever: string,
   creature: string,
   platform: string,
+  barrier: string,
+  door: string,
 } = {
   laser: 'laser',
   base_ground: 'base',
@@ -113,6 +115,8 @@ const partNames: {
   lever: 'lever',
   creature: 'creature',
   platform: 'platform',
+  barrier: 'barrier',
+  door: 'door',
 };
 
 const tiledPropertyNames: {
@@ -124,6 +128,7 @@ const tiledPropertyNames: {
   opposite: string,
   possibleInputs: string,
   userTogglable: string,
+  defaultState: string,
 } = {
   obstacleNum: 'obstacleNum',
   platformMoveVertical: 'moveVertical',
@@ -133,6 +138,7 @@ const tiledPropertyNames: {
   opposite: 'opposite',
   possibleInputs: 'possibleInputs_',
   userTogglable: 'userTogglable',
+  defaultState: 'defaultState',
 };
 
 const tiledLayerNames : {
@@ -145,6 +151,7 @@ const tiledLayerNames : {
   buttons: string,
   doors: string,
   goal: string,
+  barriers: string,
 } = {
   world: 'World',
   playerStart: 'PlayerStart',
@@ -155,6 +162,7 @@ const tiledLayerNames : {
   buttons: 'Buttons',
   doors: 'Doors',
   goal: 'Goal',
+  barriers: 'Barriers',
 };
 
 const sceneNames: {
@@ -193,7 +201,7 @@ const eventNames: {
   cameraFollowPlayer: 'cameraFollowPlayer',
 };
 
-const possibleMapNumbers: number[] = [ 5 ];// [ 1, 2, 3, 4, 5 ];
+const possibleMapNumbers: number[] = [ 1, 2, 3, 4, 5 ];
 
 // describes the currency conversion values, in terms of how many coins they're worth
 interface ConversionConfig { 
