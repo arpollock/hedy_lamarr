@@ -19,7 +19,7 @@
   <image source="../src/assets/platform.png" width="70" height="70"/>
  </tileset>
  <tileset firstgid="21" name="button" tilewidth="70" tileheight="70" tilecount="1" columns="1">
-  <image source="../src/assets/buttonOff.png" width="70" height="70"/>
+  <image source="../src/assets/buttonOff_0.png" width="70" height="70"/>
  </tileset>
  <tileset firstgid="22" name="sheet_lasers" tilewidth="70" tileheight="70" tilecount="98" columns="14">
   <image source="../src/assets/sheet_lasers.png" width="980" height="490"/>

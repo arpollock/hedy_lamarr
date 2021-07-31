@@ -175,6 +175,11 @@ export class HomeScene extends Phaser.Scene {
       this.load.image(`buttonOff_${i}`, `buttonOff_${i}.png`);
       this.load.image(`buttonOn_${i}`, `buttonOn_${i}.png`);
     }
+    // the switch (on and off) images
+    for( let i: number = 0; i < numObstacleColors; i++ ) {
+      this.load.image(`switchOff_${i}`, `switchOff_${i}.png`);
+      this.load.image(`switchOn_${i}`, `switchOn_${i}.png`);
+    }
     // the overlay sprite to fix an obstacle
     this.load.image('obstacleFix', 'obstacleFix.png');
     // player animations
@@ -349,8 +354,15 @@ export class HomeScene extends Phaser.Scene {
       if (!isButtonNumValid) {
         console.log(`ERROR: button with invalid obstacle num: ${obstacleNum}.`);
       }
-      const buttonTextureStr: string =  isButtonNumValid ? `buttonOff_${obstacleNum}` : 'buttonOff_0';
-      const butt = new ObstacleButton(this, b.x, b.y, buttonTextureStr);
+      const buttonColorTextureStr: string =  isButtonNumValid ? `${obstacleNum}` : '0';
+
+      const userTogglableIdx = this.tiledObjectHasProperty(tiledPropertyNames.userTogglable, b);
+      const userTogglable: boolean = userTogglableIdx >= 0 ?  b.properties[userTogglableIdx].value: false;
+      const buttonTextureStr: string =  `${(userTogglable ? 'switchOff' : 'buttonOff')}_${buttonColorTextureStr}`;
+
+      const butt = new ObstacleButton(this, b.x, b.y, buttonTextureStr, userTogglable);
+
+      
       butt.obstacleNum = obstacleNum;
 
       const possibleInputsStr: string = `${tiledPropertyNames.possibleInputs}${this.conversionValues.valGems.toString()}${this.conversionValues.valStars.toString()}`;
@@ -420,8 +432,8 @@ export class HomeScene extends Phaser.Scene {
       const collisionObstacleButton = () => {
         if (bObj.body.touching.up && this.player.body.touching.down) {
           if (bObj.isEnabled) { // only enable a collision if the button has been enabled (w/ user math screen)
-            if ( !(bObj.isFixed) ) { // activate if off
-              bObj.isFixed = true
+            if ( !(bObj.isOn) ) { // activate if off
+              bObj.isOn = true
               this.fixObstacle(bObj);
             }   
           } 
@@ -874,11 +886,19 @@ export class HomeScene extends Phaser.Scene {
       }
     });
     if (foundDoor || foundPlatform) {
-      ob.setTexture(`buttonOn_${ob.obstacleNum}`);
+      if (ob.userTogglable) {
+        ob.setTexture(`switchOn_${ob.obstacleNum}`);
+      } else {
+        ob.setTexture(`buttonOn_${ob.obstacleNum}`);
+      }
       this.buttonObjs.forEach((bObj) => {
         if (bObj.obstacleNum == ob.obstacleNum) {
-          bObj.setTexture(`buttonOn_${bObj.obstacleNum}`);
-          bObj.isFixed = true;
+          if (bObj.userTogglable) {
+            ob.setTexture(`switchOn_${bObj.obstacleNum}`);
+          } else {
+            bObj.setTexture(`buttonOn_${bObj.obstacleNum}`);
+          }
+          bObj.isOn = true;
           bObj.body.setSize(bObj.body.width, 0);
         }
       });

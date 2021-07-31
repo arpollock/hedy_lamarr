@@ -123,6 +123,7 @@ const tiledPropertyNames: {
   player: string,
   opposite: string,
   possibleInputs: string,
+  userTogglable: string,
 } = {
   obstacleNum: 'obstacleNum',
   platformMoveVertical: 'moveVertical',
@@ -131,6 +132,7 @@ const tiledPropertyNames: {
   player: 'player',
   opposite: 'opposite',
   possibleInputs: 'possibleInputs_',
+  userTogglable: 'userTogglable',
 };
 
 const tiledLayerNames : {
@@ -191,7 +193,7 @@ const eventNames: {
   cameraFollowPlayer: 'cameraFollowPlayer',
 };
 
-const possibleMapNumbers: number[] = [ 1, 2, 3, 4 ];
+const possibleMapNumbers: number[] = [ 5 ];// [ 1, 2, 3, 4, 5 ];
 
 // describes the currency conversion values, in terms of how many coins they're worth
 interface ConversionConfig { 
