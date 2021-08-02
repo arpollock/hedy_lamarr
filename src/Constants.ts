@@ -201,7 +201,7 @@ const eventNames: {
   cameraFollowPlayer: 'cameraFollowPlayer',
 };
 
-const possibleMapNumbers: number[] = [ 1, 2, 3, 4, 5, 6 ];
+const possibleMapNumbers: number[] = [ 1, 2, 3, 4, 5, 6, 7, 8 ];
 
 // describes the currency conversion values, in terms of how many coins they're worth
 interface ConversionConfig { 

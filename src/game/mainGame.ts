@@ -33,7 +33,7 @@ import {
   zoomFactors,
   numObstacleColors
 } from '../Constants';
-import { isSfxAllowed } from './../Utilities';
+import { isSfxAllowed, map_num_to_key } from './../Utilities';
 import { ObstacleFixMenu } from './ObstacleFixMenu';
 
 // low-priority-level todo: checkout https://phaser.io/examples/v3/view/audio/web-audio/audiosprite for buttons, etc.
@@ -99,8 +99,15 @@ export class HomeScene extends Phaser.Scene {
   }
   public init(data: MainGameConfig): void {
 
-    this.levelSeedData = data;
+  }
 
+  public preload(): void {
+    // all in start game for speed once the user first engages
+  }
+
+  public create(data: MainGameConfig): void {
+    this.levelSeedData = data;
+    console.log('Level Create! Here\'s the sitch:');
     console.log(data);
 
     this.coinLayer = null;
@@ -148,58 +155,6 @@ export class HomeScene extends Phaser.Scene {
     this.totNumObstacles = 0;
     this.solvedNumObstacles = 0;
     this.numConvertersUsed = 0;
-  }
-
-  public preload(): void {
-    this.load.setBaseURL(assetBaseURL);
-    // map made with Tiled in JSON format
-    // TODO: make this a randomized/seeded selection
-    const mapFileNum: number = (this.levelSeedData !== null && this.levelSeedData.map_number > 0) ? this.levelSeedData.map_number: 1;
-    const mapFileName: string = `maps/map_${mapFileNum.toString()}.json`;
-    this.load.tilemapTiledJSON('map', mapFileName);
-    // this.load.tilemapTiledJSON('map', 'test_map.json');
-    // tiles in spritesheet 
-    this.load.spritesheet('tiles', 'tiles.png', {frameWidth: 70, frameHeight: 70});
-    // tiles in spritesheet 
-    this.load.spritesheet('sheet_lasers', 'sheet_lasers.png', {frameWidth: 70, frameHeight: 70});
-    // simple coin image
-    this.load.image('coin', 'coin.png');
-    // simple gem image
-    this.load.image('gem', 'gem.png');
-    // simple star image
-    this.load.image('star', 'star.png');
-    // the elevator/moving platform image
-    this.load.image('platform', 'platform.png');
-    for( let i: number = 0; i < numObstacleColors; i++ ) {
-      this.load.image(`platform_${i}`, `platform_${i}.png`);
-      this.load.image(`platform_${i}`, `platform_${i}.png`);
-    }
-    // the button (on and off) images
-    for( let i: number = 0; i < numObstacleColors; i++ ) {
-      this.load.image(`buttonOff_${i}`, `buttonOff_${i}.png`);
-      this.load.image(`buttonOn_${i}`, `buttonOn_${i}.png`);
-    }
-    // the switch (on and off) images
-    for( let i: number = 0; i < numObstacleColors; i++ ) {
-      this.load.image(`switchOff_${i}`, `switchOff_${i}.png`);
-      this.load.image(`switchOn_${i}`, `switchOn_${i}.png`);
-    }
-    // the barrier (on and off) images
-    for( let i: number = 0; i < numObstacleColors; i++ ) {
-      this.load.image(`barrierOff_${i}`, `barrierOff_${i}.png`);
-      this.load.image(`barrierOn_${i}`, `barrierOn_${i}.png`);
-    }
-    // the overlay sprite to fix an obstacle
-    this.load.image('obstacleFix', 'obstacleFix.png');
-    // player animations
-    this.load.atlas('player', 'player.png', 'player.json');
-    // creatures to save + animations
-    this.load.atlasXML('creature', 'spritesheet_creatures.png', 'spritesheet_creatures.xml');
-    // background image
-    this.load.image('background', 'clouds.png');
-  }
-
-  public create(): void {
     this.events.on('destroy', this.onDestroy, this); // docs on event names valid with this pattern: https://newdocs.phaser.io/docs/3.55.2/Phaser.Scenes.Events
     eventsCenter.on(eventNames.closeObFixMenu, this.closeObFixMenu, this);
     eventsCenter.on(eventNames.pauseGame, this.pauseGame, this);
@@ -216,7 +171,7 @@ export class HomeScene extends Phaser.Scene {
     this.scene.bringToTop(sceneNames.hudMenu);
 
     // load the map 
-    this.map = this.make.tilemap({key: 'map'});
+    this.map = this.make.tilemap( { key: map_num_to_key(data.map_number) } );
 
     // set up support for audio on certain actions
     this.currencyCollectSFX = this.sound.add(musicKeyNames.collectSFX, {
@@ -408,7 +363,7 @@ export class HomeScene extends Phaser.Scene {
       });
       this.physics.world.enable(this.buttonObjs, Phaser.Physics.Arcade.STATIC_BODY);
       this.physics.world.enable(this.overlayObjs, Phaser.Physics.Arcade.STATIC_BODY);
-      this.totNumObstacles = this.overlayObjs.length;
+      this.totNumObstacles = numObstacleColors; // TODO: this really should be map based, but works bc of how levels are made
     }
 
     // add the laser doors as specified in the object layer of the map

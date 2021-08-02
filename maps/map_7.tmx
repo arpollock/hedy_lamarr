@@ -1,0 +1,850 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="42" height="32" tilewidth="70" tileheight="70" infinite="0" backgroundcolor="#000000" nextlayerid="15" nextobjectid="396">
+ <editorsettings>
+  <export target="../src/assets/maps/map_7.json" format="json"/>
+ </editorsettings>
+ <tileset firstgid="1" name="tiles" tilewidth="70" tileheight="70" tilecount="16" columns="4">
+  <image source="../src/assets/tiles.png" width="280" height="280"/>
+ </tileset>
+ <tileset firstgid="17" name="coin" tilewidth="70" tileheight="70" tilecount="1" columns="1">
+  <image source="../src/assets/coin.png" width="70" height="70"/>
+ </tileset>
+ <tileset firstgid="18" name="gem" tilewidth="70" tileheight="70" tilecount="1" columns="1">
+  <image source="../src/assets/gem.png" width="70" height="70"/>
+ </tileset>
+ <tileset firstgid="19" name="star" tilewidth="70" tileheight="70" tilecount="1" columns="1">
+  <image source="../src/assets/star.png" width="70" height="70"/>
+ </tileset>
+ <tileset firstgid="20" name="platform" tilewidth="70" tileheight="70" tilecount="1" columns="1">
+  <image source="../src/assets/platform.png" width="70" height="70"/>
+ </tileset>
+ <tileset firstgid="21" name="button" tilewidth="70" tileheight="70" tilecount="1" columns="1">
+  <image source="../src/assets/buttonOff_0.png" width="70" height="70"/>
+ </tileset>
+ <tileset firstgid="22" name="sheet_lasers" tilewidth="70" tileheight="70" tilecount="98" columns="14">
+  <image source="../src/assets/sheet_lasers.png" width="980" height="490"/>
+ </tileset>
+ <layer id="1" name="World" width="42" height="32">
+  <data encoding="base64">
+   BQAAAA8AAAAPAAAADwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUAAAAFAAAABQAAAA8AAAAPAAAADwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUAAAAFAAAABQAAAA8AAAAPAAAADwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUAAAAFAAAABQAAAA8AAAAPAAAADwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUAAAAFAAAABQAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAkAAAAAAAAAAAAAAAAAAAAAAAAACwAAAAAAAAAAAAAACgAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAUAAAAFAAAABQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUAAAAFAAAABQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwAAAA8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUAAAAFAAAABQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwAAAA8AAAAPAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUAAAAFAAAABQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwAAAA8AAAAPAAAADwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUAAAAFAAAABQAAAAkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8AAAAPAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAACQAAAAAAAAAAAAAACgAAAAMAAAADAAAAAwAAAAUAAAAFAAAABQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUAAAAFAAAABQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUAAAAFAAAABQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUAAAAFAAAABQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUAAAAFAAAABQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUAAAAFAAAABQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAAAADwAAAA8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUAAAAFAAAABQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAAAADwAAAAAAAAAAAAAADwAAAA8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACgAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAUAAAAFAAAABQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAAAAAAAAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUAAAAFAAAABQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAAAAAAAAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUAAAAFAAAABQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAAAAAAAAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwAAAA8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUAAAAFAAAABQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwAAAA8AAAAPAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUAAAAFAAAABQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwAAAA8AAAAPAAAADwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUAAAAFAAAABQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAAAADwAAAAAAAAAAAAAADwAAAA8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACwAAAA8AAAAPAAAADwAAAA8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUAAAAFAAAABQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAAAAAAAAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACgAAAAMAAAADAAAAAwAAAAMAAAAJAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwAAAAUAAAAFAAAABQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAAAAAAAAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAAAADwAAAAUAAAAFAAAABQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8AAAAPAAAADwAAAAUAAAAFAAAABQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwAAAA8AAAAPAAAADwAAAAUAAAAFAAAABQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAAAADwAAAA8AAAAPAAAADwAAAAUAAAAFAAAABQAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAABQAAAAUAAAAFAAAA
+  </data>
+ </layer>
+ <objectgroup id="13" name="Barriers">
+  <object id="216" name="barrier" gid="7" x="770" y="1470" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="233" name="barrier" gid="7" x="1190" y="1260" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="299" name="barrier" gid="7" x="1260" y="1260" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="300" name="barrier" gid="7" x="1330" y="1260" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="301" name="barrier" gid="7" x="1400" y="1260" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="302" name="barrier" gid="7" x="1470" y="1260" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="303" name="barrier" gid="7" x="1540" y="1260" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="304" name="barrier" gid="7" x="1610" y="1260" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="305" name="barrier" gid="7" x="1680" y="1260" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="308" name="barrier" gid="7" x="1750" y="1260" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="309" name="barrier" gid="7" x="1820" y="1260" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="310" name="barrier" gid="7" x="70" y="1260" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="311" name="barrier" gid="7" x="140" y="1260" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="312" name="barrier" gid="7" x="210" y="1260" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="313" name="barrier" gid="7" x="280" y="1260" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="314" name="barrier" gid="7" x="350" y="1260" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="315" name="barrier" gid="7" x="420" y="1260" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="316" name="barrier" gid="7" x="490" y="1260" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="317" name="barrier" gid="7" x="560" y="1260" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="318" name="barrier" gid="7" x="630" y="1260" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="319" name="barrier" gid="7" x="700" y="1260" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="320" name="barrier" gid="7" x="1190" y="1610" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="321" name="barrier" gid="7" x="1260" y="1610" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="322" name="barrier" gid="7" x="1330" y="1610" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="323" name="barrier" gid="7" x="1400" y="1610" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="324" name="barrier" gid="7" x="1470" y="1610" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="325" name="barrier" gid="7" x="1540" y="1610" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="326" name="barrier" gid="7" x="1610" y="1610" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="327" name="barrier" gid="7" x="1680" y="1610" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="328" name="barrier" gid="7" x="1750" y="1610" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="329" name="barrier" gid="7" x="1820" y="1610" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="330" name="barrier" gid="7" x="70" y="1610" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="331" name="barrier" gid="7" x="140" y="1610" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="332" name="barrier" gid="7" x="210" y="1610" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="333" name="barrier" gid="7" x="280" y="1610" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="334" name="barrier" gid="7" x="350" y="1610" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="335" name="barrier" gid="7" x="420" y="1610" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="336" name="barrier" gid="7" x="490" y="1610" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="337" name="barrier" gid="7" x="560" y="1610" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="338" name="barrier" gid="7" x="630" y="1610" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="339" name="barrier" gid="7" x="700" y="1610" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="340" name="barrier" gid="7" x="770" y="1540" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="341" name="barrier" gid="7" x="1120" y="1470" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="342" name="barrier" gid="7" x="1120" y="1540" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="347" name="barrier" gid="7" x="1960" y="350" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="3"/>
+   </properties>
+  </object>
+  <object id="348" name="barrier" gid="7" x="2030" y="350" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="3"/>
+   </properties>
+  </object>
+  <object id="355" name="barrier" gid="7" x="1190" y="700" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="356" name="barrier" gid="7" x="1260" y="700" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="357" name="barrier" gid="7" x="1330" y="700" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="358" name="barrier" gid="7" x="1400" y="700" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="359" name="barrier" gid="7" x="1470" y="700" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="360" name="barrier" gid="7" x="1540" y="700" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="361" name="barrier" gid="7" x="1610" y="700" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="362" name="barrier" gid="7" x="1680" y="700" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="363" name="barrier" gid="7" x="1750" y="700" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="373" name="barrier" gid="7" x="140" y="700" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="374" name="barrier" gid="7" x="210" y="700" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="375" name="barrier" gid="7" x="280" y="700" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="376" name="barrier" gid="7" x="350" y="700" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="377" name="barrier" gid="7" x="420" y="700" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="378" name="barrier" gid="7" x="490" y="700" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="379" name="barrier" gid="7" x="560" y="700" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="380" name="barrier" gid="7" x="630" y="700" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="381" name="barrier" gid="7" x="700" y="700" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="382" name="barrier" gid="7" x="280" y="420" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="383" name="barrier" gid="7" x="280" y="490" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="384" name="barrier" gid="7" x="280" y="560" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="385" name="barrier" gid="7" x="280" y="630" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="386" name="barrier" gid="7" x="699" y="70" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="387" name="barrier" gid="7" x="699" y="140" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="388" name="barrier" gid="7" x="699" y="210" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="389" name="barrier" gid="7" x="699" y="280" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="390" name="barrier" gid="7" x="1260" y="70" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="391" name="barrier" gid="7" x="1260" y="140" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="392" name="barrier" gid="7" x="1260" y="210" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="393" name="barrier" gid="7" x="1260" y="280" width="70" height="70">
+   <properties>
+    <property name="defaultState" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="1"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="11" name="PlayerStart">
+  <object id="40" name="start" gid="7" x="2660" y="490" width="70" height="70">
+   <properties>
+    <property name="player" type="int" value="1"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="5" name="Platforms">
+  <object id="110" name="platform" gid="20" x="910" y="1218" width="70" height="70">
+   <properties>
+    <property name="moveHorizontal" type="bool" value="false"/>
+    <property name="moveVertical" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="-1"/>
+    <property name="opposite" type="bool" value="false"/>
+   </properties>
+  </object>
+  <object id="111" name="platform" gid="20" x="980" y="1218" width="70" height="70">
+   <properties>
+    <property name="moveHorizontal" type="bool" value="false"/>
+    <property name="moveVertical" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="-1"/>
+    <property name="opposite" type="bool" value="false"/>
+   </properties>
+  </object>
+  <object id="289" name="platform" gid="20" x="1820" y="1190" width="70" height="70">
+   <properties>
+    <property name="moveHorizontal" type="bool" value="true"/>
+    <property name="moveVertical" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="-1"/>
+    <property name="opposite" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="290" name="platform" gid="20" x="1750" y="1190" width="70" height="70">
+   <properties>
+    <property name="moveHorizontal" type="bool" value="true"/>
+    <property name="moveVertical" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="-1"/>
+    <property name="opposite" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="291" name="platform" gid="20" x="1680" y="1190" width="70" height="70">
+   <properties>
+    <property name="moveHorizontal" type="bool" value="true"/>
+    <property name="moveVertical" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="-1"/>
+    <property name="opposite" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="292" name="platform" gid="20" x="1610" y="1190" width="70" height="70">
+   <properties>
+    <property name="moveHorizontal" type="bool" value="true"/>
+    <property name="moveVertical" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="-1"/>
+    <property name="opposite" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="293" name="platform" gid="20" x="280" y="1190" width="70" height="70">
+   <properties>
+    <property name="moveHorizontal" type="bool" value="true"/>
+    <property name="moveVertical" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="-1"/>
+    <property name="opposite" type="bool" value="false"/>
+   </properties>
+  </object>
+  <object id="294" name="platform" gid="20" x="210" y="1190" width="70" height="70">
+   <properties>
+    <property name="moveHorizontal" type="bool" value="true"/>
+    <property name="moveVertical" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="-1"/>
+    <property name="opposite" type="bool" value="false"/>
+   </properties>
+  </object>
+  <object id="295" name="platform" gid="20" x="140" y="1190" width="70" height="70">
+   <properties>
+    <property name="moveHorizontal" type="bool" value="true"/>
+    <property name="moveVertical" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="-1"/>
+    <property name="opposite" type="bool" value="false"/>
+   </properties>
+  </object>
+  <object id="296" name="platform" gid="20" x="70" y="1190" width="70" height="70">
+   <properties>
+    <property name="moveHorizontal" type="bool" value="true"/>
+    <property name="moveVertical" type="bool" value="false"/>
+    <property name="obstacleNum" type="int" value="-1"/>
+    <property name="opposite" type="bool" value="false"/>
+   </properties>
+  </object>
+  <object id="297" name="platform" gid="20" x="910" y="2012" width="70" height="70">
+   <properties>
+    <property name="moveHorizontal" type="bool" value="false"/>
+    <property name="moveVertical" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="-1"/>
+    <property name="opposite" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="298" name="platform" gid="20" x="980" y="2012" width="70" height="70">
+   <properties>
+    <property name="moveHorizontal" type="bool" value="false"/>
+    <property name="moveVertical" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="-1"/>
+    <property name="opposite" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="343" name="platform" gid="20" x="1085" y="728" width="70" height="70">
+   <properties>
+    <property name="moveHorizontal" type="bool" value="false"/>
+    <property name="moveVertical" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="-1"/>
+    <property name="opposite" type="bool" value="false"/>
+   </properties>
+  </object>
+  <object id="344" name="platform" gid="20" x="805" y="728" width="70" height="70">
+   <properties>
+    <property name="moveHorizontal" type="bool" value="false"/>
+    <property name="moveVertical" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="-1"/>
+    <property name="opposite" type="bool" value="false"/>
+   </properties>
+  </object>
+  <object id="346" name="platform" gid="20" x="1820" y="350" width="70" height="70">
+   <properties>
+    <property name="moveHorizontal" type="bool" value="false"/>
+    <property name="moveVertical" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="-1"/>
+    <property name="opposite" type="bool" value="false"/>
+   </properties>
+  </object>
+  <object id="350" name="platform" gid="20" x="2450" y="700" width="70" height="70">
+   <properties>
+    <property name="moveHorizontal" type="bool" value="false"/>
+    <property name="moveVertical" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="-1"/>
+    <property name="opposite" type="bool" value="false"/>
+   </properties>
+  </object>
+  <object id="351" name="platform" gid="20" x="2380" y="700" width="70" height="70">
+   <properties>
+    <property name="moveHorizontal" type="bool" value="false"/>
+    <property name="moveVertical" type="bool" value="true"/>
+    <property name="obstacleNum" type="int" value="-1"/>
+    <property name="opposite" type="bool" value="false"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="6" name="Buttons">
+  <object id="179" name="button" gid="21" x="1085" y="1120" width="70" height="70">
+   <properties>
+    <property name="obstacleNum" type="int" value="0"/>
+    <property name="possibleInputs_20" value="030;"/>
+    <property name="possibleInputs_23" value="030;002;021;"/>
+    <property name="possibleInputs_24" value="030;002;012;021;201;"/>
+    <property name="possibleInputs_30" value="030;"/>
+    <property name="possibleInputs_34" value="030;002;012;201;"/>
+    <property name="userTogglable" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="288" name="button" gid="21" x="1715" y="1960" width="70" height="70">
+   <properties>
+    <property name="obstacleNum" type="int" value="2"/>
+    <property name="possibleInputs_20" value="300;110;"/>
+    <property name="possibleInputs_23" value="300;110;001;"/>
+    <property name="possibleInputs_24" value="300;110;"/>
+    <property name="possibleInputs_30" value="300;010;"/>
+    <property name="possibleInputs_34" value="300;010;"/>
+    <property name="userTogglable" type="bool" value="false"/>
+   </properties>
+  </object>
+  <object id="345" name="button" gid="21" x="945" y="630" width="70" height="70">
+   <properties>
+    <property name="obstacleNum" type="int" value="1"/>
+    <property name="possibleInputs_20" value="030;"/>
+    <property name="possibleInputs_23" value="003;012;"/>
+    <property name="possibleInputs_24" value="003;"/>
+    <property name="possibleInputs_30" value="030;120;"/>
+    <property name="possibleInputs_34" value="012;003;"/>
+    <property name="userTogglable" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="354" name="button" gid="21" x="2240" y="630" width="70" height="70">
+   <properties>
+    <property name="obstacleNum" type="int" value="3"/>
+    <property name="possibleInputs_20" value="030;"/>
+    <property name="possibleInputs_23" value="003;"/>
+    <property name="possibleInputs_24" value="003;"/>
+    <property name="possibleInputs_30" value="030;"/>
+    <property name="possibleInputs_34" value="003;"/>
+    <property name="userTogglable" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="394" name="button" gid="21" x="1470" y="280" width="70" height="70">
+   <properties>
+    <property name="obstacleNum" type="int" value="1"/>
+    <property name="possibleInputs_20" value="030;"/>
+    <property name="possibleInputs_23" value="003;012;"/>
+    <property name="possibleInputs_24" value="003;"/>
+    <property name="possibleInputs_30" value="030;120;"/>
+    <property name="possibleInputs_34" value="012;003;"/>
+    <property name="userTogglable" type="bool" value="true"/>
+   </properties>
+  </object>
+  <object id="395" name="button" gid="21" x="875" y="280" width="70" height="70">
+   <properties>
+    <property name="obstacleNum" type="int" value="0"/>
+    <property name="possibleInputs_20" value="030;"/>
+    <property name="possibleInputs_23" value="030;002;021;"/>
+    <property name="possibleInputs_24" value="030;002;012;021;201;"/>
+    <property name="possibleInputs_30" value="030;"/>
+    <property name="possibleInputs_34" value="030;002;012;201;"/>
+    <property name="userTogglable" type="bool" value="true"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="7" name="Doors">
+  <object id="87" name="door" gid="103" x="1925" y="1890" width="70" height="70">
+   <properties>
+    <property name="obstacleNum" type="int" value="2"/>
+    <property name="on" type="bool" value="true"/>
+    <property name="part" value="laser"/>
+   </properties>
+  </object>
+  <object id="88" name="door" gid="103" x="1925" y="1820" width="70" height="70">
+   <properties>
+    <property name="obstacleNum" type="int" value="2"/>
+    <property name="on" type="bool" value="true"/>
+    <property name="part" value="laser"/>
+   </properties>
+  </object>
+  <object id="89" name="door" gid="103" x="1925" y="1750" width="70" height="70">
+   <properties>
+    <property name="obstacleNum" type="int" value="2"/>
+    <property name="on" type="bool" value="true"/>
+    <property name="part" value="laser"/>
+   </properties>
+  </object>
+  <object id="90" name="door" gid="111" x="1925" y="1960" width="70" height="70">
+   <properties>
+    <property name="obstacleNum" type="int" value="2"/>
+    <property name="on" type="bool" value="true"/>
+    <property name="part" value="base"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="9" name="Goal">
+  <object id="14" name="goal" gid="97" x="2730" y="70" width="70" height="70">
+   <properties>
+    <property name="part" value="base_down"/>
+   </properties>
+  </object>
+  <object id="15" name="goal" gid="97" x="2660" y="70" width="70" height="70">
+   <properties>
+    <property name="part" value="base_down"/>
+   </properties>
+  </object>
+  <object id="16" name="goal" gid="97" x="2590" y="70" width="70" height="70">
+   <properties>
+    <property name="part" value="base_down"/>
+   </properties>
+  </object>
+  <object id="17" name="goal" gid="97" x="2520" y="70" width="70" height="70">
+   <properties>
+    <property name="part" value="base_down"/>
+   </properties>
+  </object>
+  <object id="18" name="goal" gid="102" x="2730" y="140" width="70" height="70">
+   <properties>
+    <property name="part" value="laser"/>
+   </properties>
+  </object>
+  <object id="19" name="goal" gid="102" x="2730" y="210" width="70" height="70">
+   <properties>
+    <property name="part" value="laser"/>
+   </properties>
+  </object>
+  <object id="20" name="goal" gid="102" x="2730" y="280" width="70" height="70">
+   <properties>
+    <property name="part" value="laser"/>
+   </properties>
+  </object>
+  <object id="21" name="goal" gid="102" x="2660" y="140" width="70" height="70">
+   <properties>
+    <property name="part" value="laser"/>
+   </properties>
+  </object>
+  <object id="22" name="goal" gid="102" x="2660" y="210" width="70" height="70">
+   <properties>
+    <property name="part" value="laser"/>
+   </properties>
+  </object>
+  <object id="23" name="goal" gid="102" x="2660" y="280" width="70" height="70">
+   <properties>
+    <property name="part" value="laser"/>
+   </properties>
+  </object>
+  <object id="24" name="goal" gid="102" x="2590" y="140" width="70" height="70">
+   <properties>
+    <property name="part" value="laser"/>
+   </properties>
+  </object>
+  <object id="25" name="goal" gid="102" x="2590" y="210" width="70" height="70">
+   <properties>
+    <property name="part" value="laser"/>
+   </properties>
+  </object>
+  <object id="26" name="goal" gid="102" x="2590" y="280" width="70" height="70">
+   <properties>
+    <property name="part" value="laser"/>
+   </properties>
+  </object>
+  <object id="27" name="goal" gid="102" x="2520" y="140" width="70" height="70">
+   <properties>
+    <property name="part" value="laser"/>
+   </properties>
+  </object>
+  <object id="28" name="goal" gid="102" x="2520" y="210" width="70" height="70">
+   <properties>
+    <property name="part" value="laser"/>
+   </properties>
+  </object>
+  <object id="29" name="goal" gid="102" x="2520" y="280" width="70" height="70">
+   <properties>
+    <property name="part" value="laser"/>
+   </properties>
+  </object>
+  <object id="30" name="goal" gid="107" x="2409" y="280" width="70" height="70">
+   <properties>
+    <property name="part" value="lever"/>
+   </properties>
+  </object>
+  <object id="33" name="goal" gid="91" x="2555" y="280" width="70" height="70">
+   <properties>
+    <property name="part" value="creature"/>
+   </properties>
+  </object>
+  <object id="35" name="goal" gid="91" x="2625" y="280" width="70" height="70">
+   <properties>
+    <property name="part" value="creature"/>
+   </properties>
+  </object>
+  <object id="36" name="goal" gid="91" x="2695" y="280" width="70" height="70">
+   <properties>
+    <property name="part" value="creature"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <layer id="2" name="Coins" width="42" height="32">
+  <data encoding="base64">
+   AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARAAAAAAAAABEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEQAAAAAAAAARAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABEAAAAAAAAAEQAAAAAAAAARAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABEAAAAAAAAAEQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEQAAAAAAAAARAAAAAAAAABEAAAAAAAAAEQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARAAAAAAAAABEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAAAAAAARAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARAAAAAAAAABEAAAAAAAAAEQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEQAAAAAAAAARAAAAAAAAABEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARAAAAAAAAAAAAAAAAAAAAEQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+  </data>
+ </layer>
+ <layer id="3" name="Gems" width="42" height="32">
+  <data encoding="base64">
+   AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+  </data>
+ </layer>
+ <layer id="4" name="Stars" width="42" height="32">
+  <data encoding="base64">
+   AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+  </data>
+ </layer>
+</map>

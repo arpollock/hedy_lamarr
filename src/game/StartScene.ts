@@ -9,9 +9,16 @@ import {
   textConfig,
   numDifficulties,
   MainGameConfig,
+  assetGameControlUiUrl,
+  ConversionConfig,
   possibleMapNumbers,
-  assetGameControlUiUrl
+  numObstacleColors
 } from './../Constants';
+import {
+  get_rand_map_number,
+  get_rand_conversion_values,
+  map_num_to_key
+} from './../Utilities';
 import { HomeScene } from './MainGame';
 import { HudMenu } from './HudMenu';
 import { TabletMenu } from './TabletMenu';
@@ -75,7 +82,58 @@ export class StartScene extends Phaser.Scene {
     this.load.image('starHud', 'star.png');
     // these are for the pause AND win screens
     this.load.image('main_menu_button', 'main_menu.png');
+    this.load.image('back_start_button', 'back_to_start.png');
     this.load.image('play_new_level', 'play_new_level.png');
+    this.load.image('play_same_level', 'play_same_level.png');
+    // main game stuff:
+    this.load.setBaseURL(assetBaseURL);
+    // map made with Tiled in JSON format
+    for (let i = 0; i < possibleMapNumbers.length; i++) {
+      const mapFileNum: number = possibleMapNumbers[i];
+      const mapFileName: string = `maps/map_${mapFileNum.toString()}.json`;
+      this.load.tilemapTiledJSON( map_num_to_key(mapFileNum), mapFileName);
+    // this.load.tilemapTiledJSON('map', 'test_map.json');
+    }
+    
+    // tiles in spritesheet 
+    this.load.spritesheet('tiles', 'tiles.png', {frameWidth: 70, frameHeight: 70});
+    // tiles in spritesheet 
+    this.load.spritesheet('sheet_lasers', 'sheet_lasers.png', {frameWidth: 70, frameHeight: 70});
+    // simple coin image
+    this.load.image('coin', 'coin.png');
+    // simple gem image
+    this.load.image('gem', 'gem.png');
+    // simple star image
+    this.load.image('star', 'star.png');
+    // the elevator/moving platform image
+    this.load.image('platform', 'platform.png');
+    for( let i: number = 0; i < numObstacleColors; i++ ) {
+      this.load.image(`platform_${i}`, `platform_${i}.png`);
+      this.load.image(`platform_${i}`, `platform_${i}.png`);
+    }
+    // the button (on and off) images
+    for( let i: number = 0; i < numObstacleColors; i++ ) {
+      this.load.image(`buttonOff_${i}`, `buttonOff_${i}.png`);
+      this.load.image(`buttonOn_${i}`, `buttonOn_${i}.png`);
+    }
+    // the switch (on and off) images
+    for( let i: number = 0; i < numObstacleColors; i++ ) {
+      this.load.image(`switchOff_${i}`, `switchOff_${i}.png`);
+      this.load.image(`switchOn_${i}`, `switchOn_${i}.png`);
+    }
+    // the barrier (on and off) images
+    for( let i: number = 0; i < numObstacleColors; i++ ) {
+      this.load.image(`barrierOff_${i}`, `barrierOff_${i}.png`);
+      this.load.image(`barrierOn_${i}`, `barrierOn_${i}.png`);
+    }
+    // the overlay sprite to fix an obstacle
+    this.load.image('obstacleFix', 'obstacleFix.png');
+    // player animations
+    this.load.atlas('player', 'player.png', 'player.json');
+    // creatures to save + animations
+    this.load.atlasXML('creature', 'spritesheet_creatures.png', 'spritesheet_creatures.xml');
+    // background image
+    this.load.image('background', 'clouds.png');
   }
 
   public create(): void {
@@ -197,48 +255,11 @@ export class StartScene extends Phaser.Scene {
     // generate the seed data for the level 
     // todo, set these randomly according to difficulty config
     // todo, create double converters, converters that accept converters, and/or n star : m gem converters
-    const possibleGemValues: number[] = [];
-    const possibleStarValues: number[] = [];
-    switch(this.activeGradeLevel) {
-      // 4th and 5th grade worry about coins, gems, and stars
-      // 5th does everything 4th and 3rd can do, 4th can do anything 3rd, etc. 
-      // might change ^ if teachers feel is appropriate,
-      // probs would have to change w/ ML update to how game updates as you play
-
-      // currently have the graphics to support min conversions for:
-      // Gems : Coins ==> 2, 3
-      // Gems : Stars ==> 3, 4
-      // => Valid combos: (gemValue, starValue):
-      //  - 3rd Grade: (2, 0), (3, 0)
-      //  - 4th/5th Grade: (2, 3), (2, 4), (3, 4)  
-      case 5:
-        possibleStarValues.push(3);
-      case 4: 
-        possibleStarValues.push(4);
-      case 3: // 3rd grade only worries about coins and gems
-        possibleGemValues.push(2);
-        possibleGemValues.push(3);
-        break;
-      default:
-          break;
-    }
-    if (possibleStarValues.length === 0) {
-      possibleStarValues.push(0); // == 0 used to hide star sprites, etc. throughout misc. scenes
-    }
-
-    let valGems = possibleGemValues[Math.floor(Math.random() * possibleGemValues.length)];
-    let valStars = possibleStarValues[Math.floor(Math.random() * possibleStarValues.length)];
-    while ( valGems >= valStars && valStars != 0) { // don't let stars be equal or less than gems, but also remember that star value is 0 for 3rd grade
-      valGems = possibleGemValues[Math.floor(Math.random() * possibleGemValues.length)];
-      valStars = possibleStarValues[Math.floor(Math.random() * possibleStarValues.length)];
-    }
+    const currencyValues: ConversionConfig = get_rand_conversion_values(this.activeGradeLevel);
     const mainGameData: MainGameConfig = {
       grade_level: this.activeGradeLevel,
-      map_number: possibleMapNumbers[Math.floor(Math.random() * possibleMapNumbers.length)],
-      conversion_values: {
-        valGems: valGems,
-        valStars: valStars,
-      },
+      map_number: get_rand_map_number(),
+      conversion_values: currencyValues,
     };
     this.startGameButton.destroy();
     this.startGameButton = null;

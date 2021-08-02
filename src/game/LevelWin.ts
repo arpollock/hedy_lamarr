@@ -13,11 +13,16 @@ import {
   userImprovementTipIntros,
   userImprovementTips,
   ImprovementCategories,
-  screenEdgePadding
+  screenEdgePadding,
+  ConversionConfig
 } from './../Constants';
 import { HudMenu } from './HudMenu';
 import { TabletMenu } from './TabletMenu';
 import { HomeScene } from './MainGame';
+import {
+  get_rand_map_number,
+  get_rand_conversion_values
+} from './../Utilities';
 
 export class LevelWin extends Phaser.Scene {
 
@@ -26,6 +31,7 @@ export class LevelWin extends Phaser.Scene {
 
   private mainMenuButton: Phaser.GameObjects.Sprite;
   private playNewLevelButton: Phaser.GameObjects.Sprite;
+  private playSameLevelButton: Phaser.GameObjects.Sprite;
 
   private previousLevelSeedData: MainGameConfig;
   private score: number;
@@ -45,6 +51,7 @@ export class LevelWin extends Phaser.Scene {
     });
     this.mainMenuButton = null;
     this.playNewLevelButton = null;
+    this.playSameLevelButton = null;
     this.score = 0;
     this.maxScore = 0;
     this.scoreStar1 = null;
@@ -54,6 +61,15 @@ export class LevelWin extends Phaser.Scene {
   }
 
   public init(data: WinGameConfig): void {
+    
+  }
+  public preload(): void {
+    this.load.setBaseURL(assetBaseURL);
+    this.load.image('star_success', `${assetWinLevelUiURL}star_success.png`);
+    this.load.image('star_fail', `${assetWinLevelUiURL}star_fail.png`);
+  }
+
+  public create(data: WinGameConfig): void {
     this.previousLevelSeedData = data.previous_level_data;
     // todo calc score (0, 1, 2, or 3 stars) based on:
     // base score is: num_obstacles_unlocked / tot_num_obstacles
@@ -76,14 +92,7 @@ export class LevelWin extends Phaser.Scene {
     } else if ( ((data.num_coins_kept + data.num_gems_kept + data.num_stars_kept) < 5) && (data.num_converters_used > 2) ) {
       this.scoreCategory = ImprovementCategories.more_currency;
     }
-  }
-  public preload(): void {
-    this.load.setBaseURL(assetBaseURL);
-    this.load.image('star_success', `${assetWinLevelUiURL}star_success.png`);
-    this.load.image('star_fail', `${assetWinLevelUiURL}star_fail.png`);
-  }
-
-  public create(): void {
+    
     this.scene.remove(sceneNames.mainGame);
     this.scene.remove(sceneNames.hudMenu);
     this.scene.remove(sceneNames.tabletMenu);
@@ -144,9 +153,19 @@ export class LevelWin extends Phaser.Scene {
 
     // main menu button click detection
     const buttonsY: number = height * 5 / 6;
-    const buttonLeftX: number = width / 3;
-    const buttonRightX: number = width * 2 / 3;
-    this.mainMenuButton = this.add.sprite(buttonLeftX, buttonsY,'main_menu_button').setOrigin(0.5);
+    
+    const buttonCenterX: number = width / 2;
+    // play again (new level) button click detection
+    this.playNewLevelButton = this.add.sprite(buttonCenterX, buttonsY,'play_new_level').setOrigin(0.5);
+    this.playNewLevelButton.setInteractive({
+      useHandCursor: true
+    });
+    this.playNewLevelButton.on('pointerover', this.onPlayNewLevelButtonHoverEnter, this);
+    this.playNewLevelButton.on('pointerout', this.onPlayNewLevelButtonHoverExit, this);
+    this.playNewLevelButton.on('pointerdown', this.playNewLevel, this);
+
+    const buttonLeftX: number = width / 2 - screenEdgePadding - this.playNewLevelButton.displayWidth; 
+    this.mainMenuButton = this.add.sprite(buttonLeftX, buttonsY,'back_start_button').setOrigin(0.5);
     this.mainMenuButton.setInteractive({
       useHandCursor: true
     });
@@ -154,14 +173,15 @@ export class LevelWin extends Phaser.Scene {
     this.mainMenuButton.on('pointerout', this.onMainMenuButtonHoverExit, this);
     this.mainMenuButton.on('pointerdown', this.goToMainMenu, this);
 
-    // play again (new level) button click detection
-    this.playNewLevelButton = this.add.sprite(buttonRightX, buttonsY,'play_new_level').setOrigin(0.5);
-    this.playNewLevelButton.setInteractive({
+    const buttonRightX: number = width / 2 + screenEdgePadding + this.playNewLevelButton.displayWidth; 
+    // play again (same level) button click detection
+    this.playSameLevelButton = this.add.sprite(buttonRightX, buttonsY,'play_same_level').setOrigin(0.5);
+    this.playSameLevelButton.setInteractive({
       useHandCursor: true
     });
-    this.playNewLevelButton.on('pointerover', this.onPlayNewLevelButtonHoverEnter, this);
-    this.playNewLevelButton.on('pointerout', this.onPlayNewLevelButtonHoverExit, this);
-    this.playNewLevelButton.on('pointerdown', this.playNewLevel, this);
+    this.playSameLevelButton.on('pointerover', this.onPlaySameLevelButtonHoverEnter, this);
+    this.playSameLevelButton.on('pointerout', this.onPlaySameLevelButtonHoverExit, this);
+    this.playSameLevelButton.on('pointerdown', this.playSameLevel, this);
   }
 
   public update(time: number): void {
@@ -180,17 +200,46 @@ export class LevelWin extends Phaser.Scene {
 
   private onPlayNewLevelButtonHoverExit(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData): void { }
 
+  private getNewMapNumber(): number {
+    let retVal: number = this.previousLevelSeedData.map_number;
+    while(retVal === this.previousLevelSeedData.map_number) {
+      retVal = get_rand_map_number();
+    }
+    return retVal;
+  }
+
+  private getNewConversionValues(): ConversionConfig {
+    let retVal: ConversionConfig = this.previousLevelSeedData.conversion_values;
+    while(retVal.valGems === this.previousLevelSeedData.conversion_values.valGems && retVal.valStars === this.previousLevelSeedData.conversion_values.valStars) {
+      retVal = get_rand_conversion_values(this.previousLevelSeedData.grade_level);
+    }
+    return retVal;
+  }
+
   // todo, currently startNewLevel and tryLevelAgain are not different
   private playNewLevel(): void {
     this.scene.add(sceneNames.hudMenu, HudMenu, false);
     this.scene.add(sceneNames.tabletMenu, TabletMenu, false);
     this.scene.add(sceneNames.mainGame, HomeScene, false);
-    this.scene.start(sceneNames.mainGame, this.previousLevelSeedData);
+    const map_number: number = this.getNewMapNumber();
+    const conversion_values: ConversionConfig = this.getNewConversionValues();
+    const newLevelSeedData: MainGameConfig = {
+      grade_level: this.previousLevelSeedData.grade_level,
+      map_number,
+      conversion_values,
+    };
+    this.scene.start(sceneNames.mainGame, newLevelSeedData);
   }
 
-  // cannot as-is try again once won, todo medium priority
-  // private tryLevelAgain(): void {
-  //   this.scene.start(sceneNames.mainGame, this.previousLevelSeedData);
-  // }
+  private onPlaySameLevelButtonHoverEnter(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData): void { }
+
+  private onPlaySameLevelButtonHoverExit(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData): void { }
+
+  private playSameLevel(): void {
+    this.scene.add(sceneNames.hudMenu, HudMenu, false);
+    this.scene.add(sceneNames.tabletMenu, TabletMenu, false);
+    this.scene.add(sceneNames.mainGame, HomeScene, false);
+    this.scene.start(sceneNames.mainGame, this.previousLevelSeedData);
+  }
 
 };
