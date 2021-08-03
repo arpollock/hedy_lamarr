@@ -32,7 +32,7 @@ const altBackgroundColor: string = '#fbc531';
 
 const assetBaseURL: string = './src/assets/';
 
-const assetObsUiURL: string = `${assetBaseURL}obstacle_ui/`;
+const assetObsUiURL: string = `obstacle_ui/`;
 
 const assetHudUiURL: string = `hud_ui/`;
 
@@ -319,6 +319,7 @@ const eventNames: {
   updateCurrency: string,
   pauseGame: string
   cameraFollowPlayer: string,
+  playDragDropSfx: string,
 } = {
   updateScoreText: 'updateScoreText',
   setConversionValues: 'setConversionValues',
@@ -326,6 +327,7 @@ const eventNames: {
   updateCurrency: 'updateCurrency',
   pauseGame: 'pause',
   cameraFollowPlayer: 'cameraFollowPlayer',
+  playDragDropSfx: 'playDragDropSfx',
 };
 
 const possibleMapNumbers: number[] = [ 1, 2, 3, 4, 5, 6, 7, 8 ];
@@ -341,6 +343,10 @@ interface MainGameConfig {
   map_number: number,
   conversion_values: ConversionConfig;
 };
+
+interface SfxEventConfig {
+  success: boolean
+}
 
 interface WinGameConfig {
   previous_level_data: MainGameConfig,
@@ -486,6 +492,7 @@ export {
   sceneNames,
   eventNames,
   possibleMapNumbers,
+  SfxEventConfig,
   MainGameConfig,
   WinGameConfig,
   ConversionConfig,

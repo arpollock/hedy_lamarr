@@ -31,17 +31,11 @@ export class TabletMenu extends Phaser.Scene {
     super({
       key: sceneNames.tabletMenu
     });
-    this.backgroundPanel = null;
-    this.conversionText = null;
-    this.conversionString = `Notes:\nX coins = X gems\nX coins = X stars\nX gems = X stars`;
-    this.currencySprites = [];
-    this.containsStars = true;
-    this.toggleCameraButton = null;
-    this.cameraFollowPlayer = true;
+    
   }
 
-  public init(params: ConversionConfig): void {
-    this.conversionValues = params;
+  public init(data: ConversionConfig): void {
+    
   }
 
   public preload(): void {
@@ -51,7 +45,16 @@ export class TabletMenu extends Phaser.Scene {
     this.load.image('follow_player_mode', `${assetTabletUiURL}/follow_player_mode.png`);
   }
 
-  public create(): void {
+  public create(data: ConversionConfig): void {
+    this.backgroundPanel = null;
+    this.conversionText = null;
+    this.conversionString = `Notes:\nX coins = X gems\nX coins = X stars\nX gems = X stars`;
+    this.currencySprites = [];
+    this.containsStars = true;
+    this.toggleCameraButton = null;
+    this.cameraFollowPlayer = true;
+
+    this.conversionValues = data;
 
     if (this.conversionValues.valStars <= 0) {
       this.containsStars = false;

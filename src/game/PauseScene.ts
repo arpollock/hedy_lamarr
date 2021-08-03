@@ -32,7 +32,6 @@ export class PauseScene extends Phaser.Scene {
   }
   public preload(): void {
     this.load.setBaseURL(assetBaseURL);
-    this.load.image('resume_game_button', `${assetGameControlUiUrl}resume.png`);
   }
 
   public create(): void {
@@ -96,9 +95,12 @@ export class PauseScene extends Phaser.Scene {
 
   public goToMainMenu(): void {
     // clean up the old level
-    this.scene.remove(sceneNames.mainGame);
-    this.scene.remove(sceneNames.hudMenu);
-    this.scene.remove(sceneNames.tabletMenu);
+    // this.scene.remove(sceneNames.mainGame);
+    // this.scene.remove(sceneNames.hudMenu);
+    // this.scene.remove(sceneNames.tabletMenu);
+    this.scene.stop(sceneNames.mainGame);
+    this.scene.stop(sceneNames.hudMenu);
+    this.scene.stop(sceneNames.tabletMenu);
     // go back to the main menu
     this.scene.switch(sceneNames.start);
   }

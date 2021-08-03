@@ -23,275 +23,20 @@ import {
   gemToCoinConverter_original_y,
   starToCoinConverter_original_y,
   screenEdgePadding,
-  musicKeyNames
+  musicKeyNames,
+  SfxEventConfig,
+  assetBaseURL
 } from './../Constants';
 
 import {
   isSfxAllowed,
-  currency_type_to_str
 } from './../Utilities';
 
-class DraggableCurrencyTarget extends Phaser.GameObjects.Sprite {
-  private ct: currency_type;
-  private filled: boolean;
-  private converter: DraggableCurrencyConverter;
-
-  constructor(scene: Phaser.Scene, x: number, y: number, texture: string, ct: currency_type) {
-		super(scene, x, y, texture);
-    this.ct = ct;
-    this.filled = false;
-    this.converter = null;
-    this.setOrigin(0.5, 1); // bottom middle origin
-    this.makeDragDropTarget();
-    scene.add.existing(this);
-	}
-
-  public get_currency_type(): currency_type {
-    return this.ct;
-  }
-
-  public dropped_on(): void { return; }
-
-  public isFilled(): boolean {
-    return this.filled;
-  }
-
-  public isConverterFull(): boolean {
-    if (this.hasConverter()) {
-      if (this.texture.key.indexOf('0') == -1) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  public hasConverter(): boolean {
-    if (this.converter == null) {
-      return false;
-    }
-    return true;
-  }
-
-  public getConverter(): DraggableCurrencyConverter {
-    return this.converter;
-  }
-
-  public setFilled(): void {
-    this.setTexture(`${currency_type_to_str(this.ct)}Ui_accept`);
-    this.filled = true;
-  }
-
-  public setConverterFilled(converter: DraggableCurrencyConverter): void {
-    // this.removeDragDropTarget();
-    this.setTexture(converter.texture.key);
-    this.filled = true;
-    this.converter = converter;
-    // this.makeDragDropTarget();
-    // console.log(converter);
-  }
-
-  public fillConverter(): void {
-    const oldTextureStr: string = this.texture.key;
-    const zeroIdx: number = oldTextureStr.indexOf('0')
-    const newTextureStr: string = oldTextureStr.substring(0, zeroIdx) + '1' + oldTextureStr.substring(zeroIdx + 1);
-    console.log(`${oldTextureStr} --> ${newTextureStr}`);
-    this.setTexture(newTextureStr);
-    // this.input.hitArea.setSize(this.displayWidth, this.displayHeight); // update the size of the drag drop hit area target
-    // this.filled = true;
-  }
-
-  public dump(): void {
-    if (this.filled) {
-      this.removeDragDropTarget();
-      this.setTexture(`${currency_type_to_str(this.ct)}Ui_empty`);
-      this.filled = false;
-      this.converter = null;
-      this.makeDragDropTarget();
-      // this.input.hitArea.setSize(this.displayWidth, this.displayHeight); // update the size of the drag drop hit area target
-    }
-  }
-
-  private makeDragDropTarget(): void {
-    this.setInteractive({
-      useHandCursor: false,
-      dropZone: true,
-      customHitArea: true,
-      hitArea: this.getBounds(),
-    }, this.dropped_on, true);
-    // console.log('Set drop target w:');
-    // console.log(this.getBounds());
-  }
-
-  private removeDragDropTarget(): void {
-    this.disableInteractive();
-  }
-}
-
-class DraggableCurrency extends Phaser.GameObjects.Sprite {
-  public updated_flag: boolean;
-  private ct: currency_type;
-  private count: number;
-  private sp: Phaser.Scenes.ScenePlugin;
-
-  constructor(scene: Phaser.Scene, x: number, y: number, texture: string, ct: currency_type, c: number) {
-		super(scene, x, y, texture);
-    this.ct = ct;
-    this.count = c;
-    this.updated_flag = false;
-    this.setInteractive({
-      useHandCursor: true
-    });
-    scene.add.existing(this);
-    if (!(this.count > 0)) {
-      this.setVisible(false);
-    }
-    this.sp = scene.scene;
-	}
-
-  public get_currency_type(): currency_type {
-    return this.ct;
-  }
-
-  public startDrag(pointer: Phaser.Input.Pointer, dragX: number, dragY: number): void {
-    // console.log('start drag');
-  }
-
-  public doDrag(pointer: Phaser.Input.Pointer, dragX: number, dragY: number): void {
-    this.x = dragX;
-    this.y = dragY;
-  }
-
-  public stopDrag(pointer: Phaser.Input.Pointer, dragX: number, dragY: number): void {
-    // console.log('stop drag');
-    this.x = dc_original_x;
-    switch(this.get_currency_type()) {
-      case currency_type.coin:
-        this.y = coinDraggable_original_y;
-        break;
-      case currency_type.gem:
-        this.y = gemDraggable_original_y;
-        break;
-      case currency_type.star:
-        this.y = starDraggable_original_y;
-        break;
-    };
-  }
-
-  public dragDrop(pointer: Phaser.Input.Pointer, target: Phaser.GameObjects.GameObject): void {
-    console.log('currency dropped on: ');
-    console.log(target);
-    if (target != null && target instanceof DraggableCurrencyTarget) {
-      if (target.get_currency_type() === this.ct && !(target.isFilled()) ) {
-        // target does not have a converter
-        // dropped on a correct, empty slot
-        target.setFilled();
-        this.decrement_count();
-        (this.sp.get(sceneNames.obFixMenu) as ObstacleFixMenu).playDragDropAcceptSFX();
-      } else if ( target.isFilled() && target.hasConverter() ) {
-        // target has a converter
-        if (target.getConverter().getOutCt() === this.ct) {
-          // dropped on a correct conversion slot
-          if (target.texture.key.indexOf('0') > -1) {
-            // there is an empty slot in the converter
-            target.fillConverter();
-            target.input.hitArea.setSize(target.displayWidth, target.displayHeight); // update the size of the drag drop hit area target
-            this.decrement_count();
-            (this.sp.get(sceneNames.obFixMenu) as ObstacleFixMenu).playDragDropAcceptSFX();
-          } else {
-            (this.sp.get(sceneNames.obFixMenu) as ObstacleFixMenu).playDragDropRejectSFX();
-          }
-        } else {
-          (this.sp.get(sceneNames.obFixMenu) as ObstacleFixMenu).playDragDropRejectSFX();
-        }
-      } else {
-        (this.sp.get(sceneNames.obFixMenu) as ObstacleFixMenu).playDragDropRejectSFX();
-      } // dropped on a wrong currency type/converter -> ignore
-    }
-  }
-
-  public increment_count(): void {
-    this.count++;
-    this.updated_flag = true;
-    if (this.count > 0) {
-      this.setVisible(true);
-    }
-  }
-
-  public decrement_count(): void {
-    this.count--;
-    this.updated_flag = true;
-    if (this.count <= 0) {
-      this.setVisible(false);
-    }
-  }
-
-  public get_count(): number {
-    return this.count;
-  }
-}
-
-class DraggableCurrencyConverter extends Phaser.GameObjects.Sprite {
-  private in_ct: currency_type;
-  private out_ct: currency_type;
-  private sp: Phaser.Scenes.ScenePlugin;
-
-  constructor(scene: Phaser.Scene, x: number, y: number, ict: currency_type, oct: currency_type, num_oct: number) {
-    // const coversionVal: number = (currency_type_to_str(ict) === 'gem') ? ;
-    let numZeros: string = '';
-    for(let i = 0; i < num_oct; i++) {
-      numZeros += '0';
-    }
-    const texture: string = `${currency_type_to_str(ict)}_${num_oct}${currency_type_to_str(oct)}_${numZeros}`;
-		super(scene, x, y, texture);
-    this.in_ct = ict;
-    this.out_ct = oct;
-    this.setInteractive({
-      useHandCursor: true
-    });
-    this.setOrigin(0.5, 1); // bottom middle origin
-    scene.add.existing(this);
-    this.sp = scene.scene;
-	}
-
-  public getOutCt(): currency_type {
-    return this.out_ct;
-  }
-
-  public startDrag(pointer: Phaser.Input.Pointer, dragX: number, dragY: number): void {
-    // console.log('start converter drag');
-  }
-
-  public doDrag(pointer: Phaser.Input.Pointer, dragX: number, dragY: number): void {
-    this.x = dragX;
-    this.y = dragY;
-  }
-
-  public stopDrag(pointer: Phaser.Input.Pointer, dragX: number, dragY: number): void {
-    // console.log('stop converter drag');
-    this.x = dcm_original_x;
-    switch(this.in_ct) {
-      case currency_type.gem:
-        this.y = gemToCoinConverter_original_y;
-        break;
-      case currency_type.star:
-        this.y = starToCoinConverter_original_y;
-        break;
-    };
-  }
-
-  public dragDrop(pointer: Phaser.Input.Pointer, target: Phaser.GameObjects.GameObject): void {
-    console.log('drop converter drag');
-    if (target != null && target instanceof DraggableCurrencyTarget) {
-      if (target.get_currency_type() === this.in_ct && !(target.isFilled())) { // dropped the converter on the right target
-        // target.setFilled();
-        target.setConverterFilled(this);
-        (this.sp.get(sceneNames.obFixMenu) as ObstacleFixMenu).playDragDropAcceptSFX();
-      } else {
-        (this.sp.get(sceneNames.obFixMenu) as ObstacleFixMenu).playDragDropRejectSFX();
-      }
-    }
-  }
-}
+import {
+  DraggableCurrency,
+  DraggableCurrencyConverter,
+  DraggableCurrencyTarget
+} from './obstacle_parts/DraggableCurrencyComponents';
 
 export class ObstacleFixMenu extends Phaser.Scene {
 
@@ -347,7 +92,62 @@ export class ObstacleFixMenu extends Phaser.Scene {
   }
 
   public init(data: ObFixConfig): void {
-    console.log('init fix obs, data is:');
+    console.log('init fix obs');
+  }
+
+  public preload(): void {
+    this.load.setBaseURL(assetBaseURL);
+    this.load.image('back_button', `${assetObsUiURL}back.png`);
+    this.load.image('submit_button', `${assetObsUiURL}submit.png`);
+    this.load.image('clear_button', `${assetObsUiURL}clear.png`);
+    this.load.image('bgPanelLeft', `${assetObsUiURL}bgPanelLeft_2.png`);
+    this.load.image('bgPanelRight', `${assetObsUiURL}bgPanelRight_2.png`);
+    this.load.image('buttonReject', `${assetObsUiURL}buttonOff.png`);
+    this.load.image('buttonAccept', `${assetObsUiURL}buttonOn.png`);
+    this.load.image('coinUi', `${assetObsUiURL}coinUi.png`);
+    this.load.image('gemUi', `${assetObsUiURL}gemUi.png`);
+    this.load.image('starUi', `${assetObsUiURL}starUi.png`);
+    this.load.image('coinUi_empty', `${assetObsUiURL}coinUi_empty.png`);
+    this.load.image('gemUi_empty', `${assetObsUiURL}gemUi_empty.png`);
+    this.load.image('starUi_empty', `${assetObsUiURL}starUi_empty.png`);
+    this.load.image('coinUi_accept', `${assetObsUiURL}coinUi_accept.png`);
+    this.load.image('gemUi_accept', `${assetObsUiURL}gemUi_accept.png`);
+    this.load.image('starUi_accept', `${assetObsUiURL}starUi_accept.png`);
+    this.load.image('coinUi_zero', `${assetObsUiURL}coinUi_zero.png`);
+    this.load.image('gemUi_zero', `${assetObsUiURL}gemUi_zero.png`);
+    this.load.image('starUi_zero', `${assetObsUiURL}starUi_zero.png`);
+    // converter module assets
+    // 1 gem = 2 coin
+    this.load.image('gem_2coin_00', `${assetObsUiURL}gem_2coin_00.png`);
+    this.load.image('gem_2coin_10', `${assetObsUiURL}gem_2coin_10.png`);
+    this.load.image('gem_2coin_11', `${assetObsUiURL}gem_2coin_11.png`);
+    // 1 gem = 3 coin
+    this.load.image('gem_3coin_000', `${assetObsUiURL}gem_3coin_000.png`);
+    this.load.image('gem_3coin_100', `${assetObsUiURL}gem_3coin_100.png`);
+    this.load.image('gem_3coin_110', `${assetObsUiURL}gem_3coin_110.png`);
+    this.load.image('gem_3coin_111', `${assetObsUiURL}gem_3coin_111.png`);
+    // 1 star = 3 coin
+    this.load.image('star_3coin_000', `${assetObsUiURL}star_3coin_000.png`);
+    this.load.image('star_3coin_100', `${assetObsUiURL}star_3coin_100.png`);
+    this.load.image('star_3coin_110', `${assetObsUiURL}star_3coin_110.png`);
+    this.load.image('star_3coin_111', `${assetObsUiURL}star_3coin_111.png`);
+    // 1 star = 4 coin
+    this.load.image('star_4coin_0000', `${assetObsUiURL}star_4coin_0000.png`);
+    this.load.image('star_4coin_1000', `${assetObsUiURL}star_4coin_1000.png`);
+    this.load.image('star_4coin_1100', `${assetObsUiURL}star_4coin_1100.png`);
+    this.load.image('star_4coin_1110', `${assetObsUiURL}star_4coin_1110.png`);
+    this.load.image('star_4coin_1111', `${assetObsUiURL}star_4coin_1111.png`);
+    // 1 star = 2 gem // a special case, not always available
+    this.load.image('star_2gem_00', `${assetObsUiURL}star_2gem_00.png`);
+    this.load.image('star_2gem_10', `${assetObsUiURL}star_2gem_10.png`);
+    this.load.image('star_2gem_11', `${assetObsUiURL}star_2gem_11.png`);
+    // arrows to toggle between conversion modules for the same output currency (aka only star)
+    this.load.image('arrow_left', `${assetObsUiURL}arrow_left.png`);
+    this.load.image('arrow_right', `${assetObsUiURL}arrow_right.png`);
+  }
+
+  public create(data: ObFixConfig): void {
+    console.log('create fix obs, data is:');
     console.log(data);
     this.backgroundPanel_left = null;
     this.backgroundPanel_right = null;
@@ -391,57 +191,10 @@ export class ObstacleFixMenu extends Phaser.Scene {
 
     this.dragDropAcceptSFX = null;
     this.dragDropRejectSFX = null;
-  }
 
-  public preload(): void {
-    this.load.setBaseURL(assetObsUiURL);
-    this.load.image('back_button', 'back.png');
-    this.load.image('submit_button', 'submit.png');
-    this.load.image('clear_button', 'clear.png');
-    this.load.image('bgPanelLeft', 'bgPanelLeft_2.png');
-    this.load.image('bgPanelRight', 'bgPanelRight_2.png');
-    this.load.image('buttonReject', 'buttonOff.png');
-    this.load.image('buttonAccept', 'buttonOn.png');
-    this.load.image('coinUi', 'coinUi.png');
-    this.load.image('gemUi', 'gemUi.png');
-    this.load.image('starUi', 'starUi.png');
-    this.load.image('coinUi_empty', 'coinUi_empty.png');
-    this.load.image('gemUi_empty', 'gemUi_empty.png');
-    this.load.image('starUi_empty', 'starUi_empty.png');
-    this.load.image('coinUi_accept', 'coinUi_accept.png');
-    this.load.image('gemUi_accept', 'gemUi_accept.png');
-    this.load.image('starUi_accept', 'starUi_accept.png');
-    this.load.image('coinUi_zero', 'coinUi_zero.png');
-    this.load.image('gemUi_zero', 'gemUi_zero.png');
-    this.load.image('starUi_zero', 'starUi_zero.png');
-    // converter module assets
-    // 1 gem = 2 coin
-    this.load.image('gem_2coin_00', 'gem_2coin_00.png');
-    this.load.image('gem_2coin_10', 'gem_2coin_10.png');
-    this.load.image('gem_2coin_11', 'gem_2coin_11.png');
-    // 1 gem = 3 coin
-    this.load.image('gem_3coin_000', 'gem_3coin_000.png');
-    this.load.image('gem_3coin_100', 'gem_3coin_100.png');
-    this.load.image('gem_3coin_110', 'gem_3coin_110.png');
-    this.load.image('gem_3coin_111', 'gem_3coin_111.png');
-    // 1 star = 3 coin
-    this.load.image('star_3coin_000', 'star_3coin_000.png');
-    this.load.image('star_3coin_100', 'star_3coin_100.png');
-    this.load.image('star_3coin_110', 'star_3coin_110.png');
-    this.load.image('star_3coin_111', 'star_3coin_111.png');
-    // 1 star = 4 coin
-    this.load.image('star_4coin_0000', 'star_4coin_0000.png');
-    this.load.image('star_4coin_1000', 'star_4coin_1000.png');
-    this.load.image('star_4coin_1100', 'star_4coin_1100.png');
-    this.load.image('star_4coin_1110', 'star_4coin_1110.png');
-    this.load.image('star_4coin_1111', 'star_4coin_1111.png');
-    // 1 star = 2 gem // a special case, not always available
-    this.load.image('star_2gem_00', 'star_2gem_00.png');
-    this.load.image('star_2gem_10', 'star_2gem_10.png');
-    this.load.image('star_2gem_11', 'star_2gem_11.png');
-    // arrows to toggle between conversion modules for the same output currency (aka only star)
-    this.load.image('arrow_left', 'arrow_left.png');
-    this.load.image('arrow_right', 'arrow_right.png');
+    this.events.on('destroy', this.onDestroy, this); // docs on event names valid with this pattern: https://newdocs.phaser.io/docs/3.55.2/Phaser.Scenes.Events
+    eventsCenter.on(eventNames.playDragDropSfx, this.playDragDropSfx, this);
+
     // audio sounds for when they drop something on a target
     this.dragDropAcceptSFX = this.sound.add(musicKeyNames.dropAccept, {
       mute: false,
@@ -451,9 +204,7 @@ export class ObstacleFixMenu extends Phaser.Scene {
       mute: false,
       loop: false,
     });
-  }
 
-  public create(): void {
     const closeMenuKeyCode: number = Phaser.Input.Keyboard.KeyCodes.E;
     this.pauseKey = this.input.keyboard.addKey(closeMenuKeyCode);
     this.cameras.main.setBackgroundColor('rgba(0,0,0,0.67)'); // set background to be dark but transparent
@@ -950,15 +701,27 @@ export class ObstacleFixMenu extends Phaser.Scene {
     }
   }
 
-  public playDragDropAcceptSFX(): void {
+  private playDragDropAcceptSFX(): void {
     if (isSfxAllowed(this.scene)) {
       this.dragDropAcceptSFX.play();
     }
   }
 
-  public playDragDropRejectSFX(): void {
+  private playDragDropRejectSFX(): void {
     if (isSfxAllowed(this.scene)) {
       this.dragDropRejectSFX.play();
     }
+  }
+
+  private playDragDropSfx(data: SfxEventConfig): void {
+    if (data.success) {
+      this.playDragDropAcceptSFX();
+    } else {
+      this.playDragDropRejectSFX();
+    }
+  }
+
+  private onDestroy(): void {
+    eventsCenter.off(eventNames.playDragDropSfx);
   }
 }

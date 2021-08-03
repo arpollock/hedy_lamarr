@@ -20,9 +20,9 @@ import {
   get_rand_conversion_values,
   map_num_to_key
 } from './../Utilities';
-import { HomeScene } from './MainGame';
-import { HudMenu } from './HudMenu';
-import { TabletMenu } from './TabletMenu';
+// import { HomeScene } from './MainGame';
+// import { HudMenu } from './HudMenu';
+// import { TabletMenu } from './TabletMenu';
 
 class DifficultyLevelButton extends Phaser.GameObjects.Sprite {
   private difficulty: number;
@@ -139,6 +139,8 @@ export class StartScene extends Phaser.Scene {
     this.load.atlasXML('creature', 'spritesheet_creatures.png', 'spritesheet_creatures.xml');
     // background image
     this.load.image('background', 'clouds.png');
+    // pause menu stuff
+    this.load.image('resume_game_button', `${assetGameControlUiUrl}resume.png`);
   }
 
   public create(): void {
@@ -148,9 +150,9 @@ export class StartScene extends Phaser.Scene {
     }
     this.scene.bringToTop(sceneNames.musicControl);
     // add the main game into the scene manager
-    if (this.scene.getIndex(sceneNames.mainGame) === -1) {
-      this.scene.add(sceneNames.mainGame, HomeScene, false);
-    }
+    // if (this.scene.getIndex(sceneNames.mainGame) === -1) {
+    //   this.scene.add(sceneNames.mainGame, HomeScene, false);
+    // }
     
 
     this.cameras.main.setBackgroundColor(altBackgroundColor);
@@ -283,8 +285,8 @@ export class StartScene extends Phaser.Scene {
     };
     this.startGameButton.destroy();
     this.startGameButton = null;
-    this.scene.add(sceneNames.hudMenu, HudMenu, false);
-    this.scene.add(sceneNames.tabletMenu, TabletMenu, false);
+    // this.scene.add(sceneNames.hudMenu, HudMenu, false);
+    // this.scene.add(sceneNames.tabletMenu, TabletMenu, false);
     this.hideMasterMusicControlAndStartScene(sceneNames.mainGame, mainGameData);
     // the next lines achieve the == of 'this.scene.start(sceneNames.mainGame, mainGameData);'
     // BUT keeps master music control running properly in the bg

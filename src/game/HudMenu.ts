@@ -65,10 +65,12 @@ export class HudMenu extends Phaser.Scene {
   }
 
   public create(): void {
+    // this.events.on('sleep', this.onSleep, this);
+    this.events.on('destroy', this.onDestroy, this);
+    this.events.on('shutdown', this.onShutdown, this);
+    // this.events.on('wake', this.onWake, this);
     eventsCenter.on(eventNames.updateScoreText, this.updateScoreText, this);
     this.openTabletMenu(); // start with the tablet menu open to show conversion values
-    this.events.on('sleep', this.onSleep, this);
-    this.events.on('destroy', this.onDestroy, this);
     const hudPanelX: number = 10;
     const offsetY: number = 60;
     const hudPanelY: number = height - offsetY;
@@ -153,6 +155,8 @@ export class HudMenu extends Phaser.Scene {
   }
 
   private updateScoreText(scoreUpdate: ScoreUpdate): void {
+    console.log('Updating score text with:');
+    console.log(scoreUpdate);
     if (this.coinsText) {
       this.coinsText.setText(`: ${scoreUpdate.coins}`);
     } 
@@ -213,8 +217,17 @@ export class HudMenu extends Phaser.Scene {
     eventsCenter.emit(eventNames.pauseGame);
   }
 
-  private onSleep(): void {
-    this.closeTabletMenu();
+  // private onWake(): void {
+  //   eventsCenter.on(eventNames.updateScoreText, this.updateScoreText, this);
+  // }
+
+  // private onSleep(): void {
+  //   eventsCenter.off(eventNames.updateScoreText);
+  //   this.closeTabletMenu();
+  // }
+
+  private onShutdown(): void {
+    eventsCenter.off(eventNames.updateScoreText);
   }
 
   private onDestroy(): void {

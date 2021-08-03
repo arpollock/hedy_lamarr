@@ -1,20 +1,21 @@
 import 'phaser';
 import { StartScene } from './game/StartScene';
-// import { HomeScene } from './game/mainGame';
+import { HomeScene } from './game/mainGame';
 import { PauseScene } from './game/PauseScene';
-// import { HudMenu } from './game/HudMenu';
-// import { TabletMenu } from './game/TabletMenu';
+import { HudMenu } from './game/HudMenu';
+import { TabletMenu } from './game/TabletMenu';
 import { LevelWin } from './game/LevelWin';
 import { gravity, width, height } from './Constants'
 import { MusicControlScene } from './game/MasterMusicControl';
 import { TutorialScene } from './game/TutorialScene';
+import { ObstacleFixMenu } from './game/ObstacleFixMenu';
 
 const gameConfig: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   width: width,
   height: height,
   parent: 'game-container',
-  scene: [StartScene, MusicControlScene, TutorialScene, PauseScene, LevelWin],
+  scene: [StartScene, MusicControlScene, TutorialScene, PauseScene, HomeScene, HudMenu, TabletMenu, ObstacleFixMenu, LevelWin],
   physics: {
       default: 'arcade',
       arcade: {

@@ -34,7 +34,7 @@ import {
   numObstacleColors
 } from '../Constants';
 import { isSfxAllowed, map_num_to_key } from './../Utilities';
-import { ObstacleFixMenu } from './ObstacleFixMenu';
+// import { ObstacleFixMenu } from './ObstacleFixMenu';
 
 // low-priority-level todo: checkout https://phaser.io/examples/v3/view/audio/web-audio/audiosprite for buttons, etc.
 
@@ -80,7 +80,6 @@ export class HomeScene extends Phaser.Scene {
   private printDebugKey: Phaser.Input.Keyboard.Key;
 
   private isInObstacleMenu: boolean;
-  private viewingWorld: boolean;
 
   private conversionValues: ConversionConfig;
 
@@ -146,7 +145,6 @@ export class HomeScene extends Phaser.Scene {
       walkFrameRate: 15,
     };
     this.isInObstacleMenu = false;
-    this.viewingWorld = false;
 
     this.currencyCollectSFX = null;
     this.obstacleUnlockSFX = null;
@@ -155,7 +153,10 @@ export class HomeScene extends Phaser.Scene {
     this.totNumObstacles = 0;
     this.solvedNumObstacles = 0;
     this.numConvertersUsed = 0;
-    this.events.on('destroy', this.onDestroy, this); // docs on event names valid with this pattern: https://newdocs.phaser.io/docs/3.55.2/Phaser.Scenes.Events
+    // this.events.on('sleep', this.onSleep, this);
+    // this.events.on('wake', this.onWake, this);
+    this.events.on('destroy', this.onDestroy, this);
+    this.events.on('shutdown', this.onShutdown, this); // docs on event names valid with this pattern: https://newdocs.phaser.io/docs/3.55.2/Phaser.Scenes.Events
     eventsCenter.on(eventNames.closeObFixMenu, this.closeObFixMenu, this);
     eventsCenter.on(eventNames.pauseGame, this.pauseGame, this);
     eventsCenter.on(eventNames.cameraFollowPlayer, this.cameraFollowPlayer, this);
@@ -491,18 +492,22 @@ export class HomeScene extends Phaser.Scene {
 
     // handle collisions with the broken obstacle button overlays
     this.overlayObjs.forEach(overlayObj => {
+      
       const obstacleOverlapTriggerFixMenu = () => {
         const obstacleNum: number = overlayObj.obstacleNum;
+        console.log('in obstacleOverlapTriggerFixMenu');
         if (obstacleNum >= 0) {
-          for(let i: number = 0; i < this.buttonObjs.length; i += 1 ) {            if (this.buttonObjs[i].obstacleNum == obstacleNum) {
+          for(let i: number = 0; i < this.buttonObjs.length; i += 1 ) {
+            if (this.buttonObjs[i].obstacleNum == obstacleNum) {
               // trigger the obstacle fix scene
               this.player.isOnObsOverlap = true;
               this.isInObstacleMenu = true;
               this.player.setVelocity(0); // pause the player
-              if(this.playerOnFloor()) { // stop any animations
+              // if(this.playerOnFloor()) { // stop any animations
                 this.player.anims.play('idle', true);
-              }
-              this.scene.sleep(sceneNames.hudMenu);
+              // }
+              this.scene.setVisible(false, sceneNames.hudMenu);
+              this.scene.setVisible(false, sceneNames.tabletMenu);
               // todo, fixypoo
               const obFixData: ObFixConfig = {
                 numCoins: this.numCoins,
@@ -516,7 +521,9 @@ export class HomeScene extends Phaser.Scene {
                 containsStars: this.containsStars
               };
               i = this.buttonObjs.length;
-              this.scene.add(sceneNames.obFixMenu, ObstacleFixMenu, true, obFixData);
+              // this.scene.add(sceneNames.obFixMenu, ObstacleFixMenu, true, obFixData);
+              console.log('Starting ob fix menu...');
+              this.scene.launch(sceneNames.obFixMenu, obFixData);
               this.scene.bringToTop(sceneNames.obFixMenu);
             }
           } // end for loop
@@ -661,7 +668,7 @@ export class HomeScene extends Phaser.Scene {
   }
 
   public update(time: number): void {
-    if ( (!this.isInObstacleMenu) && (!this.viewingWorld) ) {
+    if ( !this.isInObstacleMenu ) {
       this.renderPlayer();
     }
     // detect if the player wants to pause the game
@@ -762,7 +769,7 @@ export class HomeScene extends Phaser.Scene {
       num_obstacles_unlocked: this.solvedNumObstacles,
       tot_num_obstacles: this.totNumObstacles,
     };
-    this.scene.start(sceneNames.win, levelWinData);
+    this.scene.launch(sceneNames.win, levelWinData);
   }
 
   private triggerSwitchOverlapEgibility(): void {
@@ -781,10 +788,12 @@ export class HomeScene extends Phaser.Scene {
     const retriggerWindowTimer = new Phaser.Time.TimerEvent( {delay: 5000, callback: this.triggerEnableObFixMenu, callbackScope: this} );
     this.time.addEvent(retriggerWindowTimer);
     this.scene.stop(sceneNames.obFixMenu);
-    this.scene.remove(sceneNames.obFixMenu);
+    // this.scene.remove(sceneNames.obFixMenu);
     this.player.setVelocity(0);
 
     if (params.success) {
+      console.log('Obstacle submit success:');
+      console.log(params);
       params.buttonObj.isEnabled = true;
       this.numCoins -= params.num_coins_consumed;
       this.numGems -= params.num_gems_consumed;
@@ -810,7 +819,8 @@ export class HomeScene extends Phaser.Scene {
       gems: this.numGems,
       stars: this.numStars
     }
-    this.scene.run(sceneNames.hudMenu, hudConfig);
+    this.scene.setVisible(true, sceneNames.hudMenu);
+    this.scene.setVisible(true, sceneNames.tabletMenu);
     this.scene.bringToTop(sceneNames.hudMenu);
   }
 
@@ -998,4 +1008,22 @@ export class HomeScene extends Phaser.Scene {
     eventsCenter.off(eventNames.pauseGame);
     eventsCenter.off(eventNames.cameraFollowPlayer);
   }
+
+  private onShutdown(): void {
+    eventsCenter.off(eventNames.closeObFixMenu);
+    eventsCenter.off(eventNames.pauseGame);
+    eventsCenter.off(eventNames.cameraFollowPlayer);
+  }
+
+  // private onSleep(): void {
+  //   eventsCenter.off(eventNames.closeObFixMenu);
+  //   eventsCenter.off(eventNames.pauseGame);
+  //   eventsCenter.off(eventNames.cameraFollowPlayer);
+  // }
+
+  // private onWake(): void {
+  //   eventsCenter.on(eventNames.closeObFixMenu, this.closeObFixMenu, this);
+  //   eventsCenter.on(eventNames.pauseGame, this.pauseGame, this);
+  //   eventsCenter.on(eventNames.cameraFollowPlayer, this.cameraFollowPlayer, this);
+  // }
 };

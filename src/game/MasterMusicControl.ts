@@ -39,12 +39,6 @@ export class MusicControlScene extends Phaser.Scene {
     this.load.image('sfx_turn_off', 'sfx_turnOff.png');
     this.load.image('sfx_turn_on', 'sfx_turnOn.png');
     // load audio assets
-    const introTemp: Phaser.Types.Loader.FileTypes.AudioFileConfig = {
-      key: musicKeyNames.intro,
-      url: [ 'audio/foggy-forest.ogg', 'audio/foggy-forest.wav' ],
-    };
-    this.load.audio(introTemp);
-    // load audio assets
     const audioCollectTemp: Phaser.Types.Loader.FileTypes.AudioFileConfig = {
       key: musicKeyNames.collectSFX,
       url: [ 'audio/shine_collect.ogg' ],
@@ -69,7 +63,12 @@ export class MusicControlScene extends Phaser.Scene {
       key: musicKeyNames.dropReject,
       url: [ 'audio/reject.ogg' ],
     });
-    // this.load.audio( musicKeyNames.intro, [ 'audio/foggy-forest.ogg', 'audio/foggy-forest.wav' ] );
+    // load audio assets
+    const introTemp: Phaser.Types.Loader.FileTypes.AudioFileConfig = {
+      key: musicKeyNames.intro,
+      url: [ 'audio/foggy-forest.ogg', 'audio/foggy-forest.wav' ],
+    };
+    this.load.audio(introTemp);
   }
 
   public create(): void {
