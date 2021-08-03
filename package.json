@@ -7,18 +7,19 @@
   "private": true,
   "main": "./src/main.ts",
   "scripts": {
-    "build": "webpack",
-    "start": "webpack --watch & live-server --port=5050"
+    "build": "webpack --config webpack.dev.js",
+    "start": "webpack --config webpack.dev.js --watch & live-server --port=5050"
   },
   "devDependencies": {
     "css-loader": "^5.2.5",
     "live-server": "^1.2.1",
-    "phaser": "^3.23.0",
     "style-loader": "^2.0.0",
     "ts-loader": "^8.0.0",
     "typescript": "^3.9.6",
     "webpack": "^5.37.1",
     "webpack-cli": "^3.3.12"
   },
-  "dependencies": {}
+  "dependencies": {
+    "phaser": "^3.55.2"
+  }
 }

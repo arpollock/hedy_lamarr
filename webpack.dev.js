@@ -11,16 +11,7 @@ module.exports = {
         test: /\.tsx?$/,
         use: 'ts-loader',
         exclude: /node_modules/,
-      }//,
-      // {
-      //   test: /\.css$/i,
-      //   use: ['style-loader', 'css-loader'],
-      // },
-      // {
-      //   test: /\.(png|svg|jpg|jpeg|gif)$/i,
-      //   use: 'html-loader',
-      //   type: 'asset/resource',
-      // }
+      }
     ]
   },
   resolve: {
