@@ -11,7 +11,6 @@ import {
   screenEdgePadding,
   zoomFactors,
   eventNames,
-  // eventNames
 } from './../Constants';
 import eventsCenter from './EventsCenter';
 export class TabletMenu extends Phaser.Scene {
@@ -148,8 +147,8 @@ export class TabletMenu extends Phaser.Scene {
  }
 
   public setConversionText(): void {
-    console.log('Setting that conversion text!');
-    console.log(this.conversionValues);
+    // console.log('Setting that conversion text!');
+    // console.log(this.conversionValues);
     const spriteSpaces: string = "       "; // 6 spaces
     const cToS: string = this.containsStars ? `${this.conversionValues.valStars.toString()}${spriteSpaces}= ` : '';
     const sToC: string = this.containsStars? '1' : '';

@@ -7,7 +7,6 @@ import {
   height,
   textConfig,
   assetBaseURL,
-  assetGameControlUiUrl
 } from './../Constants';
 
 export class PauseScene extends Phaser.Scene {
@@ -41,7 +40,6 @@ export class PauseScene extends Phaser.Scene {
     this.textString = 'Game Paused';
     const textX = width / 2; 
     const textY = height / 3;
-    console.log(`w: ${width} h: ${height} x: ${textX} y: ${textY}`);
     this.text = this.add.text(textX, textY, this.textString, {
       fontSize: textConfig.secondaryTitleFontSize,
       color: textConfig.mainFillColor,
@@ -95,12 +93,12 @@ export class PauseScene extends Phaser.Scene {
 
   public goToMainMenu(): void {
     // clean up the old level
-    // this.scene.remove(sceneNames.mainGame);
-    // this.scene.remove(sceneNames.hudMenu);
-    // this.scene.remove(sceneNames.tabletMenu);
     this.scene.stop(sceneNames.mainGame);
     this.scene.stop(sceneNames.hudMenu);
     this.scene.stop(sceneNames.tabletMenu);
+    if (this.scene.isActive(sceneNames.obFixMenu)) {
+      this.scene.stop(sceneNames.obFixMenu);
+    }
     // go back to the main menu
     this.scene.switch(sceneNames.start);
   }

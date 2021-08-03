@@ -34,9 +34,6 @@ import {
   numObstacleColors
 } from '../Constants';
 import { isSfxAllowed, map_num_to_key } from './../Utilities';
-// import { ObstacleFixMenu } from './ObstacleFixMenu';
-
-// low-priority-level todo: checkout https://phaser.io/examples/v3/view/audio/web-audio/audiosprite for buttons, etc.
 
 class PlayerSprite extends Phaser.Physics.Arcade.Sprite {
   public isOnPlatform: boolean;
@@ -153,8 +150,7 @@ export class HomeScene extends Phaser.Scene {
     this.totNumObstacles = 0;
     this.solvedNumObstacles = 0;
     this.numConvertersUsed = 0;
-    // this.events.on('sleep', this.onSleep, this);
-    // this.events.on('wake', this.onWake, this);
+    
     this.events.on('destroy', this.onDestroy, this);
     this.events.on('shutdown', this.onShutdown, this); // docs on event names valid with this pattern: https://newdocs.phaser.io/docs/3.55.2/Phaser.Scenes.Events
     eventsCenter.on(eventNames.closeObFixMenu, this.closeObFixMenu, this);
@@ -168,7 +164,6 @@ export class HomeScene extends Phaser.Scene {
     };
     this.scene.launch(sceneNames.hudMenu, hudConfig);
     this.scene.launch(sceneNames.tabletMenu, this.conversionValues);
-    // this.scene.sleep(sceneNames.tabletMenu);
     this.scene.bringToTop(sceneNames.hudMenu);
 
     // load the map 
@@ -495,7 +490,7 @@ export class HomeScene extends Phaser.Scene {
       
       const obstacleOverlapTriggerFixMenu = () => {
         const obstacleNum: number = overlayObj.obstacleNum;
-        console.log('in obstacleOverlapTriggerFixMenu');
+        // console.log('in obstacleOverlapTriggerFixMenu');
         if (obstacleNum >= 0) {
           for(let i: number = 0; i < this.buttonObjs.length; i += 1 ) {
             if (this.buttonObjs[i].obstacleNum == obstacleNum) {
@@ -508,7 +503,7 @@ export class HomeScene extends Phaser.Scene {
               // }
               this.scene.setVisible(false, sceneNames.hudMenu);
               this.scene.setVisible(false, sceneNames.tabletMenu);
-              // todo, fixypoo
+
               const obFixData: ObFixConfig = {
                 numCoins: this.numCoins,
                 numGems: this.numGems,
@@ -521,42 +516,11 @@ export class HomeScene extends Phaser.Scene {
                 containsStars: this.containsStars
               };
               i = this.buttonObjs.length;
-              // this.scene.add(sceneNames.obFixMenu, ObstacleFixMenu, true, obFixData);
-              console.log('Starting ob fix menu...');
+              // console.log('Starting ob fix menu...');
               this.scene.launch(sceneNames.obFixMenu, obFixData);
               this.scene.bringToTop(sceneNames.obFixMenu);
             }
           } // end for loop
-
-          // this.buttonObjs.forEach( (bObj) => {
-          //   if (bObj.obstacleNum == obstacleNum) {
-          //     // trigger the obstacle fix scene
-          //     this.player.isOnObsOverlap = true;
-          //     this.isInObstacleMenu = true;
-          //     this.player.setVelocity(0); // pause the player
-          //     if(this.playerOnFloor()) { // stop any animations
-          //       this.player.anims.play('idle', true);
-          //     }
-          //     this.scene.sleep(sceneNames.hudMenu);
-          //     // todo, fixypoo
-          //     const obFixData: ObFixConfig = {
-          //       numCoins: this.numCoins,
-          //       numGems: this.numGems,
-          //       numStars: this.numStars,
-          //       // todo get this from the map and load it into the button
-          //       // or probs generate it randomly once and keep it true for the whole scene? - so can channge difficulty indept of level
-          //       // todo also need to figure out how to lay out mult currnecies when they are convertable
-          //       goalCoins: overlayObj.getCoinsNeeded(), // 3
-          //       goalGems: overlayObj.getGemsNeeded(), // 1,
-          //       goalStars: overlayObj.getStarsNeeded(), // 2,
-          //       buttonObj: bObj,
-          //       conversions: this.conversionValues,
-          //       containsStars: this.containsStars
-          //     };
-          //     this.scene.add(sceneNames.obFixMenu, ObstacleFixMenu, true, obFixData);
-          //     this.scene.bringToTop(sceneNames.obFixMenu);
-          //   }
-          // });
         } else {
           console.log('ERROR: tried to create an overlay object --> button w/ obstacleNum -1. Destroying.');
           overlayObj.destroy();
@@ -788,7 +752,6 @@ export class HomeScene extends Phaser.Scene {
     const retriggerWindowTimer = new Phaser.Time.TimerEvent( {delay: 5000, callback: this.triggerEnableObFixMenu, callbackScope: this} );
     this.time.addEvent(retriggerWindowTimer);
     this.scene.stop(sceneNames.obFixMenu);
-    // this.scene.remove(sceneNames.obFixMenu);
     this.player.setVelocity(0);
 
     if (params.success) {
@@ -812,12 +775,6 @@ export class HomeScene extends Phaser.Scene {
           bObj.isEnabled = true;
         }
       });
-    }
-    const hudConfig: HudMenuConfig = {
-      containsStars: this.containsStars,
-      coins: this.numCoins,
-      gems: this.numGems,
-      stars: this.numStars
     }
     this.scene.setVisible(true, sceneNames.hudMenu);
     this.scene.setVisible(true, sceneNames.tabletMenu);
@@ -1014,16 +971,4 @@ export class HomeScene extends Phaser.Scene {
     eventsCenter.off(eventNames.pauseGame);
     eventsCenter.off(eventNames.cameraFollowPlayer);
   }
-
-  // private onSleep(): void {
-  //   eventsCenter.off(eventNames.closeObFixMenu);
-  //   eventsCenter.off(eventNames.pauseGame);
-  //   eventsCenter.off(eventNames.cameraFollowPlayer);
-  // }
-
-  // private onWake(): void {
-  //   eventsCenter.on(eventNames.closeObFixMenu, this.closeObFixMenu, this);
-  //   eventsCenter.on(eventNames.pauseGame, this.pauseGame, this);
-  //   eventsCenter.on(eventNames.cameraFollowPlayer, this.cameraFollowPlayer, this);
-  // }
 };

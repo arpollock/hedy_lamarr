@@ -224,7 +224,8 @@ export class TutorialScene extends Phaser.Scene {
 
   public goToMainMenu(): void {
     // go back to the main menu
-    this.scene.switch(sceneNames.start);
+    this.scene.launch(sceneNames.start);
+    this.scene.stop(sceneNames.tutorial);
   }
 
   private onNextButtonHoverEnter(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData): void {

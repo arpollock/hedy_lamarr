@@ -1,6 +1,7 @@
 import 'phaser';
 import {
   assetBaseURL,
+  assetObsUiURL,
   gameName,
   altBackgroundColor,
   sceneNames,
@@ -15,14 +16,12 @@ import {
   numObstacleColors,
   screenEdgePadding
 } from './../Constants';
+
 import {
   get_rand_map_number,
   get_rand_conversion_values,
   map_num_to_key
 } from './../Utilities';
-// import { HomeScene } from './MainGame';
-// import { HudMenu } from './HudMenu';
-// import { TabletMenu } from './TabletMenu';
 
 class DifficultyLevelButton extends Phaser.GameObjects.Sprite {
   private difficulty: number;
@@ -141,6 +140,55 @@ export class StartScene extends Phaser.Scene {
     this.load.image('background', 'clouds.png');
     // pause menu stuff
     this.load.image('resume_game_button', `${assetGameControlUiUrl}resume.png`);
+
+    // obstacle fix menu stuff
+    this.load.image('back_button', `${assetObsUiURL}back.png`);
+    this.load.image('submit_button', `${assetObsUiURL}submit.png`);
+    this.load.image('clear_button', `${assetObsUiURL}clear.png`);
+    this.load.image('bgPanelLeft', `${assetObsUiURL}bgPanelLeft_2.png`);
+    this.load.image('bgPanelRight', `${assetObsUiURL}bgPanelRight_2.png`);
+    this.load.image('buttonReject', `${assetObsUiURL}buttonOff.png`);
+    this.load.image('buttonAccept', `${assetObsUiURL}buttonOn.png`);
+    this.load.image('coinUi', `${assetObsUiURL}coinUi.png`);
+    this.load.image('gemUi', `${assetObsUiURL}gemUi.png`);
+    this.load.image('starUi', `${assetObsUiURL}starUi.png`);
+    this.load.image('coinUi_empty', `${assetObsUiURL}coinUi_empty.png`);
+    this.load.image('gemUi_empty', `${assetObsUiURL}gemUi_empty.png`);
+    this.load.image('starUi_empty', `${assetObsUiURL}starUi_empty.png`);
+    this.load.image('coinUi_accept', `${assetObsUiURL}coinUi_accept.png`);
+    this.load.image('gemUi_accept', `${assetObsUiURL}gemUi_accept.png`);
+    this.load.image('starUi_accept', `${assetObsUiURL}starUi_accept.png`);
+    this.load.image('coinUi_zero', `${assetObsUiURL}coinUi_zero.png`);
+    this.load.image('gemUi_zero', `${assetObsUiURL}gemUi_zero.png`);
+    this.load.image('starUi_zero', `${assetObsUiURL}starUi_zero.png`);
+    // converter module assets
+    // 1 gem = 2 coin
+    this.load.image('gem_2coin_00', `${assetObsUiURL}gem_2coin_00.png`);
+    this.load.image('gem_2coin_10', `${assetObsUiURL}gem_2coin_10.png`);
+    this.load.image('gem_2coin_11', `${assetObsUiURL}gem_2coin_11.png`);
+    // 1 gem = 3 coin
+    this.load.image('gem_3coin_000', `${assetObsUiURL}gem_3coin_000.png`);
+    this.load.image('gem_3coin_100', `${assetObsUiURL}gem_3coin_100.png`);
+    this.load.image('gem_3coin_110', `${assetObsUiURL}gem_3coin_110.png`);
+    this.load.image('gem_3coin_111', `${assetObsUiURL}gem_3coin_111.png`);
+    // 1 star = 3 coin
+    this.load.image('star_3coin_000', `${assetObsUiURL}star_3coin_000.png`);
+    this.load.image('star_3coin_100', `${assetObsUiURL}star_3coin_100.png`);
+    this.load.image('star_3coin_110', `${assetObsUiURL}star_3coin_110.png`);
+    this.load.image('star_3coin_111', `${assetObsUiURL}star_3coin_111.png`);
+    // 1 star = 4 coin
+    this.load.image('star_4coin_0000', `${assetObsUiURL}star_4coin_0000.png`);
+    this.load.image('star_4coin_1000', `${assetObsUiURL}star_4coin_1000.png`);
+    this.load.image('star_4coin_1100', `${assetObsUiURL}star_4coin_1100.png`);
+    this.load.image('star_4coin_1110', `${assetObsUiURL}star_4coin_1110.png`);
+    this.load.image('star_4coin_1111', `${assetObsUiURL}star_4coin_1111.png`);
+    // 1 star = 2 gem // a special case, not always available
+    this.load.image('star_2gem_00', `${assetObsUiURL}star_2gem_00.png`);
+    this.load.image('star_2gem_10', `${assetObsUiURL}star_2gem_10.png`);
+    this.load.image('star_2gem_11', `${assetObsUiURL}star_2gem_11.png`);
+    // arrows to toggle between conversion modules for the same output currency (aka only star)
+    this.load.image('arrow_left', `${assetObsUiURL}arrow_left.png`);
+    this.load.image('arrow_right', `${assetObsUiURL}arrow_right.png`);
   }
 
   public create(): void {
@@ -149,11 +197,6 @@ export class StartScene extends Phaser.Scene {
       this.scene.launch(sceneNames.musicControl);
     }
     this.scene.bringToTop(sceneNames.musicControl);
-    // add the main game into the scene manager
-    // if (this.scene.getIndex(sceneNames.mainGame) === -1) {
-    //   this.scene.add(sceneNames.mainGame, HomeScene, false);
-    // }
-    
 
     this.cameras.main.setBackgroundColor(altBackgroundColor);
     // text to show the game title
@@ -205,23 +248,16 @@ export class StartScene extends Phaser.Scene {
         this.activeGradeLevel = currGrade;
         this.difficultyLevelButtons.forEach( (btn: DifficultyLevelButton) => {
           if (btn) {
-            console.log('btn is not null:');
-            console.log('btn:');
-            console.log(btn);
-            
             if (this.activeGradeLevel == btn.get_difficulty()) {
-              console.log(`is active grade level: ${this.activeGradeLevel}`);
+              // console.log(`is active grade level: ${this.activeGradeLevel}`);
               btn.setTexture(`difficulty${this.activeGradeLevel}_active`);
-              console.log('Set active texture ok!');
+              // console.log('Set active texture ok!');
             } else {
-              console.log(`is not active grade level (${this.activeGradeLevel}): ${btn.get_difficulty()}`);
+              // console.log(`is not active grade level (${this.activeGradeLevel}): ${btn.get_difficulty()}`);
               btn.setTexture(`difficulty${btn.get_difficulty()}`);
-              console.log('Set non-active texture ok!');
+              // console.log('Set non-active texture ok!');
             }
-          } else {
-            console.log('btn is null!!');
           }
-          console.log('======================================');
         });
       }, this);
       this.difficultyLevelButtons.push(tempButtonSpr);
@@ -275,7 +311,7 @@ export class StartScene extends Phaser.Scene {
     this.startGameButton.removeListener('pointerdown', this.startGame, this);
     this.cleanupDifficultyButtons();
     // generate the seed data for the level 
-    // todo, set these randomly according to difficulty config
+    // set these randomly according to difficulty config
     // todo, create double converters, converters that accept converters, and/or n star : m gem converters
     const currencyValues: ConversionConfig = get_rand_conversion_values(this.activeGradeLevel);
     const mainGameData: MainGameConfig = {
@@ -285,12 +321,9 @@ export class StartScene extends Phaser.Scene {
     };
     this.startGameButton.destroy();
     this.startGameButton = null;
-    // this.scene.add(sceneNames.hudMenu, HudMenu, false);
-    // this.scene.add(sceneNames.tabletMenu, TabletMenu, false);
-    this.hideMasterMusicControlAndStartScene(sceneNames.mainGame, mainGameData);
     // the next lines achieve the == of 'this.scene.start(sceneNames.mainGame, mainGameData);'
     // BUT keeps master music control running properly in the bg
-    
+    this.hideMasterMusicControlAndStartScene(sceneNames.mainGame, mainGameData);
   }
 
   private cleanupDifficultyButtons(): void {
@@ -312,7 +345,4 @@ export class StartScene extends Phaser.Scene {
     this.scene.launch(key, sceneData);
     this.scene.stop(sceneNames.start);
   }
-
-  // private onDestroy(): void {
-  // }
 };

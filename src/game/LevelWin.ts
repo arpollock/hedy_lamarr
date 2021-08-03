@@ -1,4 +1,5 @@
 import 'phaser';
+
 import {
   assetBaseURL,
   assetWinLevelUiURL,
@@ -16,9 +17,8 @@ import {
   screenEdgePadding,
   ConversionConfig
 } from './../Constants';
-// import { HudMenu } from './HudMenu';
-// import { TabletMenu } from './TabletMenu';
-// import { HomeScene } from './MainGame';
+
+
 import {
   get_rand_map_number,
   get_rand_conversion_values
@@ -94,10 +94,6 @@ export class LevelWin extends Phaser.Scene {
       this.scoreCategory = ImprovementCategories.more_currency;
     }
     
-    // this.scene.remove(sceneNames.mainGame);
-    // this.scene.remove(sceneNames.hudMenu);
-    // this.scene.remove(sceneNames.tabletMenu);
-    console.log('from win screen')
     this.cameras.main.setBackgroundColor(backgroundColor);
     // text to show pause menu text.
     this.textString = 'Rescue Complete. Mission Success.\nWoohoo!';
@@ -220,9 +216,6 @@ export class LevelWin extends Phaser.Scene {
 
   // todo, currently startNewLevel and tryLevelAgain are not different
   private playNewLevel(): void {
-    // this.scene.add(sceneNames.hudMenu, HudMenu, false);
-    // this.scene.add(sceneNames.tabletMenu, TabletMenu, false);
-    // this.scene.add(sceneNames.mainGame, HomeScene, false);
     const map_number: number = this.getNewMapNumber();
     const conversion_values: ConversionConfig = this.getNewConversionValues();
     const newLevelSeedData: MainGameConfig = {
@@ -239,9 +232,6 @@ export class LevelWin extends Phaser.Scene {
   private onPlaySameLevelButtonHoverExit(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData): void { }
 
   private playSameLevel(): void {
-    // this.scene.add(sceneNames.hudMenu, HudMenu, false);
-    // this.scene.add(sceneNames.tabletMenu, TabletMenu, false);
-    // this.scene.add(sceneNames.mainGame, HomeScene, false);
     this.scene.launch(sceneNames.mainGame, this.previousLevelSeedData);
     this.scene.stop(sceneNames.win);
   }

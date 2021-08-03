@@ -3,7 +3,6 @@ import eventsCenter from './EventsCenter';
 import ObstacleButton from './platformer_parts/ObstacleButton';
 import {
   sceneNames,
-  assetObsUiURL,
   width,
   height,
   textConfig,
@@ -92,58 +91,11 @@ export class ObstacleFixMenu extends Phaser.Scene {
   }
 
   public init(data: ObFixConfig): void {
-    console.log('init fix obs');
+    // console.log('init fix obs');
   }
 
   public preload(): void {
     this.load.setBaseURL(assetBaseURL);
-    this.load.image('back_button', `${assetObsUiURL}back.png`);
-    this.load.image('submit_button', `${assetObsUiURL}submit.png`);
-    this.load.image('clear_button', `${assetObsUiURL}clear.png`);
-    this.load.image('bgPanelLeft', `${assetObsUiURL}bgPanelLeft_2.png`);
-    this.load.image('bgPanelRight', `${assetObsUiURL}bgPanelRight_2.png`);
-    this.load.image('buttonReject', `${assetObsUiURL}buttonOff.png`);
-    this.load.image('buttonAccept', `${assetObsUiURL}buttonOn.png`);
-    this.load.image('coinUi', `${assetObsUiURL}coinUi.png`);
-    this.load.image('gemUi', `${assetObsUiURL}gemUi.png`);
-    this.load.image('starUi', `${assetObsUiURL}starUi.png`);
-    this.load.image('coinUi_empty', `${assetObsUiURL}coinUi_empty.png`);
-    this.load.image('gemUi_empty', `${assetObsUiURL}gemUi_empty.png`);
-    this.load.image('starUi_empty', `${assetObsUiURL}starUi_empty.png`);
-    this.load.image('coinUi_accept', `${assetObsUiURL}coinUi_accept.png`);
-    this.load.image('gemUi_accept', `${assetObsUiURL}gemUi_accept.png`);
-    this.load.image('starUi_accept', `${assetObsUiURL}starUi_accept.png`);
-    this.load.image('coinUi_zero', `${assetObsUiURL}coinUi_zero.png`);
-    this.load.image('gemUi_zero', `${assetObsUiURL}gemUi_zero.png`);
-    this.load.image('starUi_zero', `${assetObsUiURL}starUi_zero.png`);
-    // converter module assets
-    // 1 gem = 2 coin
-    this.load.image('gem_2coin_00', `${assetObsUiURL}gem_2coin_00.png`);
-    this.load.image('gem_2coin_10', `${assetObsUiURL}gem_2coin_10.png`);
-    this.load.image('gem_2coin_11', `${assetObsUiURL}gem_2coin_11.png`);
-    // 1 gem = 3 coin
-    this.load.image('gem_3coin_000', `${assetObsUiURL}gem_3coin_000.png`);
-    this.load.image('gem_3coin_100', `${assetObsUiURL}gem_3coin_100.png`);
-    this.load.image('gem_3coin_110', `${assetObsUiURL}gem_3coin_110.png`);
-    this.load.image('gem_3coin_111', `${assetObsUiURL}gem_3coin_111.png`);
-    // 1 star = 3 coin
-    this.load.image('star_3coin_000', `${assetObsUiURL}star_3coin_000.png`);
-    this.load.image('star_3coin_100', `${assetObsUiURL}star_3coin_100.png`);
-    this.load.image('star_3coin_110', `${assetObsUiURL}star_3coin_110.png`);
-    this.load.image('star_3coin_111', `${assetObsUiURL}star_3coin_111.png`);
-    // 1 star = 4 coin
-    this.load.image('star_4coin_0000', `${assetObsUiURL}star_4coin_0000.png`);
-    this.load.image('star_4coin_1000', `${assetObsUiURL}star_4coin_1000.png`);
-    this.load.image('star_4coin_1100', `${assetObsUiURL}star_4coin_1100.png`);
-    this.load.image('star_4coin_1110', `${assetObsUiURL}star_4coin_1110.png`);
-    this.load.image('star_4coin_1111', `${assetObsUiURL}star_4coin_1111.png`);
-    // 1 star = 2 gem // a special case, not always available
-    this.load.image('star_2gem_00', `${assetObsUiURL}star_2gem_00.png`);
-    this.load.image('star_2gem_10', `${assetObsUiURL}star_2gem_10.png`);
-    this.load.image('star_2gem_11', `${assetObsUiURL}star_2gem_11.png`);
-    // arrows to toggle between conversion modules for the same output currency (aka only star)
-    this.load.image('arrow_left', `${assetObsUiURL}arrow_left.png`);
-    this.load.image('arrow_right', `${assetObsUiURL}arrow_right.png`);
   }
 
   public create(data: ObFixConfig): void {
@@ -245,28 +197,7 @@ export class ObstacleFixMenu extends Phaser.Scene {
     this.clear_button.on('pointerover', this.onClearButtonHoverEnter, this);
     this.clear_button.on('pointerout', this.onClearButtonHoverExit, this);
     this.clear_button.on('pointerdown', this.clearButton, this);
-    // draggable currency targets in order to accept payment
-    // calc offset horiz for each type dept on tot #
-    // for(let i = 0; i < this.num_coins_needed; i++) {
-    //   const temp_coinUiTarget_sprite = new DraggableCurrencyTarget(this, dc_target_x, coin_original_y, 'coinUi_empty', currency_type.coin);
-    //   const offset_step = temp_coinUiTarget_sprite.displayWidth + 10;
-    //   temp_coinUiTarget_sprite.setX(dc_target_x + offset_step * i);
-    //   this.draggable_currency_targets.push(temp_coinUiTarget_sprite);
-    // }
-    // for(let i = 0; i < this.num_gems_needed; i++) {
-    //   const temp_gemUiTarget_sprite = new DraggableCurrencyTarget(this, dc_target_x, gem_original_y, 'gemUi_empty', currency_type.gem);
-    //   const offset_step = temp_gemUiTarget_sprite.displayWidth + 10;
-    //   temp_gemUiTarget_sprite.setX(dc_target_x + offset_step * i);
-    //   this.draggable_currency_targets.push(temp_gemUiTarget_sprite);
-    // }
-    // if (this.containsStars) {
-    //   for(let i = 0; i < this.num_stars_needed; i++) {
-    //     const temp_starUiTarget_sprite = new DraggableCurrencyTarget(this, dc_target_x, star_original_y, 'starUi_empty', currency_type.star);
-    //     const offset_step = temp_starUiTarget_sprite.displayWidth + 10;
-    //     temp_starUiTarget_sprite.setX(dc_target_x + offset_step * i);
-    //     this.draggable_currency_targets.push(temp_starUiTarget_sprite);
-    //   }
-    // }
+
     const tot_input_items: number = this.num_coins_needed + this.num_gems_needed + this.num_stars_needed;
     if (tot_input_items > 3) {
       console.log('Warning! Too many inputs required, GUI might be messed up.');
@@ -402,8 +333,8 @@ export class ObstacleFixMenu extends Phaser.Scene {
       this.starArrowRightButton.setInteractive({
         useHandCursor: true
       });
-      this.starArrowRightButton.on('pointerover', this.onStarArrowLeftButtonHoverEnter, this);
-      this.starArrowRightButton.on('pointerout', this.onStarArrowLeftButtonHoverExit, this);
+      this.starArrowRightButton.on('pointerover', this.onStarArrowRightButtonHoverEnter, this);
+      this.starArrowRightButton.on('pointerout', this.onStarArrowRightButtonHoverExit, this);
       this.starArrowRightButton.on('pointerdown', this.clickStarArrowRight, this);
     }
   }
@@ -430,7 +361,7 @@ export class ObstacleFixMenu extends Phaser.Scene {
   }
 
   private goBackToLevel(): void {
-    console.log('Back button pushed (from Obstacle Fix menu).');
+    // console.log('Back button pushed (from Obstacle Fix menu).');
     eventsCenter.emit(eventNames.closeObFixMenu, { success: false, }); // enable the user to move the player again
   }
 
@@ -444,7 +375,7 @@ export class ObstacleFixMenu extends Phaser.Scene {
   }
 
   private completeObstacle(): void {
-    console.log('Submit button pushed (from Obstacle Fix menu).');
+    // console.log('Submit button pushed (from Obstacle Fix menu).');
     const ncs: numCurrencies = this.countCurrencySpent();
     eventsCenter.emit(eventNames.closeObFixMenu, {
       success: true,
@@ -513,7 +444,7 @@ export class ObstacleFixMenu extends Phaser.Scene {
         dct.dump();
       }
     });
-    console.log(`${coins_cleared}; ${gems_cleared}; ${stars_cleared};`)
+    // console.log(`${coins_cleared}; ${gems_cleared}; ${stars_cleared};`)
     retVal.coins = coins_cleared;
     retVal.gems = gems_cleared;
     retVal.stars = stars_cleared;
@@ -522,7 +453,7 @@ export class ObstacleFixMenu extends Phaser.Scene {
   }
 
   private clearButton(): void {
-    console.log('Clear button pushed.');
+    // console.log('Clear button pushed.');
     // there's probs a better way to do this...
     const ncs: numCurrencies = this.countCurrencySpent();
     // update the #s next to the currencies once created
@@ -624,7 +555,7 @@ export class ObstacleFixMenu extends Phaser.Scene {
       }
     }, this);
     this.getNeededCurrenciesFromTargets();
-    console.log(`After needs: ${this.num_coins_needed}; ${this.num_gems_needed}; ${this.num_stars_needed}`);
+    // console.log(`After needs: ${this.num_coins_needed}; ${this.num_gems_needed}; ${this.num_stars_needed}`);
     this.updateCurrency();
   }
 

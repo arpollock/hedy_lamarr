@@ -48,10 +48,7 @@ export class HudMenu extends Phaser.Scene {
   }
 
   public init(data: HudMenuConfig): void {
-    this.containsStars = data.containsStars;
-    this.initCoins = data.coins;
-    this.initGems = data.gems;
-    this.initStars = data.stars;
+    
   }
 
   public preload(): void {
@@ -64,12 +61,17 @@ export class HudMenu extends Phaser.Scene {
     this.cameras.main.setBackgroundColor(); // set background of hud menu to transparent
   }
 
-  public create(): void {
-    // this.events.on('sleep', this.onSleep, this);
+  public create(data: HudMenuConfig): void {
+    this.containsStars = data.containsStars;
+    this.initCoins = data.coins;
+    this.initGems = data.gems;
+    this.initStars = data.stars;
+
     this.events.on('destroy', this.onDestroy, this);
     this.events.on('shutdown', this.onShutdown, this);
-    // this.events.on('wake', this.onWake, this);
+
     eventsCenter.on(eventNames.updateScoreText, this.updateScoreText, this);
+
     this.openTabletMenu(); // start with the tablet menu open to show conversion values
     const hudPanelX: number = 10;
     const offsetY: number = 60;
@@ -155,8 +157,8 @@ export class HudMenu extends Phaser.Scene {
   }
 
   private updateScoreText(scoreUpdate: ScoreUpdate): void {
-    console.log('Updating score text with:');
-    console.log(scoreUpdate);
+    // console.log('Updating score text with:');
+    // console.log(scoreUpdate);
     if (this.coinsText) {
       this.coinsText.setText(`: ${scoreUpdate.coins}`);
     } 
@@ -172,7 +174,6 @@ export class HudMenu extends Phaser.Scene {
     if (this.tablet_menu_open) {
       this.closeTabletMenu();
     }
-    // console.log(`click at: ${pointer.x}, ${pointer.y}`);
   }
 
   private openTabletMenu(): void {
@@ -182,8 +183,6 @@ export class HudMenu extends Phaser.Scene {
   }
 
   private toggleTabletMenu(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData) {
-    // this.tablet_menu_open = !(this.tablet_menu_open);
-    // console.log(`toggling tablet menu to: ${this.tablet_menu_open}`);
     event.stopPropagation(); // stop it from detecting a click elsewhere, which is used to close the menu
     if(!this.tablet_menu_open) {
       this.openTabletMenu();
@@ -216,15 +215,6 @@ export class HudMenu extends Phaser.Scene {
   private pauseGame() {
     eventsCenter.emit(eventNames.pauseGame);
   }
-
-  // private onWake(): void {
-  //   eventsCenter.on(eventNames.updateScoreText, this.updateScoreText, this);
-  // }
-
-  // private onSleep(): void {
-  //   eventsCenter.off(eventNames.updateScoreText);
-  //   this.closeTabletMenu();
-  // }
 
   private onShutdown(): void {
     eventsCenter.off(eventNames.updateScoreText);
