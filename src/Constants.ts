@@ -42,6 +42,8 @@ const assetGameControlUiUrl: string = `game_control_ui/`;
 
 const assetWinLevelUiURL: string = `win_level_ui/`;
 
+const assetTutorialUiURL: string = `tutorial_ui/`;
+
 const pauseKeyCode: number = Phaser.Input.Keyboard.KeyCodes.ESC.valueOf();
 
 const hudMenuSpriteY: number = height - 40;
@@ -63,6 +65,105 @@ const initScore: ScoreUpdate = {
 const numDifficulties: number = 3; // 3, 4, 5 grade
 
 const numObstacleColors: number = 4;
+
+const numTutorialScreens: number = 11;
+
+enum TutorialTextPositions {
+  top_right,
+  bottom_left,
+  top_left
+}
+
+enum TutorialTextBackgroundSizes {
+  small,
+  large
+}
+
+const tutorialTextObjects: { // todo wip
+  screen: number,
+  text: string,
+  position: TutorialTextPositions,
+  size: TutorialTextBackgroundSizes,
+}[] = [
+  {
+    screen: 0,
+    text: 'Hello! This is you.',
+    position: 0,
+    size: 1,
+  },
+  {
+    screen: 0,
+    text: 'These are Snufflebubs. They were stolen from your home planet and taken to this weird world. ):\nIt is up to you to save them!',
+    position: 1,
+    size: 1,
+  },
+  {
+    screen: 1,
+    text: 'Unfortunately, a number of obstacles are in between you and the Snufflebubs...',
+    position: 0,
+    size: 0,
+  },
+  {
+    screen: 2,
+    text: 'Thankfully there is a way to unlock these obstacles! You just need pay the needed amount. You will need to collect coins, gems, and stars throughout the world for this.',
+    position: 2,
+    size: 1,
+  },
+  {
+    screen: 3,
+    text: 'So, use your keyboard\'s arrow keys to navigate the world, collect currency, unlock obstacles, and save the Snufflebubs!',
+    position: 0,
+    size: 0,
+  },
+  {
+    screen: 4,
+    text: 'You will unlock obstacles by dragging your currency into each obstacle\'s input slot(s).',
+    position: 0,
+    size: 0,
+  },
+  {
+    screen: 4,
+    text: 'And don\'t worry if you don\'t have any gems or stars...',
+    position: 1,
+    size: 0,
+  },
+  {
+    screen: 5,
+    text: 'You can use converter modules to trade coins in! But watch out: the value of coins to gems and stars changes with each Snufflebub rescue.',
+    position: 0,
+    size: 0,
+  },
+  {
+    screen: 6,
+    text: 'There will be 3 types of obstacles: laser doors, moving platforms, and barriers.',
+    position: 0,
+    size: 0,
+  },
+  {
+    screen: 7,
+    text: 'Laser doors and moving platforms can be turned on by buttons once unlocked.',
+    position: 0,
+    size: 0,
+  },
+  {
+    screen: 8,
+    text: 'Barriers, on the otherhand, are controlled by switches.',
+    position: 0,
+    size: 0,
+  },
+  {
+    screen: 9,
+    text: 'Unlike buttons, switches can be turned off again once unlocked and activated.',
+    position: 0,
+    size: 0,
+  },
+  {
+    screen: 10,
+    text: 'So get out there and save those Snufflebubs! We\'re counting on you! And remember, as an alien you can jump twice before you need to touch the ground again!',
+    position: 0,
+    size: 0,
+  },
+];
 
 // https://photonstorm.github.io/phaser3-docs/Phaser.Types.GameObjects.Text.html#.TextStyle
 const textConfig: {
@@ -174,6 +275,7 @@ const sceneNames: {
   obFixMenu: string,
   start: string,
   musicControl: string,
+  tutorial: string
 } = {
   mainGame: 'HomeScene',
   hudMenu: 'HudMenu',
@@ -183,6 +285,7 @@ const sceneNames: {
   obFixMenu: 'ObstacleFixMenu',
   start: 'Start',
   musicControl: 'MasterMusicControl',
+  tutorial: 'tutorial',
 };
 
 const eventNames: {
@@ -337,6 +440,7 @@ export {
   assetTabletUiURL,
   assetGameControlUiUrl,
   assetWinLevelUiURL,
+  assetTutorialUiURL,
   pauseKeyCode,
   hudMenuSpriteY,
   hudMenuSpriteX,
@@ -345,6 +449,8 @@ export {
   initScore,
   numDifficulties,
   numObstacleColors,
+  numTutorialScreens,
+  tutorialTextObjects,
   textConfig,
   musicKeyNames,
   partNames,

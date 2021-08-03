@@ -12,7 +12,8 @@ import {
   assetGameControlUiUrl,
   ConversionConfig,
   possibleMapNumbers,
-  numObstacleColors
+  numObstacleColors,
+  screenEdgePadding
 } from './../Constants';
 import {
   get_rand_map_number,
@@ -46,6 +47,7 @@ export class StartScene extends Phaser.Scene {
   private difficultyText: Phaser.GameObjects.Text;
   private difficultyTextString: string;
   private startGameButton: Phaser.GameObjects.Sprite;
+  private tutorialButton: Phaser.GameObjects.Sprite;
   private difficultyLevelButtons: DifficultyLevelButton[];
   private activeGradeLevel: number;
 
@@ -57,6 +59,7 @@ export class StartScene extends Phaser.Scene {
     this.difficultyTextString = 'Choose your grade level:'
     this.activeGradeLevel = 4;
     this.difficultyLevelButtons = [];
+    this.tutorialButton = null;
   }
 
   public init(params): void {
@@ -75,6 +78,8 @@ export class StartScene extends Phaser.Scene {
     this.load.image('difficulty3_active', `${assetGameControlUiUrl}difficulty3_active.png`);
     this.load.image('difficulty4_active', `${assetGameControlUiUrl}difficulty4_active.png`);
     this.load.image('difficulty5_active', `${assetGameControlUiUrl}difficulty5_active.png`);
+    this.load.image('help', 'help.png');
+    this.load.image('help_hover', 'help_hover.png');
     // these are technically shared across the hud and tablet menu, but they
     // need to be preloaded here since the other scenes are added dynamically
     this.load.image('coinHud', 'coin.png');
@@ -143,7 +148,10 @@ export class StartScene extends Phaser.Scene {
     }
     this.scene.bringToTop(sceneNames.musicControl);
     // add the main game into the scene manager
-    this.scene.add(sceneNames.mainGame, HomeScene, false);
+    if (this.scene.getIndex(sceneNames.mainGame) === -1) {
+      this.scene.add(sceneNames.mainGame, HomeScene, false);
+    }
+    
 
     this.cameras.main.setBackgroundColor(altBackgroundColor);
     // text to show the game title
@@ -226,10 +234,33 @@ export class StartScene extends Phaser.Scene {
     this.startGameButton.on('pointerover', this.onStartGameButtonHoverEnter, this);
     this.startGameButton.on('pointerout', this.onStartGameButtonHoverExit, this);
     this.startGameButton.on('pointerdown', this.startGame, this);
+
+    // tutorial button click detection
+    this.tutorialButton = this.add.sprite(width - screenEdgePadding, screenEdgePadding,'help').setOrigin(1, 0);
+    this.tutorialButton.setScale(0.5);
+    this.tutorialButton.setInteractive({
+      useHandCursor: true
+    });
+    this.tutorialButton.on('pointerover', this.onTutorialButtonHoverEnter, this);
+    this.tutorialButton.on('pointerout', this.onTutorialButtonHoverExit, this);
+    this.tutorialButton.on('pointerdown', this.goToTutorial, this);
   }
 
   public update(time: number): void {
 
+  }
+
+  private onTutorialButtonHoverEnter(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData): void {
+    this.tutorialButton.setTexture('help_hover');
+  }
+
+  private onTutorialButtonHoverExit(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData): void {
+    this.tutorialButton.setTexture('help');
+  }
+
+  private goToTutorial(): void {
+    this.cleanupDifficultyButtons();
+    this.hideMasterMusicControlAndStartScene(sceneNames.tutorial);
   }
 
   private onStartGameButtonHoverEnter(pointer: Phaser.Input.Pointer, localX: number, localY: number, event: Phaser.Types.Input.EventData): void { }
@@ -240,18 +271,7 @@ export class StartScene extends Phaser.Scene {
     this.startGameButton.removeListener('pointerover', this.onStartGameButtonHoverEnter, this);
     this.startGameButton.removeListener('pointerout', this.onStartGameButtonHoverExit, this);
     this.startGameButton.removeListener('pointerdown', this.startGame, this);
-    this.difficultyLevelButtons.forEach( (btn: DifficultyLevelButton) => {
-      btn.removeListener('pointerover');
-      btn.removeListener('pointerout');
-      btn.removeListener('pointerdown');
-      // need to remove the old buttons
-      // so a relaunch of the start game scene won't trigger
-      // multiple overlapping event listeners??
-      // IDK it was broken and this fixed it
-      btn.destroy(); 
-    });
-
-    this.difficultyLevelButtons = [];
+    this.cleanupDifficultyButtons();
     // generate the seed data for the level 
     // todo, set these randomly according to difficulty config
     // todo, create double converters, converters that accept converters, and/or n star : m gem converters
@@ -265,10 +285,32 @@ export class StartScene extends Phaser.Scene {
     this.startGameButton = null;
     this.scene.add(sceneNames.hudMenu, HudMenu, false);
     this.scene.add(sceneNames.tabletMenu, TabletMenu, false);
+    this.hideMasterMusicControlAndStartScene(sceneNames.mainGame, mainGameData);
     // the next lines achieve the == of 'this.scene.start(sceneNames.mainGame, mainGameData);'
     // BUT keeps master music control running properly in the bg
+    
+  }
+
+  private cleanupDifficultyButtons(): void {
+    this.difficultyLevelButtons.forEach( (btn: DifficultyLevelButton) => {
+      btn.removeListener('pointerover');
+      btn.removeListener('pointerout');
+      btn.removeListener('pointerdown');
+      // need to remove the old buttons
+      // so a relaunch of the start game scene won't trigger
+      // multiple overlapping event listeners??
+      // IDK it was broken and this fixed it
+      btn.destroy(); 
+    });
+    this.difficultyLevelButtons = [];
+  }
+
+  private hideMasterMusicControlAndStartScene(key: string, sceneData?: object): void {
     this.scene.sendToBack(sceneNames.musicControl);
-    this.scene.launch(sceneNames.mainGame, mainGameData);
+    this.scene.launch(key, sceneData);
     this.scene.stop(sceneNames.start);
   }
+
+  // private onDestroy(): void {
+  // }
 };

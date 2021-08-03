@@ -7,13 +7,14 @@ import { PauseScene } from './game/PauseScene';
 import { LevelWin } from './game/LevelWin';
 import { gravity, width, height } from './Constants'
 import { MusicControlScene } from './game/MasterMusicControl';
+import { TutorialScene } from './game/TutorialScene';
 
 const gameConfig: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   width: width,
   height: height,
   parent: 'game-container',
-  scene: [StartScene, MusicControlScene, PauseScene, LevelWin],
+  scene: [StartScene, MusicControlScene, TutorialScene, PauseScene, LevelWin],
   physics: {
       default: 'arcade',
       arcade: {
