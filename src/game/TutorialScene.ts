@@ -9,15 +9,88 @@ import {
   screenEdgePadding,
   assetTutorialUiURL,
   numTutorialScreens,
-  tutorialTextObjects // todo use this
+  TextObject,
+  tutorialTextObjects, // todo use this
+  TutorialTextBackgroundSizes,
+  TutorialTextPositions,
 } from '../Constants';
+
+class FormattedText extends Phaser.GameObjects.Sprite {
+  private text: Phaser.GameObjects.Text;
+
+  constructor(scene, textObject: TextObject, defaultVisibility: boolean) {
+    const textureStr: string = textObject.size === TutorialTextBackgroundSizes.small ? 'text_background_small' : 'text_background_large';
+    super(scene, 0, 0, textureStr);
+    let x: number = 0;
+    let y: number = 0;
+    const buttonYPadding: number = 45;
+    const fromEdgeX: number = screenEdgePadding * 3 + this.displayWidth / 2;
+    const fromEdgeY: number = screenEdgePadding * 3 + this.displayHeight / 2;
+    switch( textObject.position ) {
+      case TutorialTextPositions.top_right:
+        x = width - fromEdgeX;
+        y = fromEdgeY
+        break;
+      case TutorialTextPositions.top_center:
+        x = width / 2;
+        y = fromEdgeY
+        break;
+      case TutorialTextPositions.top_left:
+        x = fromEdgeX;
+        y = fromEdgeY + buttonYPadding;
+        break;
+      case TutorialTextPositions.middle_left:
+        x = fromEdgeX;
+        y = height / 2;
+        break;
+      case TutorialTextPositions.bottom_left:
+        x = fromEdgeX;
+        y = height - fromEdgeY - buttonYPadding;
+        break;
+      case TutorialTextPositions.bottom_right:
+        x = width - fromEdgeX;
+        y = height - fromEdgeY - buttonYPadding;
+        break;
+      case TutorialTextPositions.middle_right:
+        x = width - fromEdgeX;
+        y = height / 2;
+        break;
+      default:
+        x = width - fromEdgeX;
+        y = height - fromEdgeY;
+        break;
+    }
+    this.setX(x);
+    this.setY(y);
+    this.setOrigin(0.5);
+    
+    this.text = scene.add.text(x, y, textObject.text, {
+      fontSize: textConfig.tertiaryTitleFontSize,
+      color: textConfig.secondaryFillColor,
+      fontFamily: textConfig.fontFams,
+      align: 'justify',
+      wordWrap: {
+        width: this.displayWidth - screenEdgePadding * 4,
+      }
+    }).setOrigin(0.5).setScrollFactor(0).setDepth(1); // set origin makes it so we can center the text easily
+    this.setVisible(defaultVisibility);
+    scene.add.existing(this);
+  }
+
+  public setVisible(value: boolean){
+    this.text.setVisible(value);
+    return super.setVisible(value);
+
+  }
+}
 
 export class TutorialScene extends Phaser.Scene {
 
   private mainMenuButton: Phaser.GameObjects.Sprite;
   private backgroundScreens: Phaser.GameObjects.Sprite[];
-  private textByScreen: Array<Phaser.GameObjects.Text[]>;
-  private textBackgroundsByScreen: Array<Phaser.GameObjects.Sprite[]>;
+  private textObjects: Array<FormattedText[]>
+  // private textByScreen: Array<Phaser.GameObjects.Text[]>;
+  // private textBackgroundsByScreen: Array<Phaser.GameObjects.Sprite[]>;
   private currScreenIdx: number;
   private nextButton: Phaser.GameObjects.Sprite;
   private prevButton: Phaser.GameObjects.Sprite;
@@ -29,8 +102,9 @@ export class TutorialScene extends Phaser.Scene {
     this.mainMenuButton = null;
     this.nextButton = null;
     this.prevButton = null;
-    this.textByScreen = new Array(numTutorialScreens);
-    this.textBackgroundsByScreen = new Array(numTutorialScreens);
+    this.textObjects = new Array(numTutorialScreens);
+    // this.textByScreen = new Array(numTutorialScreens);
+    // this.textBackgroundsByScreen = new Array(numTutorialScreens);
   }
 
   public init(params): void {
@@ -94,23 +168,31 @@ export class TutorialScene extends Phaser.Scene {
     this.mainMenuButton.setScale(0.5);
     // text + backgrounds for each screen
     for (let i = 0; i < numTutorialScreens; i++) {
-      this.textByScreen[i] = [];
-      this.textBackgroundsByScreen[i] = [];
-      const currX: number = width * 2 / 3;
-      const currY: number = height / 3;
-      const currBgSprite: Phaser.GameObjects.Sprite = this.add.sprite(currX, currY, 'text_background_large').setOrigin(0.5).setVisible(false);
-      this.textBackgroundsByScreen[i].push(currBgSprite);
-      const currStr: string = `Testing: ${i}`;
-      const currText = this.add.text(currX, currY, currStr, {
-        fontSize: textConfig.tertiaryTitleFontSize,
-        color: textConfig.secondaryFillColor,
-        fontFamily: textConfig.fontFams,
-        wordWrap: { width: currBgSprite.displayWidth - screenEdgePadding / 2, },
-      }).setOrigin(0.5).setVisible(false); 
-      currText.setScrollFactor(0);
-      this.textByScreen[i].push(currText);
-      this.showCurrentScreenTextAndBackgrounds();
+        this.textObjects[i] = [];
     }
+    for (let i = 0; i < tutorialTextObjects.length; i++) {
+      const textIdx: number = tutorialTextObjects[i].screen;
+      const currText: FormattedText = new FormattedText(this, tutorialTextObjects[i], ( textIdx === this.currScreenIdx));
+      this.textObjects[textIdx].push(currText);
+    }
+    // for (let i = 0; i < numTutorialScreens; i++) {
+    //   this.textByScreen[i] = [];
+    //   this.textBackgroundsByScreen[i] = [];
+    //   const currX: number = width * 2 / 3;
+    //   const currY: number = height / 3;
+    //   const currBgSprite: Phaser.GameObjects.Sprite = this.add.sprite(currX, currY, 'text_background_large').setOrigin(0.5).setVisible(false);
+    //   this.textBackgroundsByScreen[i].push(currBgSprite);
+    //   const currStr: string = `Testing: ${i}`;
+    //   const currText = this.add.text(currX, currY, currStr, {
+    //     fontSize: textConfig.tertiaryTitleFontSize,
+    //     color: textConfig.secondaryFillColor,
+    //     fontFamily: textConfig.fontFams,
+    //     wordWrap: { width: currBgSprite.displayWidth - screenEdgePadding / 2, },
+    //   }).setOrigin(0.5).setVisible(false); 
+    //   currText.setScrollFactor(0);
+    //   this.textByScreen[i].push(currText);
+    //   this.showCurrentScreenTextAndBackgrounds();
+    // }
     
   }
 
@@ -119,16 +201,20 @@ export class TutorialScene extends Phaser.Scene {
   }
 
   private hideCurrentScreenTextAndBackgrounds(): void {
-    for (let i = 0; i < this.textBackgroundsByScreen[this.currScreenIdx].length; i++) {
-      this.textBackgroundsByScreen[this.currScreenIdx][i].setVisible(false);
-      this.textByScreen[this.currScreenIdx][i].setVisible(false);
+    // for (let i = 0; i < this.textBackgroundsByScreen[this.currScreenIdx].length; i++) {
+    //   this.textBackgroundsByScreen[this.currScreenIdx][i].setVisible(false);
+    //   this.textByScreen[this.currScreenIdx][i].setVisible(false);
+    // }
+    for (let i = 0; i < this.textObjects[this.currScreenIdx].length; i++) {
+      this.textObjects[this.currScreenIdx][i].setVisible(false);
+      this.textObjects[this.currScreenIdx][i].setVisible(false);
     }
   }
 
   private showCurrentScreenTextAndBackgrounds(): void {
-    for (let i = 0; i < this.textBackgroundsByScreen[this.currScreenIdx].length; i++) {
-      this.textBackgroundsByScreen[this.currScreenIdx][i].setVisible(true);
-      this.textByScreen[this.currScreenIdx][i].setVisible(true);
+    for (let i = 0; i < this.textObjects[this.currScreenIdx].length; i++) {
+      this.textObjects[this.currScreenIdx][i].setVisible(true);
+      this.textObjects[this.currScreenIdx][i].setVisible(true);
     }
   }
 

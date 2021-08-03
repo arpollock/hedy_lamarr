@@ -68,10 +68,14 @@ const numObstacleColors: number = 4;
 
 const numTutorialScreens: number = 11;
 
-enum TutorialTextPositions {
+enum TutorialTextPositions { // ccw starting with top right
   top_right,
+  top_center,
+  top_left,
+  middle_left,
   bottom_left,
-  top_left
+  bottom_right,
+  middle_right,
 }
 
 enum TutorialTextBackgroundSizes {
@@ -79,88 +83,108 @@ enum TutorialTextBackgroundSizes {
   large
 }
 
-const tutorialTextObjects: { // todo wip
+interface TextObject {
   screen: number,
   text: string,
   position: TutorialTextPositions,
   size: TutorialTextBackgroundSizes,
-}[] = [
+};
+
+const tutorialTextObjects: TextObject[] = [
   {
     screen: 0,
     text: 'Hello! This is you.',
-    position: 0,
-    size: 1,
+    position: TutorialTextPositions.top_right,
+    size: 0,
   },
   {
     screen: 0,
-    text: 'These are Snufflebubs. They were stolen from your home planet and taken to this weird world. ):\nIt is up to you to save them!',
-    position: 1,
+    text: 'These are Snufflebubs. They were stolen from your home planet and taken to this weird world...\n\nIt is up to you to save them!',
+    position: TutorialTextPositions.bottom_left,
     size: 1,
   },
   {
     screen: 1,
-    text: 'Unfortunately, a number of obstacles are in between you and the Snufflebubs...',
-    position: 0,
+    text: 'Unfortunately, many obstacles block you from the Snufflebubs...',
+    position: TutorialTextPositions.top_right,
     size: 0,
   },
   {
     screen: 2,
-    text: 'Thankfully there is a way to unlock these obstacles! You just need pay the needed amount. You will need to collect coins, gems, and stars throughout the world for this.',
-    position: 2,
-    size: 1,
-  },
-  {
-    screen: 3,
-    text: 'So, use your keyboard\'s arrow keys to navigate the world, collect currency, unlock obstacles, and save the Snufflebubs!',
-    position: 0,
+    text: 'Thankfully there is a way to unlock these obstacles!',
+    position: TutorialTextPositions.top_center,
     size: 0,
   },
   {
+    screen: 2,
+    text: 'You will need to collect coins, gems, and stars throughout the world for this.',
+    position: TutorialTextPositions.bottom_right,
+    size: 0,
+  },
+  {
+    screen: 3,
+    text: 'So, use your keyboard\'s arrow keys to explore, collect currency, unlock obstacles, and most importantly...\n\nsave the Snufflebubs!!!',
+    position: TutorialTextPositions.top_right,
+    size: 1,
+  },
+  {
     screen: 4,
-    text: 'You will unlock obstacles by dragging your currency into each obstacle\'s input slot(s).',
-    position: 0,
+    text: 'You will unlock obstacles by dragging your currency into the empty input slot(s).',
+    position: TutorialTextPositions.top_center,
     size: 0,
   },
   {
     screen: 4,
     text: 'And don\'t worry if you don\'t have any gems or stars...',
-    position: 1,
+    position: TutorialTextPositions.bottom_left,
     size: 0,
   },
   {
     screen: 5,
-    text: 'You can use converter modules to trade coins in! But watch out: the value of coins to gems and stars changes with each Snufflebub rescue.',
-    position: 0,
+    text: 'You can use converter modules to trade coins in!',
+    position: TutorialTextPositions.top_left,
+    size: 0,
+  },
+  {
+    screen: 5,
+    text: 'But watch out: the value of coins to gems and stars changes with each Snufflebub rescue.',
+    position: TutorialTextPositions.bottom_right,
     size: 0,
   },
   {
     screen: 6,
-    text: 'There will be 3 types of obstacles: laser doors, moving platforms, and barriers.',
-    position: 0,
-    size: 0,
+    text: 'There will be 3 types of obstacles:\n- laser doors\n- moving platforms\n- barriers',
+    position: TutorialTextPositions.top_right,
+    size: 1,
   },
   {
     screen: 7,
-    text: 'Laser doors and moving platforms can be turned on by buttons once unlocked.',
-    position: 0,
+    text: 'Laser doors and moving platforms can be turned off or on by buttons once unlocked.',
+    position: TutorialTextPositions.top_left,
     size: 0,
   },
   {
     screen: 8,
-    text: 'Barriers, on the otherhand, are controlled by switches.',
-    position: 0,
+    text: 'Barriers are controlled by switches, not buttons.',
+    position: TutorialTextPositions.middle_left,
     size: 0,
   },
   {
     screen: 9,
-    text: 'Unlike buttons, switches can be turned off again once unlocked and activated.',
-    position: 0,
+    text: 'Unlike buttons, switches can be turned on and off as much as you want once unlocked.',
+    position: TutorialTextPositions.middle_left,
     size: 0,
   },
   {
     screen: 10,
-    text: 'So get out there and save those Snufflebubs! We\'re counting on you! And remember, as an alien you can jump twice before you need to touch the ground again!',
-    position: 0,
+    text: 'So get out there and save those Snufflebubs!\n\nWe\'re counting on you!!!',
+    position: TutorialTextPositions.top_left,
+    size: 1,
+  },
+  {
+    screen: 10,
+    text: 'And remember, as an alien you can jump twice before you need to touch the ground again!',
+    position: TutorialTextPositions.bottom_left,
     size: 0,
   },
 ];
@@ -316,7 +340,7 @@ interface MainGameConfig {
   grade_level: number,
   map_number: number,
   conversion_values: ConversionConfig;
-}
+};
 
 interface WinGameConfig {
   previous_level_data: MainGameConfig,
@@ -326,14 +350,14 @@ interface WinGameConfig {
   num_stars_kept: number,
   num_obstacles_unlocked: number,
   tot_num_obstacles: number,
-}
+};
 
 interface HudMenuConfig {
   containsStars: boolean,
   coins: number,
   gems: number,
   stars: number
-}
+};
 
 interface CloseObstacleMenuConfig {
   success: boolean,
@@ -342,7 +366,7 @@ interface CloseObstacleMenuConfig {
   num_stars_consumed?: number,
   num_converters?: number,
   buttonObj?: ObstacleButton
-}
+};
 
 interface PlayerConfig {
   x: number,
@@ -450,6 +474,9 @@ export {
   numDifficulties,
   numObstacleColors,
   numTutorialScreens,
+  TutorialTextBackgroundSizes,
+  TutorialTextPositions,
+  TextObject,
   tutorialTextObjects,
   textConfig,
   musicKeyNames,
