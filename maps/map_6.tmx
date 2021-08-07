@@ -90,18 +90,6 @@
     <property name="obstacleNum" type="int" value="1"/>
    </properties>
   </object>
-  <object id="229" name="barrier" gid="7" x="420" y="1120" width="70" height="70">
-   <properties>
-    <property name="defaultState" type="bool" value="false"/>
-    <property name="obstacleNum" type="int" value="1"/>
-   </properties>
-  </object>
-  <object id="230" name="barrier" gid="7" x="490" y="1120" width="70" height="70">
-   <properties>
-    <property name="defaultState" type="bool" value="false"/>
-    <property name="obstacleNum" type="int" value="1"/>
-   </properties>
-  </object>
   <object id="231" name="barrier" gid="7" x="70" y="1330" width="70" height="70">
    <properties>
     <property name="defaultState" type="bool" value="false"/>
@@ -127,12 +115,6 @@
    </properties>
   </object>
   <object id="235" name="barrier" gid="7" x="420" y="1330" width="70" height="70">
-   <properties>
-    <property name="defaultState" type="bool" value="false"/>
-    <property name="obstacleNum" type="int" value="1"/>
-   </properties>
-  </object>
-  <object id="236" name="barrier" gid="7" x="490" y="1330" width="70" height="70">
    <properties>
     <property name="defaultState" type="bool" value="false"/>
     <property name="obstacleNum" type="int" value="1"/>

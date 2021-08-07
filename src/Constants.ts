@@ -382,6 +382,7 @@ interface PlayerConfig {
   speed: number,
   numJumps: number,
   maxJumps: number,
+  jumpHeightFactor: number, // should be a fraction between 0 and 1, positive
   flipX: boolean,
   walkFrameRate: number,
 };

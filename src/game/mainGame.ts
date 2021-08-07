@@ -138,6 +138,7 @@ export class HomeScene extends Phaser.Scene {
       speed: 200,
       numJumps: 0,
       maxJumps: 2,
+      jumpHeightFactor: 0.75,
       flipX: false,
       walkFrameRate: 15,
     };
@@ -683,7 +684,7 @@ export class HomeScene extends Phaser.Scene {
     }
 
     if ((Phaser.Input.Keyboard.JustDown(this.cursors.space) || Phaser.Input.Keyboard.JustDown(this.cursors.up)) && this.playerConfig.numJumps < this.playerConfig.maxJumps) {
-      (this.player.body as Phaser.Physics.Arcade.Body).setVelocityY(gravity*-0.67); // jump up
+      (this.player.body as Phaser.Physics.Arcade.Body).setVelocityY(gravity*-1*this.playerConfig.jumpHeightFactor); // jump up
       this.playerConfig.numJumps++;
     }
 

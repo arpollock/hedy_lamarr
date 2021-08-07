@@ -263,52 +263,6 @@
                 {
                  "gid":7,
                  "height":70,
-                 "id":229,
-                 "name":"barrier",
-                 "properties":[
-                        {
-                         "name":"defaultState",
-                         "type":"bool",
-                         "value":false
-                        }, 
-                        {
-                         "name":"obstacleNum",
-                         "type":"int",
-                         "value":1
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":70,
-                 "x":420,
-                 "y":1120
-                }, 
-                {
-                 "gid":7,
-                 "height":70,
-                 "id":230,
-                 "name":"barrier",
-                 "properties":[
-                        {
-                         "name":"defaultState",
-                         "type":"bool",
-                         "value":false
-                        }, 
-                        {
-                         "name":"obstacleNum",
-                         "type":"int",
-                         "value":1
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":70,
-                 "x":490,
-                 "y":1120
-                }, 
-                {
-                 "gid":7,
-                 "height":70,
                  "id":231,
                  "name":"barrier",
                  "properties":[
@@ -419,29 +373,6 @@
                  "visible":true,
                  "width":70,
                  "x":420,
-                 "y":1330
-                }, 
-                {
-                 "gid":7,
-                 "height":70,
-                 "id":236,
-                 "name":"barrier",
-                 "properties":[
-                        {
-                         "name":"defaultState",
-                         "type":"bool",
-                         "value":false
-                        }, 
-                        {
-                         "name":"obstacleNum",
-                         "type":"int",
-                         "value":1
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":70,
-                 "x":490,
                  "y":1330
                 }, 
                 {
