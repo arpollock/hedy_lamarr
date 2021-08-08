@@ -66,7 +66,7 @@ const numDifficulties: number = 3; // 3, 4, 5 grade
 
 const numObstacleColors: number = 4;
 
-const numTutorialScreens: number = 11;
+const numTutorialScreens: number = 13;
 
 enum TutorialTextPositions { // ccw starting with top right
   top_right,
@@ -74,6 +74,7 @@ enum TutorialTextPositions { // ccw starting with top right
   top_left,
   middle_left,
   bottom_left,
+  bottom_center,
   bottom_right,
   middle_right,
 }
@@ -136,53 +137,59 @@ const tutorialTextObjects: TextObject[] = [
   {
     screen: 4,
     text: 'And don\'t worry if you don\'t have any gems or stars...',
-    position: TutorialTextPositions.bottom_left,
+    position: TutorialTextPositions.bottom_right,
     size: 0,
   },
   {
     screen: 5,
     text: 'You can use converter modules to trade coins in!',
-    position: TutorialTextPositions.top_left,
-    size: 0,
-  },
-  {
-    screen: 5,
-    text: 'But watch out: the value of coins to gems and stars changes with each Snufflebub rescue.',
     position: TutorialTextPositions.bottom_right,
     size: 0,
   },
   {
     screen: 6,
-    text: 'There will be 3 types of obstacles:\n- laser doors\n- moving platforms\n- barriers',
-    position: TutorialTextPositions.top_right,
+    text: 'Simply drag the module you need from the left, to the empty slot on the right!\n\nThen you can fill the converter with a new input currency.',
+    position: TutorialTextPositions.bottom_center,
     size: 1,
   },
   {
     screen: 7,
-    text: 'Laser doors and moving platforms can be turned off or on by buttons once unlocked.',
+    text: 'But watch out: the value of coins to gems and stars changes with each Snufflebub rescue.',
     position: TutorialTextPositions.top_left,
     size: 0,
   },
   {
     screen: 8,
+    text: 'There will be 3 types of obstacles:\n- laser doors\n- moving platforms\n- barriers',
+    position: TutorialTextPositions.top_right,
+    size: 1,
+  },
+  {
+    screen: 9,
+    text: 'Laser doors and moving platforms can be turned off or on by buttons once unlocked.',
+    position: TutorialTextPositions.top_left,
+    size: 0,
+  },
+  {
+    screen: 10,
     text: 'Barriers are controlled by switches, not buttons.',
     position: TutorialTextPositions.middle_left,
     size: 0,
   },
   {
-    screen: 9,
+    screen: 11,
     text: 'Unlike buttons, switches can be turned on and off as much as you want once unlocked.',
     position: TutorialTextPositions.middle_left,
     size: 0,
   },
   {
-    screen: 10,
+    screen: 12,
     text: 'So get out there and save those Snufflebubs!\n\nWe\'re counting on you!!!',
     position: TutorialTextPositions.top_left,
     size: 1,
   },
   {
-    screen: 10,
+    screen: 12,
     text: 'And remember, as an alien you can jump twice before you need to touch the ground again!',
     position: TutorialTextPositions.bottom_left,
     size: 0,

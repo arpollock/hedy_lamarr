@@ -12,5 +12,46 @@
     <body>
         <h1 id="game-container-header">Ratio Rocket Rescue</h1>
         <div id="game-container"></div> 
+        <div id="credits-container">
+            <button type="button" class="collapsible">See Credits</button>
+            <div class="content">
+            <p>
+                Special thanks to:
+                <ul>
+                    <li><a href="https://kenney.nl/" target="_blank">Kenney.nl</a> for the game art assets</li>
+                    <li>Background music "Foggy Forest" from <a href="https://www.playonloop.com/royalty-free-music/video-game-chiptune-music/" target="_blank">PlayOnLoop.com</a>. Licensed under Creative Commons by Attribution 4.0</li>
+                    <li><a href="https://www.dreamstime.com/prodigypuma-more-best-audio" target="_blank">DreamsTime</a> for the royalty free sound effects.</li>
+                    <li>The creators of <a href="https://www.phaser.io/phaser3">Phaser</a>, the awesome JavaScript framework this game is built on!</li>
+                </ul>
+            </p>
+            </div>
+            <button type="button" class="collapsible">Hey Teachers</button>
+            <div class="content">
+            <p>
+                The difficulty levels break down to the following characteristics:
+                <ul>
+                    <li>Level 1 - only coins and gems (no stars). Coins are either a 2:1 or 3:1 exchange rate for gems.</li>
+                    <li>Level 2 - coins, gems, and stars. Coins are a 2:1 exchange rate for gems and a 3:1 rate for stars.</li>
+                    <li>Level 3 - coins, gems, and stars. Coins are either a 2:1 or 3:1 exchange rate to gems, and either a 3:1 or 4:1 rate to stars. Gems and stars will never be worth the same number of coins.</li>
+                </ul>
+            </p>
+            </div>
+        </div> 
+        <script>
+            var coll = document.getElementsByClassName("collapsible");
+            var i;
+            
+            for (i = 0; i < coll.length; i++) {
+              coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.display === "block") {
+                  content.style.display = "none";
+                } else {
+                  content.style.display = "block";
+                }
+              });
+            }
+        </script>
     </body>
 </html>

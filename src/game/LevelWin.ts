@@ -200,16 +200,22 @@ export class LevelWin extends Phaser.Scene {
 
   private getNewMapNumber(): number {
     let retVal: number = this.previousLevelSeedData.map_number;
-    while(retVal === this.previousLevelSeedData.map_number) {
+    const maxTries: number = 1000;
+    let count: number = 0;
+    while((retVal === this.previousLevelSeedData.map_number) && count < maxTries) {
       retVal = get_rand_map_number();
+      count++;
     }
     return retVal;
   }
 
   private getNewConversionValues(): ConversionConfig {
     let retVal: ConversionConfig = this.previousLevelSeedData.conversion_values;
-    while(retVal.valGems === this.previousLevelSeedData.conversion_values.valGems && retVal.valStars === this.previousLevelSeedData.conversion_values.valStars) {
+    const maxTries: number = 100;
+    let count: number = 0;
+    while((retVal.valGems === this.previousLevelSeedData.conversion_values.valGems && retVal.valStars === this.previousLevelSeedData.conversion_values.valStars) && count < maxTries) {
       retVal = get_rand_conversion_values(this.previousLevelSeedData.grade_level);
+      count++;
     }
     return retVal;
   }

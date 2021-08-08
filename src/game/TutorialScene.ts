@@ -47,6 +47,10 @@ class FormattedText extends Phaser.GameObjects.Sprite {
         x = fromEdgeX;
         y = height - fromEdgeY - buttonYPadding;
         break;
+      case TutorialTextPositions.bottom_center:
+          x = width / 2;
+          y = height - fromEdgeY - buttonYPadding;
+          break;
       case TutorialTextPositions.bottom_right:
         x = width - fromEdgeX;
         y = height - fromEdgeY - buttonYPadding;

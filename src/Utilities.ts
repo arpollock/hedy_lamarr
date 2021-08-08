@@ -45,9 +45,9 @@ function get_rand_conversion_values(activeGradeLevel: number): ConversionConfig 
       //  - 3rd Grade: (2, 0), (3, 0)
       //  - 4th/5th Grade: (2, 3), (2, 4), (3, 4)  
       case 5:
-        possibleStarValues.push(3);
-      case 4: 
         possibleStarValues.push(4);
+      case 4: 
+        possibleStarValues.push(3);
       case 3: // 3rd grade only worries about coins and gems
         possibleGemValues.push(2);
         possibleGemValues.push(3);

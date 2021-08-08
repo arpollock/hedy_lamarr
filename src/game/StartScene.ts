@@ -55,7 +55,7 @@ export class StartScene extends Phaser.Scene {
       key: sceneNames.start
     });
     this.startGameButton = null;
-    this.difficultyTextString = 'Choose your grade level:'
+    this.difficultyTextString = 'Choose your difficulty level:'
     this.activeGradeLevel = 4;
     this.difficultyLevelButtons = [];
     this.tutorialButton = null;
